@@ -83,6 +83,16 @@ class QuizBrainLvlThree {
         'Harpa vill alltaf vera í marki', true, 'soundLevelThree/long/120.mp3'),
     Question(
         'Egill er duglegur að púsla', true, 'soundLevelThree/long/121.mp3'),
+    Question('Eva spilar á píanó', true, 'soundLevelThree/long/122.mp3'),
+    Question('Jóna er í ballett', true, 'soundLevelThree/long/123.mp3'),
+    Question('Afi fór í sund', true, 'soundLevelThree/long/124.mp3'),
+    Question('Mamma gaf Óla ís', true, 'soundLevelThree/long/125.mp3'),
+    Question('Anna veiddi lax', true, 'soundLevelThree/long/126.mp3'),
+    Question('Öndin borðar brauð', true, 'soundLevelThree/long/127.mp3'),
+    Question('Ari fær líka ís', true, 'soundLevelThree/long/128.mp3'),
+    Question('Gunni fór út á róló', true, 'soundLevelThree/long/129.mp3'),
+    Question('Pabbi kann að baka', true, 'soundLevelThree/long/130.mp3'),
+    Question('Voffi gelti á kisu', true, 'soundLevelThree/long/131.mp3'),
   ];
 
   String getQuestionText1() {

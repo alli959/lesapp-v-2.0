@@ -79,6 +79,16 @@ class QuizBrainLvlThreeShort {
     Question('Óli spilar á flautu', true, 'soundLevelThree/short/94.mp3'),
     Question('Traktorinn er horfinn', true, 'soundLevelThree/short/95.mp3'),
     Question('Rútan er komin', true, 'soundLevelThree/short/96.mp3'),
+    Question('Nú er dimmt', true, 'soundLevelThree/short/97.mp3'),
+    Question('Ása les heima', true, 'soundLevelThree/short/98.mp3'),
+    Question('Máni fór út', true, 'soundLevelThree/short/99.mp3'),
+    Question('Hún fór upp', true, 'soundLevelThree/short/100.mp3'),
+    Question('Blómið er gult', true, 'soundLevelThree/short/101.mp3'),
+    Question('Ég var ekki heima', true, 'soundLevelThree/short/102.mp3'),
+    Question('Magga sá mús', true, 'soundLevelThree/short/103.mp3'),
+    Question('Gæsin borðar gras', true, 'soundLevelThree/short/104.mp3'),
+    Question('Músin var inni', true, 'soundLevelThree/short/105.mp3'),
+    Question('Eva og Ási spila', true, 'soundLevelThree/short/107.mp3'),
   ];
 
   String getQuestionText1() {
