@@ -84,7 +84,6 @@ class QuizBrainLvlThreeShort {
     Question('Máni fór út', true, 'soundLevelThree/short/99.mp3'),
     Question('Hún fór upp', true, 'soundLevelThree/short/100.mp3'),
     Question('Blómið er gult', true, 'soundLevelThree/short/101.mp3'),
-    Question('Ég var ekki heima', true, 'soundLevelThree/short/102.mp3'),
     Question('Magga sá mús', true, 'soundLevelThree/short/103.mp3'),
     Question('Gæsin borðar gras', true, 'soundLevelThree/short/104.mp3'),
     Question('Músin var inni', true, 'soundLevelThree/short/105.mp3'),
