@@ -45,7 +45,7 @@ class LevelFin extends StatelessWidget {
 
   Widget button1(double stigamet) {
     return SetScore(
-      currentScoreCaps: stigamet.toStringAsFixed(0),
+      currentScore: stigamet.toStringAsFixed(0),
       level: LvlOneChoose.id,
       text: 'Borð 1: Stafir',
     );
@@ -53,7 +53,7 @@ class LevelFin extends StatelessWidget {
 
   Widget button2(double stigamet) {
     return SetScore(
-      currentScoreCaps: stigamet.toStringAsFixed(0),
+      currentScore: stigamet.toStringAsFixed(0),
       level: LvlTwoChoose.id,
       text: 'Borð 2: Orð',
     );
@@ -61,7 +61,7 @@ class LevelFin extends StatelessWidget {
 
   Widget button3(double stigamet) {
     return SetScore(
-      currentScoreCaps: stigamet.toStringAsFixed(0),
+      currentScore: stigamet.toStringAsFixed(0),
       level: Welcome.id,
       text: 'Heim',
     );
