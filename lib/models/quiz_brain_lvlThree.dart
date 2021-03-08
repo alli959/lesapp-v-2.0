@@ -93,7 +93,7 @@ class QuizBrainLvlThree {
     Question('Gunni fór út á róló', true, 'soundLevelThree/long/129.mp3'),
     Question('Pabbi kann að baka', true, 'soundLevelThree/long/130.mp3'),
     Question('Voffi gelti á kisu', true, 'soundLevelThree/long/131.mp3'),
-    Question('Ég var ekki heima', true, 'soundLevelThree/short/102.mp3'),
+    Question('Ég var ekki heima', true, 'soundLevelThree/long/102.mp3'),
   ];
 
   String getQuestionText1() {
