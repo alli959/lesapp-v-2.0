@@ -3,8 +3,12 @@
 
 Til að keyra:
 
-Passa að kveikt sé á simulator eða tengja síma við tölvu.
+Kveikt þarf að vera á simulator eða sími tengdur við tölvu.
+
 
 Til að Keyra úr terminal:
+
 flutter pub get
+
 flutter run
+
