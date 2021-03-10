@@ -40,6 +40,7 @@ class Lesapp extends StatelessWidget {
           primaryColor: Color(0xFFE0FF62), // Litur á appbari uppi
           scaffoldBackgroundColor: Color(0xFFE0FF62), // litur á scaffold niðri
         ),
+        debugShowCheckedModeBanner: false,
         initialRoute: Wrapper.id,
         routes: {
           Welcome.id: (context) => Welcome(),
