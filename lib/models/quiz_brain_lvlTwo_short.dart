@@ -84,7 +84,7 @@ class QuizBrainLvlTwoShort {
     Question('Úr', true, 'soundLevelTwo/uur.mp3'),
     Question('Út', true, 'soundLevelTwo/uut.mp3'),
     Question('Var', true, 'soundLevelTwo/var.mp3'),
-    Question('Vel', true, 'soundLevelTwo/vel.mp3'),
+    Question('Vél', true, 'soundLevelTwo/vel.mp3'),
     Question('Hús', true, 'soundLevelTwo/Hus.mp3'),
     Question('Rúm', true, 'soundLevelTwo/Rum.mp3'),
     Question('Hæ', true, 'soundLevelTwo/hae.mp3'),
