@@ -18,22 +18,27 @@ import 'package:Lesaforrit/screens/my_profile.dart';
 import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/services/auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'models/levelTemplate.dart';
-import 'models/user.dart';
+import 'models/usr.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
 import 'package:Lesaforrit/screens/level_one_finish.dart';
 import 'package:Lesaforrit/screens/level_two.dart';
 
-void main() => runApp(Lesapp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(Lesapp());
+}
 
 class Lesapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Þurfum að tilgreina hvaða provider við ætlum að hlusta á..
     // Þetta þýðir að öll widgetin fyrir neðan hafa aðgang að gögnum sem koma úr þessum stream.
-    return StreamProvider<User>.value(
+    return StreamProvider<Usr>.value(
       value: AuthService().user,
       child: MaterialApp(
         theme: ThemeData(

@@ -4,7 +4,7 @@ import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_short.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo_short.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
@@ -44,7 +44,7 @@ class SetScore extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
+    Usr user = Provider.of<Usr>(context);
     return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData,
         builder: (context, snapshot) {

@@ -1,6 +1,6 @@
 import 'package:Lesaforrit/components/img_button.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/screens/authenticate/authenticate.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
 import 'package:Lesaforrit/screens/lvlThree_choose.dart';
@@ -21,7 +21,7 @@ class Welcome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<Usr>(context);
     // Everytime there is a change in the database we are gonna receive a list of Reads and theire gonna reflect the reads currently in the Firestore collection
     if (user == null) {
       return Authenticate();
@@ -43,7 +43,7 @@ class Welcome extends StatelessWidget {
                 unpressedImage: Image.asset('assets/images/logout.png'),
                 onTap: () async {
                   if (_auth.getCurrentUser() == null) {
-                    print('User = null');
+                    print('Usr = null');
                   } else
                     await _auth.logOut();
                 },

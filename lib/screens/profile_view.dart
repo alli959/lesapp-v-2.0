@@ -1,6 +1,6 @@
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/screens/my_profile.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/shared/constants.dart';

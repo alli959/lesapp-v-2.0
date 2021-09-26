@@ -10,7 +10,7 @@ import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'lvlTwo_choose.dart';
 
 class OneFinish extends StatelessWidget {
@@ -77,7 +77,7 @@ class LevelFin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String highestScore = '\n Jei þú slóst metið þitt!';
-    User user = Provider.of<User>(context);
+    Usr user = Provider.of<Usr>(context);
     return StreamBuilder<UserData>(
       stream: DatabaseService(uid: user.uid).userData,
       builder: (context, snapshot) {

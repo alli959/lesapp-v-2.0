@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 
 // Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
 class DatabaseService {
@@ -9,7 +9,7 @@ class DatabaseService {
 
 // Tilvísun í collection í database
   final CollectionReference lesaCollection =
-      Firestore.instance.collection('Notendur');
+      FirebaseFirestore.instance.collection('Notendur');
 
   //document er í auth // Þetta fall skrifar gildi í Firebase. Gildi í gæsalöppum verða að stemma
   Future updateUserData(
@@ -22,7 +22,7 @@ class DatabaseService {
       String scoreTwoLong,
       String scoreThree,
       String scoreThreeLong) async {
-    return await lesaCollection.document(uid).setData({
+    return await lesaCollection.doc(uid).set({
       'age': age,
       'name': name,
       'readingStage': readingStage,
@@ -37,30 +37,30 @@ class DatabaseService {
 
   //document er í auth
   Future updateUserScore(String score) async {
-    return await lesaCollection.document(uid).setData({
+    return await lesaCollection.doc(uid).set({
       'score': score,
     });
   }
 
   // read list from snapshot
   List<Read> _readListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      double totalpoints = double.parse(doc.data['score']) +
-          double.parse(doc.data['scoreTwo']) +
-          double.parse(doc.data['scoreThree']) +
-          double.parse(doc.data['scoreCaps']) +
-          double.parse(doc.data['scoreTwoLong']) +
-          double.parse(doc.data['scoreThreeLong']);
+    return snapshot.docs.map((document) {
+      double totalpoints = double.parse(document['score']) +
+          double.parse(document['scoreTwo']) +
+          double.parse(document['scoreThree']) +
+          double.parse(document['scoreCaps']) +
+          double.parse(document['scoreTwoLong']) +
+          double.parse(document['scoreThreeLong']);
       return Read(
-        name: doc.data['name'] ?? '',
-        score: doc.data['score'] ?? '',
-        scoreCaps: doc.data['scoreCaps'] ?? '',
-        scoreTwo: doc.data['scoreTwo'] ?? '',
-        scoreTwoLong: doc.data['scoreTwoLong'] ?? '',
-        scoreThree: doc.data['scoreThree'] ?? '',
-        scoreThreeLong: doc.data['scoreThreeLong'] ?? '',
-        age: doc.data['age'] ?? '',
-        readingStage: doc.data['readingStage'] ?? '',
+        name: document['name'] ?? '',
+        score: document['score'] ?? '',
+        scoreCaps: document['scoreCaps'] ?? '',
+        scoreTwo: document['scoreTwo'] ?? '',
+        scoreTwoLong: document['scoreTwoLong'] ?? '',
+        scoreThree: document['scoreThree'] ?? '',
+        scoreThreeLong: document['scoreThreeLong'] ?? '',
+        age: document['age'] ?? '',
+        readingStage: document['readingStage'] ?? '',
         totalpoints: totalpoints,
       );
     }).toList();
@@ -75,19 +75,19 @@ class DatabaseService {
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
         uid: uid,
-        name: snapshot.data['name'],
-        age: snapshot.data['age'],
-        readingStage: snapshot.data['readingStage'],
-        score: snapshot.data['score'],
-        scoreCaps: snapshot.data['scoreCaps'],
-        scoreTwo: snapshot.data['scoreTwo'],
-        scoreTwoLong: snapshot.data['scoreTwoLong'],
-        scoreThree: snapshot.data['scoreThree'],
-        scoreThreeLong: snapshot.data['scoreThreeLong']);
+        name: snapshot['name'],
+        age: snapshot['age'],
+        readingStage: snapshot['readingStage'],
+        score: snapshot['score'],
+        scoreCaps: snapshot['scoreCaps'],
+        scoreTwo: snapshot['scoreTwo'],
+        scoreTwoLong: snapshot['scoreTwoLong'],
+        scoreThree: snapshot['scoreThree'],
+        scoreThreeLong: snapshot['scoreThreeLong']);
   }
 
   // Get user document
   Stream<UserData> get userData {
-    return lesaCollection.document(uid).snapshots().map(_userDataFromSnapshot);
+    return lesaCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
   }
 }

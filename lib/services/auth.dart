@@ -1,4 +1,4 @@
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,14 +7,14 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create user object based on Firebase-user
-  User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+  Usr _userFromFirebaseUser(User user) {
+    return user != null ? Usr(uid: user.uid) : null;
   }
 
-  // Everytime a User signs in or signs out we get a signal from the stream.
-  // A null value if the user signs out but a User object if the user signs in.
-  Stream<User> get user {
-    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+  // Everytime a Usr signs in or signs out we get a signal from the stream.
+  // A null value if the user signs out but a Usr object if the user signs in.
+  Stream<Usr> get user {
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
   // GET CURRENT USER
@@ -25,8 +25,8 @@ class AuthService {
   // sign in with email and password
   Future signInAnon() async {
     try {
-      AuthResult result = await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
+      UserCredential result = await _auth.signInAnonymously();
+      User user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
       print('Villan er: ' + e.toString());
@@ -37,9 +37,9 @@ class AuthService {
   // SIGN IN w. email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
+      User user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -61,9 +61,9 @@ class AuthService {
       String ScoreThree,
       String ScoreThreeLong) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      FirebaseUser user = result.user;
+      User user = result.user;
 
       // create a new document for the user with the uid
       await DatabaseService(uid: user.uid).updateUserData(

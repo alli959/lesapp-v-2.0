@@ -7,7 +7,7 @@ import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 
 import '../models/set_score.dart';
 import 'level_one.dart';
@@ -47,7 +47,7 @@ class LevelFinish extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
+    Usr user = Provider.of<Usr>(context);
     return StreamBuilder<UserData>(
       stream: DatabaseService(uid: user.uid).userData,
       builder: (context, snapshot) {

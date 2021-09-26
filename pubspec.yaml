@@ -7,28 +7,31 @@ environment:
   sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
+  animated_text_kit: ^2.5.3
+  audioplayers: ^0.20.1
+  cloud_firestore: ^2.5.3
+  connectivity_plus: ^1.1.0
+  cupertino_icons: ^0.1.3
+  equatable: ^2.0.3
+  firebase_auth: ^3.1.1
+  firebase_core: ^1.6.0
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^0.1.3
-  rflutter_alert: ^1.0.2
-  animated_text_kit: ^2.5.3
-  firebase_auth: 0.15.4
-  cloud_firestore: 0.13.4
-  firebase_core: 0.4.4
-  modal_progress_hud: ^0.1.3
-  audioplayers: ^0.10.0
-  icon_shadow: ^1.0.1
-  provider: ^4.3.2+3
+  flutter_bloc: ^7.3.0
   flutter_spinkit: ^4.1.2
+  hydrated_bloc: ^7.1.0
+  icon_shadow: ^1.0.1
   imagebutton: ^0.0.6
+  modal_progress_hud: ^0.1.3
+  path_provider: ^2.0.5
+  provider: ^6.0.1
   random_color: ^1.0.5
+  rflutter_alert: ^1.0.2
 
 dev_dependencies:
   auto_size_text: ^2.1.0
   flutter_test:
     sdk: flutter
-
 
 flutter:
   uses-material-design: true
@@ -55,8 +58,3 @@ flutter:
         - asset: fonts/Metropolis-RegularItalic.otf
         - asset: fonts/Metropolis-SemiBold.otf
         - asset: fonts/Metropolis-Thin.otf
-
-
-
-
-

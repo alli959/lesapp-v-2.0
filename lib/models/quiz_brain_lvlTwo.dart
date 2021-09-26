@@ -1,6 +1,5 @@
 import 'question.dart';
 import 'dart:math';
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 import 'package:Lesaforrit/shared/audio.dart';
@@ -132,7 +131,11 @@ class QuizBrainLvlTwo {
   String getQuestionText2() {
     // þessi kóði passar bara að við fáum ekki sömu stafi. Annars er hann eins og getQuestionText1()
     _question2 = Random().nextInt(_questionBank.length - 1);
+    print("_question2");
+    print(_question2);
     whichSound = Random().nextInt(2) + 1;
+    print("whichSound");
+    print(whichSound);
     if (_question1 == _question2) {
       _question2++;
       sound2 = _questionBank[_question2].file;

@@ -1,6 +1,6 @@
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
-import 'package:Lesaforrit/models/user.dart';
+import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -26,7 +26,7 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
+    Usr user = Provider.of<Usr>(context);
     return StreamBuilder<UserData>(
       stream: DatabaseService(uid: user.uid).userData,
       builder: (context, snapshot) {

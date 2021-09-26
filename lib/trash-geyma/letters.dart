@@ -62,8 +62,8 @@ class _LettersState extends State<Letters> {
         quizBrain.rePlay(2);
       }
     }
-    if (quizBrain.spilari.state != AudioPlayerState.PLAYING ||
-        quizBrain.player.state != AudioPlayerState.PLAYING) setState(() {});
+    if (quizBrain.spilari.state != PlayerState.PLAYING ||
+        quizBrain.player.state != PlayerState.PLAYING) setState(() {});
   }
 
   @override
