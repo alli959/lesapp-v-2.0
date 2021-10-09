@@ -14,6 +14,7 @@ class AuthService {
   // Everytime a Usr signs in or signs out we get a signal from the stream.
   // A null value if the user signs out but a Usr object if the user signs in.
   Stream<Usr> get user {
+    print("usr get stuff called");
     return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
@@ -42,6 +43,7 @@ class AuthService {
       User user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
+      print("what is going on...");
       print(e.toString());
       return null;
     }

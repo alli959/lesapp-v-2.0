@@ -9,16 +9,22 @@ import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
-  static const String id = 'sign';
+  final Function toggleView;
+  SignIn({this.toggleView});
+
   Widget build(BuildContext context) {
     final authService = RepositoryProvider.of<AuthService>(context);
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    return BlocProvider<LoginBloc>(
-      create: (context) => LoginBloc(authBloc, authService),
-      child: SignInForm(),
+    return Container(
+      child: BlocProvider<LoginBloc>(
+        create: (context) => LoginBloc(authBloc, authService),
+        child: SignInForm(),
+      ),
     );
   }
+
+  static const String id = 'sign';
 }
 
 class SignInForm extends StatefulWidget {
@@ -38,18 +44,34 @@ class _SignInState extends State<SignInForm> {
   @override
   Widget build(BuildContext context) {
     final _loginBloc = BlocProvider.of<LoginBloc>(context);
-    final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _onLoginButtonPressed() {
+
+// () async {
+//         if (_formKey.currentState.validate()) {
+//           setState(() {
+//             loading = true;
+//           });
+//           dynamic result = await _auth
+//               .signInWithEmailAndPassword(email, password);
+
+//           if (result == null) {
+//             setState(() {
+//               error =
+//                   'Gat ekki skráð notanda inn með þessum gögnum';
+//               loading = false;
+//             });
+//           }
+//         }
+//       },
+    _onLoginButtonPressed() async {
       if (_formKey.currentState.validate()) {
+        setState(() {
+          loading = true;
+        });
         _loginBloc
             .add(LoginWithEmailButtonPressed(email: email, password: password));
+        print("email: $email");
+        print("password: $password");
       }
-      print("email: $email");
-      print("password: $password");
-    }
-
-    _onRegisterViewButtonPressed() {
-      _authBloc.add(RegisterScreenToggle());
     }
 
     return Scaffold(
@@ -60,7 +82,8 @@ class _SignInState extends State<SignInForm> {
         actions: <Widget>[
           FlatButton.icon(
               onPressed: () {
-                _onRegisterViewButtonPressed();
+                print("pressed");
+                // widget.toggleView();
               },
               icon: Icon(Icons.face),
               label: Text('Nýskráning'))
@@ -69,7 +92,7 @@ class _SignInState extends State<SignInForm> {
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginFailure) {
-            print("oh no!");
+            _showError(state.error);
           }
         },
         child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
@@ -128,11 +151,12 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.fromLTRB(20, 8, 20, 100),
                   child: RoundedButton(
-                      title: 'Skrá inn',
-                      colour: Color(0xFF009df4),
-                      onPressed: state is LoginLoading
-                          ? () {}
-                          : _onLoginButtonPressed),
+                    title: 'Skrá inn',
+                    colour: Color(0xFF009df4),
+                    onPressed: state is LoginLoading
+                        ? Loading()
+                        : _onLoginButtonPressed,
+                  ),
                 ),
                 Center(
                   child: Text(
@@ -154,7 +178,15 @@ class _SignInState extends State<SignInForm> {
       ),
     );
   }
+
+  void _showError(String error) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(error),
+      backgroundColor: Theme.of(context).errorColor,
+    ));
+  }
 }
+
 
 /*
             child: RoundedButton(
