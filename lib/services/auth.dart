@@ -23,6 +23,10 @@ class AuthService {
     return _auth.currentUser;
   }
 
+  Future getCurrentUserID() async {
+    return _auth.currentUser.uid;
+  }
+
   // sign in with email and password
   Future signInAnon() async {
     try {

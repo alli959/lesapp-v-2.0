@@ -5,6 +5,16 @@ abstract class AuthenticationState extends Equatable {
   List<Object> get props => [];
 }
 
+//might add more states later.
+class UsrState extends AuthenticationState {
+  String uid;
+
+  UsrState({@required this.uid});
+
+  @override
+  List<Object> get props => [uid];
+}
+
 class LoginScreen extends AuthenticationState {}
 
 class RegisterScreen extends AuthenticationState {}

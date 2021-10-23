@@ -27,9 +27,7 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInState extends State<SignInForm> {
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
 
   String email;
   String password;
@@ -44,8 +42,6 @@ class _SignInState extends State<SignInForm> {
         _loginBloc
             .add(LoginWithEmailButtonPressed(email: email, password: password));
       }
-      print("email: $email");
-      print("password: $password");
     }
 
     _onRegisterViewButtonPressed() {

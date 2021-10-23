@@ -1,6 +1,7 @@
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
@@ -10,11 +11,9 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthService _authService;
-  bool isLoginScreen;
   AuthenticationBloc(AuthService authService)
       : assert(authService != null),
         _authService = authService,
-        isLoginScreen = true,
         super(AuthenticationInitialized());
 
   @override
@@ -49,12 +48,15 @@ class AuthenticationBloc
       await Future.delayed(Duration(milliseconds: 500));
       final currentUser = await _authService.getCurrentUser();
       if (currentUser != null) {
-        yield AuthenticationAuthenticated(usr: currentUser);
+        final uid = await _authService.getCurrentUserID();
+        Usr usr = Usr(uid: uid);
+        yield AuthenticationAuthenticated(usr: usr);
       } else {
+        print("current user = null");
         yield AuthenticationUnauthenticated();
         yield LoginScreen();
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       yield AuthenticationFailure(
           message: e.message ?? 'An unknown error occurred');
     }

@@ -1,4 +1,6 @@
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
+import 'package:Lesaforrit/screens/level_three_voice.dart';
+import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
 import 'package:Lesaforrit/screens/authenticate/sign_in.dart';
@@ -20,6 +22,7 @@ import 'package:Lesaforrit/screens/my_profile.dart';
 import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/services/auth.dart';
+import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -48,12 +51,36 @@ import 'package:flutter/foundation.dart';
 // }
 
 void main() async {
+  // S3 IMPORT
+  const region = "eu-west-1";
+  const bucketId = "lesapp-data";
+  final AwsS3Client s3client = AwsS3Client(
+      region: region,
+      host: "s3.$region.amazonaws.com",
+      bucketId: bucketId,
+      accessKey: "AKIA3TGGOOO6EHBNOH7W",
+      secretKey: "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");
+
+  final listBucketResult =
+      await s3client.listObjects(prefix: "assets/sound/", delimiter: "/");
+  print("below is bucketresult");
+  print(listBucketResult.toString());
+
+  final response = await s3client.getObject("assets/sound/a.mp3");
+  print("below is body");
+  print(response.body.toString());
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(RepositoryProvider<AuthService>(
-      create: (context) {
-        return AuthService();
-      },
+  runApp(MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AuthService>(create: (context) {
+          return AuthService();
+        }),
+        RepositoryProvider(create: (context) {
+          return DatabaseService();
+        })
+      ],
       child: BlocProvider<AuthenticationBloc>(
           create: (context) {
             final authService = RepositoryProvider.of<AuthService>(context);
@@ -79,6 +106,7 @@ class lesApp extends StatelessWidget {
         scaffoldBackgroundColor: Color(0xFFE0FF62), // litur á scaffold niðri
       ),
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: appRouter.onGenerateRoute,
       initialRoute: Wrapper.id,
       routes: {
         Welcome.id: (context) => Welcome(),
@@ -94,6 +122,7 @@ class lesApp extends StatelessWidget {
         LevelFinish.id: (context) => LevelFinish(),
         LevelThree.id: (context) => LevelThree(),
         LevelThreeShort.id: (context) => LevelThreeShort(),
+        LevelThreeVoice.id: (context) => LevelThreeVoice(),
         OneFinish.id: (context) => OneFinish(),
         OneCapsFinish.id: (context) => OneCapsFinish(),
         TwoFinish.id: (context) => TwoFinish(),

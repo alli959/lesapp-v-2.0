@@ -9,8 +9,10 @@ class Choose extends StatelessWidget {
   Choose({
     this.buttonOne,
     this.buttonTwo,
+    this.buttonThree,
     this.buttonTextOne,
     this.buttonTextTwo,
+    this.buttonTextThree,
     this.appBarText,
     this.image,
     this.appBarColor,
@@ -18,8 +20,10 @@ class Choose extends StatelessWidget {
 
   Function buttonOne;
   Function buttonTwo;
+  Function buttonThree;
   String buttonTextOne;
   String buttonTextTwo;
+  String buttonTextThree;
   String appBarText;
   String image;
   Color appBarColor;
@@ -35,10 +39,10 @@ class Choose extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 5,
+            flex: 3,
             child: Container(
-              padding: EdgeInsets.only(top: 50, bottom: 50),
-              width: 300,
+              padding: EdgeInsets.only(top: 30, bottom: 50),
+              width: 200,
               alignment: Alignment.center,
               child: Image.asset(image),
             ),
@@ -51,7 +55,7 @@ class Choose extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: Container(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(minHeight: 40),
+                      constraints: BoxConstraints(minHeight: 30),
                       child: RoundedButton(
                         title: buttonTextOne,
                         colour: buttonColorBlue,
@@ -66,11 +70,27 @@ class Choose extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Container(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: 40),
+                        constraints: BoxConstraints(minHeight: 30),
                         child: RoundedButton(
                           title: buttonTextTwo,
                           colour: buttonColorBlue,
                           onPressed: buttonTwo,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: 30),
+                        child: RoundedButton(
+                          title: buttonTextThree,
+                          colour: buttonColorBlue,
+                          onPressed: buttonThree,
                         ),
                       ),
                     ),

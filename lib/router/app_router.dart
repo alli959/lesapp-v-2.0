@@ -44,6 +44,11 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => Welcome(),
         );
+      case '/lvl_one_choose':
+        print("we are here");
+        return MaterialPageRoute(
+          builder: (_) => LvlOneChoose(),
+        );
       default:
         return null;
     }

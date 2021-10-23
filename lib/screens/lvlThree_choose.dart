@@ -1,4 +1,5 @@
 import 'package:Lesaforrit/models/choose_long_short.dart';
+import 'package:Lesaforrit/screens/level_three_voice.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'level_three.dart';
@@ -20,8 +21,13 @@ class LvlThreeChoose extends StatelessWidget {
               LevelThree.id, (Route<dynamic> route) => false);
           // Navigator.pushNamed(context, LevelThree.id);
         },
+        buttonThree: () {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              LevelThreeVoice.id, (Route<dynamic> route) => false);
+        },
         buttonTextOne: 'Stuttar setningar',
         buttonTextTwo: 'Lengri setningar',
+        buttonTextThree: 'talgreining',
         appBarText: 'Setningar',
         appBarColor: lightBlue,
         image: 'assets/images/level_buttons-3.png');
