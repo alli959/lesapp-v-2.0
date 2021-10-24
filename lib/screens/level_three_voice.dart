@@ -73,6 +73,7 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     initSpeechState();
     _switchLang('is_IS');
+    displayText();
     super.initState();
   }
 
@@ -88,6 +89,7 @@ class _QuizPageState extends State<QuizPage> {
     if (!started) {
       setState(() {
         letter = quizBrain.getQuestionText();
+        print(letter);
       });
       started = true;
     } else {
@@ -109,8 +111,25 @@ class _QuizPageState extends State<QuizPage> {
       scoreKeeper = [];
       quizBrain.reset();
     } else {
-      print("userVoiceAnswer");
-      print("textAnswer");
+      List<String> ans = userVoiceAnswer.split(' ');
+      List<String> q = letter.split(' ');
+
+      for (int i = 0; i < ans.length; i++) {
+        if (ans[i] == q[i]) {
+          calc.correct++;
+          scoreKeeper.add(Icon(
+            Icons.star,
+            color: Colors.purpleAccent,
+            size: 31,
+          ));
+        } else {
+          if (scoreKeeper.isNotEmpty) {
+            quizBrain.stars--;
+            scoreKeeper.removeLast();
+          }
+        }
+      }
+      calc.trys++;
     }
   }
 
@@ -165,10 +184,6 @@ class _QuizPageState extends State<QuizPage> {
                     image: 'assets/images/bottomBar_bl.png'),
                 shadowLevel: 30),
           ),
-          Expanded(
-            flex: 1,
-            child: ErrorWidget(lastError: lastError),
-          ),
           SpeechStatusWidget(speech: speech),
         ]),
       ),
@@ -219,8 +234,9 @@ class _QuizPageState extends State<QuizPage> {
     _logEvent(
         'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
     setState(() {
-      lastWords = '${result.recognizedWords} - ${result.finalResult}';
+      lastWords = '${result.recognizedWords}';
     });
+    checkAnswer(result.recognizedWords);
   }
 
   void soundLevelListener(double level) {
@@ -307,148 +323,21 @@ class RecognitionResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LevelTemplateVoice(
-        fontSize: 39,
-        cardColor: cardColorLvlThree,
-        stigColor: lightBlue,
-        shadowLevel: 30,
-        letter: letter,
-        scoreKeeper: scoreKeeper,
-        trys: trys,
-        correct: correct,
-        stig: stig,
-        bottomBar: bottomBar,
-        answer: answer);
-  }
-
-  // Widget build(BuildContext context) {
-  //   return Column(
-  //     children: <Widget>[
-  //       Center(
-  //         child: Text(
-  //           'Recognized Words',
-  //           style: TextStyle(fontSize: 22.0),
-  //         ),
-  //       ),
-  //       Expanded(
-  //         child: Stack(
-  //           children: <Widget>[
-  //             Container(
-  //               color: Theme.of(context).selectedRowColor,
-  //               child: Center(
-  //                 child: Text(
-  //                   lastWords,
-  //                   textAlign: TextAlign.center,
-  //                 ),
-  //               ),
-  //             ),
-  //             Positioned.fill(
-  //               bottom: 10,
-  //               child: Align(
-  //                 alignment: Alignment.bottomCenter,
-  //                 child: Container(
-  //                   width: 40,
-  //                   height: 40,
-  //                   alignment: Alignment.center,
-  //                   decoration: BoxDecoration(
-  //                     boxShadow: [
-  //                       BoxShadow(
-  //                           blurRadius: .26,
-  //                           spreadRadius: level * 1.5,
-  //                           color: Colors.black.withOpacity(.05))
-  //                     ],
-  //                     color: Colors.white,
-  //                     borderRadius: BorderRadius.all(Radius.circular(50)),
-  //                   ),
-  //                   child: IconButton(
-  //                     icon: Icon(Icons.mic),
-  //                     onPressed: () => startListening(),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-}
-
-/// Display the current error status from the speech
-/// recognizer
-class ErrorWidget extends StatelessWidget {
-  const ErrorWidget({
-    Key key,
-    @required this.lastError,
-  }) : super(key: key);
-
-  final String lastError;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Text(
-            'Error Status',
-            style: TextStyle(fontSize: 22.0),
-          ),
-        ),
-        Center(
-          child: Text(lastError),
-        ),
-      ],
+      fontSize: 39,
+      cardColor: cardColorLvlThree,
+      stigColor: lightBlue,
+      shadowLevel: 30,
+      letter: letter,
+      scoreKeeper: scoreKeeper,
+      trys: trys,
+      correct: correct,
+      stig: stig,
+      bottomBar: bottomBar,
+      answer: answer,
+      startListening: startListening,
     );
   }
 }
-
-// class SessionOptionsWidget extends StatelessWidget {
-//   const SessionOptionsWidget(this.currentLocaleId, this.switchLang,
-//       this.localeNames, this.logEvents, this.switchLogging,
-//       {Key key})
-//       : super(key: key);
-
-//   final String currentLocaleId;
-//   final void Function(String) switchLang;
-//   final void Function(bool) switchLogging;
-//   final List<LocaleName> localeNames;
-//   final bool logEvents;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceAround,
-//       children: <Widget>[
-//         // Row(
-//         //   children: [
-//         //     Text('Language: '),
-//         //     DropdownButton<String>(
-//         //       onChanged: (selectedVal) => switchLang(selectedVal),
-//         //       value: currentLocaleId,
-//         //       items: localeNames
-//         //           .map(
-//         //             (localeName) => DropdownMenuItem(
-//         //               value: localeName.localeId,
-//         //               child: Text(localeName.name),
-//         //             ),
-//         //           )
-//         //           .toList(),
-//         //     ),
-//         //   ],
-//         // ),
-//         Row(
-//           children: [
-//             Text('Log events: '),
-//             Checkbox(
-//               value: logEvents,
-//               onChanged: switchLogging,
-//             ),
-//           ],
-//         )
-//       ],
-//     );
-//   }
-// }
 
 /// Display the current status of the listener
 class SpeechStatusWidget extends StatelessWidget {

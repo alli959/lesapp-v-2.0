@@ -19,6 +19,7 @@ class LevelTemplateVoice extends StatelessWidget {
   double fontSize;
   Widget bottomBar;
   int shadowLevel;
+  Function startListening;
 
   LevelTemplateVoice(
       {this.letter,
@@ -31,7 +32,8 @@ class LevelTemplateVoice extends StatelessWidget {
       this.stigColor,
       this.fontSize,
       this.bottomBar,
-      this.shadowLevel});
+      this.shadowLevel,
+      this.startListening});
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +184,13 @@ class LevelTemplateVoice extends StatelessWidget {
             ],
           ),
           Container(
-            child: bottomBar,
+            child: Column(children: <Widget>[
+              bottomBar,
+              IconButton(
+                icon: Icon(Icons.mic),
+                onPressed: () => startListening(),
+              ),
+            ]),
           ),
         ],
       ),
