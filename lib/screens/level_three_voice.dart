@@ -1,12 +1,16 @@
+import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
+import 'package:Lesaforrit/screens/level_three_short_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
+import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -17,10 +21,15 @@ class LevelThreeVoice extends StatelessWidget {
   static const String id = 'level_three_short_voice';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(backgroundColor: guli, title: Text('Raddgreining')),
-      endDrawer: SideMenu(),
-      body: QuizPage(),
+    final _speech = RepositoryProvider.of<SpeechToText>(context);
+
+    return BlocProvider<VoiceBloc>(
+      create: (context) => VoiceBloc(_speech),
+      child: Scaffold(
+        appBar: AppBar(backgroundColor: guli, title: Text('Raddgreining')),
+        endDrawer: SideMenu(),
+        body: QuizPage(),
+      ),
     );
   }
 }
@@ -63,6 +72,7 @@ class _QuizPageState extends State<QuizPage> {
   double minSoundLevel = 50000;
   double maxSoundLevel = -50000;
   String lastWords = ' ';
+  List<SpeechRecognitionWords> alternates;
   String lastError = '';
   String lastStatus = '';
   String _currentLocaleId = 'is_IS';
@@ -89,7 +99,6 @@ class _QuizPageState extends State<QuizPage> {
     if (!started) {
       setState(() {
         letter = quizBrain.getQuestionText();
-        print(letter);
       });
       started = true;
     } else {
@@ -104,9 +113,16 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
+  void getNewQuestion() {
+    setState(() {
+      letter = quizBrain.getQuestionText();
+    });
+    upperLetterImage = emptyImage;
+    lowerLetterImage = emptyImage;
+  }
+
   void checkAnswer(String userVoiceAnswer) {
     enabled = true;
-
     if (quizBrain.isFinished() == true) {
       scoreKeeper = [];
       quizBrain.reset();
@@ -114,20 +130,34 @@ class _QuizPageState extends State<QuizPage> {
       List<String> ans = userVoiceAnswer.split(' ');
       List<String> q = letter.split(' ');
 
-      for (int i = 0; i < ans.length; i++) {
-        if (ans[i] == q[i]) {
-          calc.correct++;
-          scoreKeeper.add(Icon(
-            Icons.star,
-            color: Colors.purpleAccent,
-            size: 31,
-          ));
-        } else {
-          if (scoreKeeper.isNotEmpty) {
-            quizBrain.stars--;
-            scoreKeeper.removeLast();
-          }
+      if (userVoiceAnswer.toLowerCase() == letter.toLowerCase()) {
+        calc.correct++;
+        scoreKeeper.add(Icon(
+          Icons.star,
+          color: Colors.purpleAccent,
+          size: 31,
+        ));
+      } else {
+        if (scoreKeeper.isNotEmpty) {
+          quizBrain.stars--;
+          scoreKeeper.removeLast();
         }
+      }
+
+      if (quizBrain.stars < 10) {
+        getNewQuestion();
+        qEnabled = true;
+      } else {
+        Timer(Duration(seconds: 1), () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ThreeShortFinish(
+                stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
+              ),
+            ),
+          );
+        });
       }
       calc.trys++;
     }
@@ -159,9 +189,22 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
+    _voiceBloc.add(VoiceInitializeEvent());
     return MaterialApp(
-      home: Scaffold(
-        body: Column(children: [
+        home: Scaffold(
+            body:
+                BlocListener<VoiceBloc, VoiceState>(listener: (context, state) {
+      if (state is VoiceFailure) {
+        print("voice failure");
+      }
+    }, child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
+      if (state is VoiceLoading) {
+        return Loading();
+      }
+
+      return Column(
+        children: [
           Expanded(
             flex: 4,
             child: RecognitionResultsWidget(
@@ -185,9 +228,9 @@ class _QuizPageState extends State<QuizPage> {
                 shadowLevel: 30),
           ),
           SpeechStatusWidget(speech: speech),
-        ]),
-      ),
-    );
+        ],
+      );
+    }))));
   }
 
   // This is called each time the users wants to start a new speech
@@ -203,7 +246,7 @@ class _QuizPageState extends State<QuizPage> {
     speech.listen(
         onResult: resultListener,
         listenFor: Duration(seconds: 30),
-        pauseFor: Duration(seconds: 5),
+        pauseFor: Duration(seconds: 10),
         partialResults: true,
         localeId: _currentLocaleId,
         onSoundLevelChange: soundLevelListener,
@@ -231,12 +274,14 @@ class _QuizPageState extends State<QuizPage> {
   /// This callback is invoked each time new recognition results are
   /// available after `listen` is called.
   void resultListener(SpeechRecognitionResult result) {
+    print("result alt");
+    print(result.alternates);
     _logEvent(
         'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
     setState(() {
       lastWords = '${result.recognizedWords}';
+      alternates = result.alternates;
     });
-    checkAnswer(result.recognizedWords);
   }
 
   void soundLevelListener(double level) {
@@ -262,13 +307,46 @@ class _QuizPageState extends State<QuizPage> {
     setState(() {
       lastStatus = '$status';
     });
+    int closestVal = lastWords.toLowerCase().compareTo(
+        letter.toLowerCase()); //compare correct answer to voice input
+
+    int closestIndex =
+        -1; //index of closest value, if -1 then result.recongizedwords
+    if (status == 'done') {
+      //check if alternates are closer to correct answer
+      for (int i = 0; i < alternates.length; i++) {
+        String tempString = alternates[i].recognizedWords;
+        int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
+        if (temp.abs() < closestVal.abs()) {
+          print("temp < closestVal");
+          print("tempString: $tempString");
+          print("lastWords: $lastWords");
+          print("tempInt: $temp");
+          print("closestValInt: $closestVal");
+
+          closestIndex = i;
+          closestVal = temp;
+        }
+      }
+      if (closestIndex == -1) {
+        checkAnswer(lastWords);
+      } else {
+        print("there was another");
+        print(alternates[closestIndex].recognizedWords);
+
+        setState(() {
+          lastWords = alternates[closestIndex].recognizedWords;
+        });
+
+        checkAnswer(alternates[closestIndex].recognizedWords);
+      }
+    }
   }
 
   void _switchLang(selectedVal) {
     setState(() {
       _currentLocaleId = selectedVal;
     });
-    print(selectedVal);
   }
 
   void _logEvent(String eventDescription) {

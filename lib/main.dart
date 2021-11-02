@@ -32,6 +32,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'models/levelTemplate.dart';
 import 'models/usr.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
@@ -79,7 +80,10 @@ void main() async {
         }),
         RepositoryProvider(create: (context) {
           return DatabaseService();
-        })
+        }),
+        RepositoryProvider(create: (context) {
+          return SpeechToText();
+        }),
       ],
       child: BlocProvider<AuthenticationBloc>(
           create: (context) {
