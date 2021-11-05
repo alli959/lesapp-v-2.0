@@ -71,6 +71,8 @@ void main() async {
   print("below is body");
   print(response.body.toString());
 
+  final SpeechToText _speech = SpeechToText();
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MultiRepositoryProvider(

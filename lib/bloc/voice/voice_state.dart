@@ -82,8 +82,9 @@ class VoiceStop extends VoiceState {
 
 class WordsChange extends VoiceState {
   final String lastWords;
+  final List<SpeechRecognitionWords> alternates;
 
-  WordsChange({@required this.lastWords});
+  WordsChange({@required this.lastWords, this.alternates});
 
   @override
   List<Object> get props => [lastWords];
@@ -107,4 +108,13 @@ class VoiceStatusState extends VoiceState {
 
   @override
   List<Object> get props => [lastStatus];
+}
+
+class SoundLevelState extends VoiceState {
+  final double level;
+
+  SoundLevelState({@required this.level});
+
+  @override
+  List<Object> get props => [level];
 }

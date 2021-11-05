@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -13,21 +15,23 @@ part 'voice_event.dart';
 part 'voice_state.dart';
 
 class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
+  // final SpeechToText _speech;
   final SpeechToText _speech;
 
   VoiceBloc(SpeechToText speech)
       : _speech = speech,
         super(VoiceInitial(
-            hasSpeech: false,
-            logEvents: false,
-            level: 0.0,
-            minSoundLevel: 50000,
-            maxSoundLevel: -50000,
-            lastWords: ' ',
-            lastError: ' ',
-            lastStatus: ' ',
-            currentLocaleId: 'is_IS',
-            localeNames: []));
+          hasSpeech: false,
+          logEvents: false,
+          level: 0.0,
+          minSoundLevel: 50000,
+          maxSoundLevel: -50000,
+          lastWords: ' ',
+          lastError: ' ',
+          lastStatus: ' ',
+          currentLocaleId: 'is_IS',
+          localeNames: [],
+        ));
 
   @override
   Stream<VoiceState> mapEventToState(VoiceEvent event) async* {
@@ -37,6 +41,18 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
     if (event is VoiceFailureEvent) {
       yield* _mapVoiceFailure(event);
+    }
+
+    if (event is VoiceStartedEvent) {
+      yield* _mapVoiceStartedEvent(event);
+    }
+
+    if (event is LastWordsEvent) {
+      yield* _mapLastWordsEvent(event);
+    }
+
+    if (event is SoundLevelEvent) {
+      yield* _mapSoundLevelEvent(event);
     }
 
     if (event is VoiceStatusEvent) {
@@ -52,9 +68,9 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       VoiceInitializeEvent event) async* {
     yield VoiceLoading();
     _logEvent('Initialize');
-    print("YES IT WORKED");
 
     try {
+      print(_speech);
       // initialize the speech
       var hasSpeech = await _speech.initialize(
         onError: errorListener,
@@ -72,12 +88,47 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     }
   }
 
+  Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
+    print("AT ERROR EVENT");
+    yield VoiceFailure(error: event.error);
+  }
+
+  Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
+    _logEvent('start listening');
+    yield WordsChange(lastWords: '');
+    print("WE ARE HERE!!!!");
+
+    // Note that `listenFor` is the maximum, not the minimun, on some
+    // recognition will be stopped before this value is reached.
+    // Similarly `pauseFor` is a maximum not a minimum and may be ignored
+    // on some devices.
+    print(_speech);
+    _speech.listen(
+        onResult: resultListener,
+        listenFor: Duration(seconds: 30),
+        pauseFor: Duration(seconds: 10),
+        partialResults: true,
+        localeId: 'is_IS',
+        onSoundLevelChange: soundLevelListener,
+        cancelOnError: true,
+        listenMode: ListenMode.confirmation);
+
+    print("after starting speech");
+  }
+
   Stream<VoiceState> _mapVoiceStatusToState(VoiceStatusEvent event) async* {
+    print("AT VOICE STATUS EVENT");
     yield VoiceStatusState(lastStatus: event.lastStatus);
   }
 
-  Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
-    yield VoiceFailure(error: event.error);
+  Stream<VoiceState> _mapLastWordsEvent(LastWordsEvent event) async* {
+    print("AT VOICE LAST WORDS EVENT");
+    yield WordsChange(lastWords: event.lastWords, alternates: event.alternates);
+  }
+
+  Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
+    print("AT SOUND LEVEL EVENT");
+    yield SoundLevelState(level: event.level);
   }
 
   /* Helper functions */
@@ -86,6 +137,20 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     _logEvent(
         'Received error status: $error, listening: ${_speech.isListening}');
     VoiceFailureEvent(error: '${error.errorMsg} - ${error.permanent}');
+  }
+
+  void resultListener(SpeechRecognitionResult result) {
+    print("result alt");
+    print(result.alternates);
+    _logEvent(
+        'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
+    LastWordsEvent(
+        lastWords: '${result.recognizedWords}', alternates: result.alternates);
+  }
+
+  void soundLevelListener(double level) {
+    print("soundLevelListener stuff");
+    SoundLevelEvent(level: level);
   }
 
   void statusListener(String status) {

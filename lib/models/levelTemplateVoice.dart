@@ -1,3 +1,4 @@
+import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
@@ -37,6 +39,14 @@ class LevelTemplateVoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(context);
+    final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
+
+    _onVoiceButtonPressed() {
+      print("Voice Bloc Pressed");
+      _voiceBloc.add(VoiceStartedEvent());
+    }
+
     return Container(
       // B L Á A  K O R T I Ð
       decoration: BoxDecoration(
@@ -188,7 +198,7 @@ class LevelTemplateVoice extends StatelessWidget {
               bottomBar,
               IconButton(
                 icon: Icon(Icons.mic),
-                onPressed: () => startListening(),
+                onPressed: () => _onVoiceButtonPressed(),
               ),
             ]),
           ),

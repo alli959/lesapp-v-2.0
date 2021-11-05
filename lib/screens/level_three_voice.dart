@@ -81,8 +81,6 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   void initState() {
-    initSpeechState();
-    _switchLang('is_IS');
     displayText();
     super.initState();
   }
@@ -196,12 +194,13 @@ class _QuizPageState extends State<QuizPage> {
             body:
                 BlocListener<VoiceBloc, VoiceState>(listener: (context, state) {
       if (state is VoiceFailure) {
-        print("voice failure");
+        print("voice failure, why is this happening?");
       }
     }, child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
       if (state is VoiceLoading) {
         return Loading();
       }
+      if (state is VoiceFailure) {}
 
       return Column(
         children: [
