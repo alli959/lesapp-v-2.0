@@ -8,6 +8,7 @@ abstract class VoiceState extends Equatable {
 class VoiceInitial extends VoiceState {
   bool hasSpeech;
   bool logEvents;
+  bool isListening;
   double level;
   double minSoundLevel;
   double maxSoundLevel;
@@ -21,6 +22,7 @@ class VoiceInitial extends VoiceState {
   VoiceInitial(
       {hasSpeech,
       logEvents,
+      isListening,
       level,
       minSoundLevel,
       maxSoundLevel,
@@ -35,6 +37,7 @@ class VoiceInitial extends VoiceState {
   List<Object> get props => [
         hasSpeech,
         logEvents,
+        isListening,
         level,
         minSoundLevel,
         maxSoundLevel,
@@ -87,14 +90,15 @@ class VoiceStop extends VoiceState {
   List<Object> get props => [lastWords];
 }
 
-class WordsChange extends VoiceState {
+class UpdateState extends VoiceState {
   final String lastWords;
   final List<SpeechRecognitionWords> alternates;
+  final bool isListening;
 
-  WordsChange({@required this.lastWords, this.alternates});
+  UpdateState({this.lastWords, this.alternates, this.isListening});
 
   @override
-  List<Object> get props => [lastWords];
+  List<Object> get props => [lastWords, alternates, isListening];
 }
 
 class VoiceFailure extends VoiceState {

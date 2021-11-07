@@ -153,67 +153,78 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-    listeningUpdate(String lastWords, bool isListening) async {
-      _voiceBloc.add(isListeningEvent(isListening: isListening));
-      _voiceBloc.add(LastWordsEvent(lastWords: lastWords));
+    listeningUpdate(String lastWords, List<SpeechRecognitionWords> alternates,
+        bool isListening) {
+      _voiceBloc.add(UpdateEvent(
+          lastWords: lastWords,
+          alternates: alternates,
+          isListening: isListening));
     }
 
     _voiceBloc.add(VoiceInitializeEvent(callback: listeningUpdate));
     return MaterialApp(
-        home: Scaffold(
-            body:
-                BlocListener<VoiceBloc, VoiceState>(listener: (context, state) {
-      if (state is VoiceFailure) {
-        print("voice failure, why is this happening?");
-      }
-    }, child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
-      if (state is VoiceLoading) {
-        return Loading();
-      }
-      if (state is VoiceFailure) {}
+      home: Scaffold(
+        body: BlocListener<VoiceBloc, VoiceState>(
+          listener: (context, state) {
+            if (state is VoiceFailure) {
+              print("voice failure, why is this happening?");
+            }
+          },
+          child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
+            if (state is VoiceLoading) {
+              return Loading();
+            }
+            if (state is VoiceFailure) {}
 
-      return Column(
-        children: [
-          Expanded(
-            flex: 4,
-            child: RecognitionResultsWidget(
-                listeningUpdate: listeningUpdate,
-                letter: letter,
-                scoreKeeper: scoreKeeper,
-                trys: calc.trys,
-                correct: calc.correct.toString(),
-                stig: play() + calc.checkPoints(calc.correct, calc.trys),
-                cardColor: cardColor,
-                stigColor: lightBlue,
-                fontSize: 39,
-                bottomBar: BottomBar(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    image: 'assets/images/bottomBar_bl.png'),
-                shadowLevel: 30),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            color: Theme.of(context).backgroundColor,
-            child: Center(child: BlocBuilder<VoiceBloc, VoiceState>(
-              builder: (context, state) {
-                if (state is IsListeningState) {
-                  if (state.isListening) {
-                    return Text(
-                      "I'm listening...",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    );
-                  }
-                }
-                return Text("Not listening",
-                    style: TextStyle(fontWeight: FontWeight.bold));
-              },
-            )),
-          ),
-        ],
-      );
-    }))));
+            return Column(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: RecognitionResultsWidget(
+                      listeningUpdate: listeningUpdate,
+                      letter: letter,
+                      scoreKeeper: scoreKeeper,
+                      trys: calc.trys,
+                      correct: calc.correct.toString(),
+                      stig: play() + calc.checkPoints(calc.correct, calc.trys),
+                      cardColor: cardColor,
+                      stigColor: lightBlue,
+                      fontSize: 39,
+                      bottomBar: BottomBar(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          image: 'assets/images/bottomBar_bl.png'),
+                      shadowLevel: 30),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  color: Theme.of(context).backgroundColor,
+                  child: SpeechStatusWidget(),
+                  // child: Center(
+                  //   child: BlocBuilder<VoiceBloc, VoiceState>(
+                  //     builder: (context, state) {
+                  //       if (state is UpdateState) {
+                  //         print("ISLISTENING STATE => ${state.isListening}");
+                  //         if (state.isListening != null) {
+                  //           return Text(
+                  //             "I'm listening...",
+                  //             style: TextStyle(fontWeight: FontWeight.bold),
+                  //           );
+                  //         }
+                  //       }
+                  //       return Text("Not listening",
+                  //           style: TextStyle(fontWeight: FontWeight.bold));
+                  //     },
+                  //   ),
+                  // ),
+                ),
+              ],
+            );
+          }),
+        ),
+      ),
+    );
   }
 }
 
@@ -264,31 +275,33 @@ class RecognitionResultsWidget extends StatelessWidget {
 }
 
 // /// Display the current status of the listener
-// class SpeechStatusWidget extends StatelessWidget {
-//   const SpeechStatusWidget({
-//     Key key,
-//   }) : super(key: key);
+class SpeechStatusWidget extends StatelessWidget {
+  const SpeechStatusWidget({
+    Key key,
+  }) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.symmetric(vertical: 20),
-//       color: Theme.of(context).backgroundColor,
-//       child: Center(child: BlocBuilder<VoiceBloc, VoiceState>(
-//         builder: (context, state) {
-//           if (state is VoiceStart) {
-//             return Text(
-//               "I'm listening...",
-//               style: TextStyle(fontWeight: FontWeight.bold),
-//             );
-//           } else {
-//             return Text(
-//               "Not listening",
-//               style: TextStyle(fontWeight: FontWeight.bold),
-//             );
-//           }
-//         },
-//       )),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      color: Theme.of(context).backgroundColor,
+      child: Center(
+        child: BlocBuilder<VoiceBloc, VoiceState>(
+          builder: (context, state) {
+            if (state is UpdateState) {
+              // print("ISLISTENING STATE => ${state.isListening}");
+              if (state.isListening) {
+                return Text(
+                  "I'm listening...",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                );
+              }
+            }
+            return Text("Not listening",
+                style: TextStyle(fontWeight: FontWeight.bold));
+          },
+        ),
+      ),
+    );
+  }
+}
