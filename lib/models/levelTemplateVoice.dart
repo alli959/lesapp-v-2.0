@@ -102,9 +102,8 @@ class LevelTemplateVoice extends StatelessWidget {
                 Container(
                   child: BlocBuilder<VoiceBloc, VoiceState>(
                     builder: (context, state) {
-                      if (state is WordsChange) {
-                        print("STATE LAST WORDS");
-                        print(state.lastWords);
+                      if (state is UpdateState) {
+                        print("ISLISTENING STATE => ${state.isListening}");
                         return QuestionCard(
                           cardChild: AutoSizeText(
                             state.lastWords,

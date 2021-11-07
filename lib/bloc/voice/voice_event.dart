@@ -38,14 +38,15 @@ class VoiceFailureEvent extends VoiceEvent {
   List<Object> get props => [error];
 }
 
-class LastWordsEvent extends VoiceEvent {
+class UpdateEvent extends VoiceEvent {
   final String lastWords;
   final List<SpeechRecognitionWords> alternates;
+  final bool isListening;
 
-  LastWordsEvent({@required this.lastWords, this.alternates});
+  UpdateEvent({this.lastWords, this.alternates, this.isListening});
 
   @override
-  List<Object> get props => [lastWords, alternates];
+  List<Object> get props => [lastWords, alternates, isListening];
 }
 
 class VoiceStatusEvent extends VoiceEvent {

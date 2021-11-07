@@ -21,6 +21,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         super(VoiceInitial(
           hasSpeech: false,
           logEvents: false,
+          isListening: false,
           level: 0.0,
           minSoundLevel: 50000,
           maxSoundLevel: -50000,
@@ -45,7 +46,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapVoiceStartedEvent(event);
     }
 
-    if (event is LastWordsEvent) {
+    if (event is UpdateEvent) {
       yield* _mapLastWordsEvent(event);
     }
 
@@ -78,8 +79,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     statusListener(String status) {
       _logEvent(
           'Received listener status: $status, listening: ${_speech.speech.isListening}');
-      _speech.lastStatus = _speech.speech.lastStatus;
+      event.callback(
+          _speech.lastWords, _speech.alternates, _speech.speech.isListening);
     }
+
+    String lastWords = '';
+    List<SpeechRecognitionWords> alternates = [];
+    bool isListening = false;
 
     try {
       // initialize the speech
@@ -87,6 +93,10 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       if (hasSpeech) {
         yield VoiceHasInitialized(hasSpeech: hasSpeech);
         //initiallize language
+        yield UpdateState(
+            lastWords: lastWords,
+            alternates: alternates,
+            isListening: isListening);
         yield VoiceLanguage(currentLocaleId: 'is_IS');
       }
     } catch (e) {
@@ -99,11 +109,18 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
-    yield VoiceLoading();
     _logEvent('start listening');
-    String lastWords = '';
-    List<SpeechRecognitionWords> alternates = [];
-    yield WordsChange(lastWords: lastWords, alternates: alternates);
+
+    // if (isListening == null) {
+    //   print("isListening ===== null");
+    //   isListening = false;
+    // }
+    // print("IS LISTENING, ${isListening}");
+    // yield UpdateState(
+    //   lastWords: lastWords,
+    //   alternates: alternates,
+    //   isListening: isListening,
+    // );
     // yield WordsChange(lastWords: '');
 
     // Note that `listenFor` is the maximum, not the minimun, on some
@@ -116,8 +133,10 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       _speech.lastWords = '${result.recognizedWords}';
       _speech.alternates = result.alternates;
       _speech.finalResult = result.finalResult;
-      bool isListening = _speech.speech.isListening;
-      event.callback(_speech.lastWords, isListening);
+      _speech.isListening = _speech.speech.isListening;
+      print("isListening in the function!!! => ${_speech.isListening}");
+      event.callback(
+          _speech.lastWords, _speech.alternates, _speech.isListening);
     }
 
     _speech.speechListen(resultListener);
@@ -127,8 +146,11 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield VoiceStatusState(lastStatus: event.lastStatus);
   }
 
-  Stream<VoiceState> _mapLastWordsEvent(LastWordsEvent event) async* {
-    yield WordsChange(lastWords: event.lastWords, alternates: event.alternates);
+  Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
+    yield UpdateState(
+        lastWords: event.lastWords,
+        alternates: event.alternates,
+        isListening: event.isListening);
   }
 
   Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
