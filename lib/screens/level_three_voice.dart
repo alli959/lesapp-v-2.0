@@ -66,19 +66,7 @@ class _QuizPageState extends State<QuizPage> {
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
   Color letterColor = Colors.black;
-
-  bool _hasSpeech = false;
-  bool _logEvents = false;
-  double level = 0.0;
-  double minSoundLevel = 50000;
-  double maxSoundLevel = -50000;
-  String lastWords = ' ';
-  List<SpeechRecognitionWords> alternates;
-  String lastError = '';
-  String lastStatus = '';
-  String _currentLocaleId = 'is_IS';
-  List<LocaleName> _localeNames = [];
-  final SpeechToText speech = SpeechToText();
+  Function listeningUpdate;
 
   @override
   void initState() {
@@ -162,34 +150,15 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  /// This initializes SpeechToText. That only has to be done
-  /// once per application, though calling it again is harmless
-  /// it also does nothing. The UX of the sample app ensures that
-  /// it can only be called once.
-  Future<void> initSpeechState() async {
-    _logEvent('Initialize');
-    var hasSpeech = await speech.initialize(
-        onError: errorListener,
-        onStatus: statusListener,
-        debugLogging: true,
-        finalTimeout: Duration(milliseconds: 0));
-    if (hasSpeech) {
-      // Get the list of languages installed on the supporting platform so they
-      // can be displayed in the UI for selection by the user.
-      _localeNames = await speech.locales();
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      _hasSpeech = hasSpeech;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-    _voiceBloc.add(VoiceInitializeEvent());
+    listeningUpdate(String lastWords, bool isListening) async {
+      _voiceBloc.add(isListeningEvent(isListening: isListening));
+      _voiceBloc.add(LastWordsEvent(lastWords: lastWords));
+    }
+
+    _voiceBloc.add(VoiceInitializeEvent(callback: listeningUpdate));
     return MaterialApp(
         home: Scaffold(
             body:
@@ -208,11 +177,8 @@ class _QuizPageState extends State<QuizPage> {
           Expanded(
             flex: 4,
             child: RecognitionResultsWidget(
-                lastWords: lastWords,
-                level: level,
-                startListening: startListening,
+                listeningUpdate: listeningUpdate,
                 letter: letter,
-                answer: lastWords,
                 scoreKeeper: scoreKeeper,
                 trys: calc.trys,
                 correct: calc.correct.toString(),
@@ -227,139 +193,27 @@ class _QuizPageState extends State<QuizPage> {
                     image: 'assets/images/bottomBar_bl.png'),
                 shadowLevel: 30),
           ),
-          SpeechStatusWidget(speech: speech),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            color: Theme.of(context).backgroundColor,
+            child: Center(child: BlocBuilder<VoiceBloc, VoiceState>(
+              builder: (context, state) {
+                if (state is IsListeningState) {
+                  if (state.isListening) {
+                    return Text(
+                      "I'm listening...",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    );
+                  }
+                }
+                return Text("Not listening",
+                    style: TextStyle(fontWeight: FontWeight.bold));
+              },
+            )),
+          ),
         ],
       );
     }))));
-  }
-
-  // This is called each time the users wants to start a new speech
-  // recognition session
-  void startListening() {
-    _logEvent('start listening');
-    lastWords = '';
-    lastError = '';
-    // Note that `listenFor` is the maximum, not the minimun, on some
-    // recognition will be stopped before this value is reached.
-    // Similarly `pauseFor` is a maximum not a minimum and may be ignored
-    // on some devices.
-    speech.listen(
-        onResult: resultListener,
-        listenFor: Duration(seconds: 30),
-        pauseFor: Duration(seconds: 10),
-        partialResults: true,
-        localeId: _currentLocaleId,
-        onSoundLevelChange: soundLevelListener,
-        cancelOnError: true,
-        listenMode: ListenMode.confirmation);
-    setState(() {});
-  }
-
-  void stopListening() {
-    _logEvent('stop');
-    speech.stop();
-    setState(() {
-      level = 0.0;
-    });
-  }
-
-  void cancelListening() {
-    _logEvent('cancel');
-    speech.cancel();
-    setState(() {
-      level = 0.0;
-    });
-  }
-
-  /// This callback is invoked each time new recognition results are
-  /// available after `listen` is called.
-  void resultListener(SpeechRecognitionResult result) {
-    print("result alt");
-    print(result.alternates);
-    _logEvent(
-        'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-    setState(() {
-      lastWords = '${result.recognizedWords}';
-      alternates = result.alternates;
-    });
-  }
-
-  void soundLevelListener(double level) {
-    minSoundLevel = min(minSoundLevel, level);
-    maxSoundLevel = max(maxSoundLevel, level);
-    // _logEvent('sound level $level: $minSoundLevel - $maxSoundLevel ');
-    setState(() {
-      this.level = level;
-    });
-  }
-
-  void errorListener(SpeechRecognitionError error) {
-    _logEvent(
-        'Received error status: $error, listening: ${speech.isListening}');
-    setState(() {
-      lastError = '${error.errorMsg} - ${error.permanent}';
-    });
-  }
-
-  void statusListener(String status) {
-    _logEvent(
-        'Received listener status: $status, listening: ${speech.isListening}');
-    setState(() {
-      lastStatus = '$status';
-    });
-    int closestVal = lastWords.toLowerCase().compareTo(
-        letter.toLowerCase()); //compare correct answer to voice input
-
-    int closestIndex =
-        -1; //index of closest value, if -1 then result.recongizedwords
-    if (status == 'done') {
-      //check if alternates are closer to correct answer
-      for (int i = 0; i < alternates.length; i++) {
-        String tempString = alternates[i].recognizedWords;
-        int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-        if (temp.abs() < closestVal.abs()) {
-          print("temp < closestVal");
-          print("tempString: $tempString");
-          print("lastWords: $lastWords");
-          print("tempInt: $temp");
-          print("closestValInt: $closestVal");
-
-          closestIndex = i;
-          closestVal = temp;
-        }
-      }
-      if (closestIndex == -1) {
-        checkAnswer(lastWords);
-      } else {
-        print("there was another");
-        print(alternates[closestIndex].recognizedWords);
-
-        setState(() {
-          lastWords = alternates[closestIndex].recognizedWords;
-        });
-
-        checkAnswer(alternates[closestIndex].recognizedWords);
-      }
-    }
-  }
-
-  void _switchLang(selectedVal) {
-    setState(() {
-      _currentLocaleId = selectedVal;
-    });
-  }
-
-  void _logEvent(String eventDescription) {
-    if (_logEvents) {
-      var eventTime = DateTime.now().toIso8601String();
-      print('$eventTime $eventDescription');
-    }
-  }
-
-  void _switchLogging(bool val) {
-    setState(() {
-      _logEvents = val ?? false;
-    });
   }
 }
 
@@ -367,11 +221,8 @@ class _QuizPageState extends State<QuizPage> {
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
     Key key,
-    @required this.lastWords,
-    @required this.level,
-    @required this.startListening,
+    @required this.listeningUpdate,
     @required this.letter,
-    @required this.answer,
     @required this.scoreKeeper,
     @required this.trys,
     @required this.correct,
@@ -382,12 +233,8 @@ class RecognitionResultsWidget extends StatelessWidget {
     @required this.bottomBar,
     @required this.shadowLevel,
   }) : super(key: key);
-
-  final String lastWords;
-  final double level;
-  final Function startListening;
+  final Function listeningUpdate;
   final String letter;
-  final String answer;
   final List<Icon> scoreKeeper;
   final int trys;
   final String correct;
@@ -401,6 +248,7 @@ class RecognitionResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LevelTemplateVoice(
+      listeningUpdate: listeningUpdate,
       fontSize: 39,
       cardColor: cardColorLvlThree,
       stigColor: lightBlue,
@@ -411,37 +259,36 @@ class RecognitionResultsWidget extends StatelessWidget {
       correct: correct,
       stig: stig,
       bottomBar: bottomBar,
-      answer: answer,
-      startListening: startListening,
     );
   }
 }
 
-/// Display the current status of the listener
-class SpeechStatusWidget extends StatelessWidget {
-  const SpeechStatusWidget({
-    Key key,
-    @required this.speech,
-  }) : super(key: key);
+// /// Display the current status of the listener
+// class SpeechStatusWidget extends StatelessWidget {
+//   const SpeechStatusWidget({
+//     Key key,
+//   }) : super(key: key);
 
-  final SpeechToText speech;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      color: Theme.of(context).backgroundColor,
-      child: Center(
-        child: speech.isListening
-            ? Text(
-                "I'm listening...",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            : Text(
-                'Not listening',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: EdgeInsets.symmetric(vertical: 20),
+//       color: Theme.of(context).backgroundColor,
+//       child: Center(child: BlocBuilder<VoiceBloc, VoiceState>(
+//         builder: (context, state) {
+//           if (state is VoiceStart) {
+//             return Text(
+//               "I'm listening...",
+//               style: TextStyle(fontWeight: FontWeight.bold),
+//             );
+//           } else {
+//             return Text(
+//               "Not listening",
+//               style: TextStyle(fontWeight: FontWeight.bold),
+//             );
+//           }
+//         },
+//       )),
+//     );
+//   }
+// }

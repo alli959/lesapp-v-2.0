@@ -26,7 +26,7 @@ class VoiceService {
 
   VoiceService({@required this.speech, this.context});
 
-  Future speechInit() async {
+  Future speechInit(statusListener) async {
     hasSpeech = await speech.initialize(
       onError: errorListener,
       onStatus: statusListener,
@@ -36,8 +36,8 @@ class VoiceService {
     return hasSpeech;
   }
 
-  void speechListen(Function resultListener) async {
-    await speech.listen(
+  void speechListen(Function resultListener) {
+    speech.listen(
       onResult: resultListener,
       listenFor: Duration(seconds: 30),
       pauseFor: Duration(seconds: 10),
@@ -74,53 +74,49 @@ class VoiceService {
     level = lvl;
   }
 
-  Stream<VoiceState> statusListener(String status) async* {
-    _logEvent(
-        'Received listener status: $status, listening: ${speech.isListening}');
-    lastStatus = status;
-    if (status == 'done') {
-      print("STATUS = DONE");
-      print("{lastWords: ${lastWords}\n alternates: ${alternates}}");
-      yield WordsChange(lastWords: lastWords, alternates: alternates);
-    }
-    // int closestVal = lastWords.toLowerCase().compareTo(
-    //     letter.toLowerCase()); //compare correct answer to voice input
+  // void statusListener(String status) {
+  //   _logEvent(
+  //       'Received listener status: $status, listening: ${speech.isListening}');
+  //   lastStatus = status;
 
-    // int closestIndex =
-    //     -1; //index of closest value, if -1 then result.recongizedwords
-    // if (status == 'done') {
-    //   //check if alternates are closer to correct answer
-    //   for (int i = 0; i < alternates.length; i++) {
-    //     String tempString = alternates[i].recognizedWords;
-    //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-    //     if (temp.abs() < closestVal.abs()) {
-    //       print("temp < closestVal");
-    //       print("tempString: $tempString");
-    //       print("lastWords: $lastWords");
-    //       print("tempInt: $temp");
-    //       print("closestValInt: $closestVal");
+  // int closestVal = lastWords.toLowerCase().compareTo(
+  //     letter.toLowerCase()); //compare correct answer to voice input
 
-    //       closestIndex = i;
-    //       closestVal = temp;
-    //     }
-    //   }
-    //   if (closestIndex == -1) {
-    //     checkAnswer(lastWords);
-    //   } else {
-    //     print("there was another");
-    //     print(alternates[closestIndex].recognizedWords);
+  // int closestIndex =
+  //     -1; //index of closest value, if -1 then result.recongizedwords
+  // if (status == 'done') {
+  //   //check if alternates are closer to correct answer
+  //   for (int i = 0; i < alternates.length; i++) {
+  //     String tempString = alternates[i].recognizedWords;
+  //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
+  //     if (temp.abs() < closestVal.abs()) {
+  //       print("temp < closestVal");
+  //       print("tempString: $tempString");
+  //       print("lastWords: $lastWords");
+  //       print("tempInt: $temp");
+  //       print("closestValInt: $closestVal");
 
-    //     setState(() {
-    //       lastWords = alternates[closestIndex].recognizedWords;
-    //     });
+  //       closestIndex = i;
+  //       closestVal = temp;
+  //     }
+  //   }
+  //   if (closestIndex == -1) {
+  //     checkAnswer(lastWords);
+  //   } else {
+  //     print("there was another");
+  //     print(alternates[closestIndex].recognizedWords);
 
-    //     checkAnswer(alternates[closestIndex].recognizedWords);
-    //   }
-    // }
-  }
+  //     setState(() {
+  //       lastWords = alternates[closestIndex].recognizedWords;
+  //     });
 
-  void _logEvent(String eventDescription) {
-    var eventTime = DateTime.now().toIso8601String();
-    print('$eventTime $eventDescription');
-  }
+  //     checkAnswer(alternates[closestIndex].recognizedWords);
+  //   }
+  // }
+}
+
+void _logEvent(String eventDescription) {
+  var eventTime = DateTime.now().toIso8601String();
+  print('$eventTime $eventDescription');
+  // }
 }

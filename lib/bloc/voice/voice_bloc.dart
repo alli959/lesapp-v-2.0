@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -59,6 +57,14 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapVoiceStatusToState(event);
     }
 
+    if (event is VoiceStoppedEvent) {
+      yield* _mapVoiceStopEvent(event);
+    }
+
+    if (event is isListeningEvent) {
+      yield* _mapVoiceIsListeningEvent(event);
+    }
+
     // if (event is VoiceStartedEvent) {
     //   yield* _mapVoiceStartedToState(event);
     // }
@@ -69,10 +75,15 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield VoiceLoading();
     _logEvent('Initialize');
 
+    statusListener(String status) {
+      _logEvent(
+          'Received listener status: $status, listening: ${_speech.speech.isListening}');
+      _speech.lastStatus = _speech.speech.lastStatus;
+    }
+
     try {
-      print(_speech);
       // initialize the speech
-      var hasSpeech = await _speech.speechInit();
+      var hasSpeech = await _speech.speechInit(statusListener);
       if (hasSpeech) {
         yield VoiceHasInitialized(hasSpeech: hasSpeech);
         //initiallize language
@@ -81,50 +92,55 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     } catch (e) {
       yield VoiceFailure(error: e);
     }
-    print("last Status = ${_speech.lastStatus}");
   }
 
   Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
-    print("AT ERROR EVENT");
     yield VoiceFailure(error: event.error);
   }
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
+    yield VoiceLoading();
     _logEvent('start listening');
     String lastWords = '';
     List<SpeechRecognitionWords> alternates = [];
+    yield WordsChange(lastWords: lastWords, alternates: alternates);
     // yield WordsChange(lastWords: '');
 
     // Note that `listenFor` is the maximum, not the minimun, on some
     // recognition will be stopped before this value is reached.
     // Similarly `pauseFor` is a maximum not a minimum and may be ignored
     // on some devices.
-    Function resultListener = (SpeechRecognitionResult result) {
+    resultListener(SpeechRecognitionResult result) {
       _logEvent(
           'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
       _speech.lastWords = '${result.recognizedWords}';
       _speech.alternates = result.alternates;
       _speech.finalResult = result.finalResult;
-    };
-    _speech.speechListen(resultListener);
-    
-    yield WordsChange(lastWords: _speech.lastWords);
+      bool isListening = _speech.speech.isListening;
+      event.callback(_speech.lastWords, isListening);
+    }
 
+    _speech.speechListen(resultListener);
   }
 
   Stream<VoiceState> _mapVoiceStatusToState(VoiceStatusEvent event) async* {
-    print("AT VOICE STATUS EVENT");
     yield VoiceStatusState(lastStatus: event.lastStatus);
   }
 
   Stream<VoiceState> _mapLastWordsEvent(LastWordsEvent event) async* {
-    print("AT VOICE LAST WORDS EVENT");
     yield WordsChange(lastWords: event.lastWords, alternates: event.alternates);
   }
 
   Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
-    print("AT SOUND LEVEL EVENT");
     yield SoundLevelState(level: event.level);
+  }
+
+  Stream<VoiceState> _mapVoiceStopEvent(VoiceStoppedEvent event) async* {
+    yield VoiceStop();
+  }
+
+  Stream<VoiceState> _mapVoiceIsListeningEvent(isListeningEvent event) async* {
+    yield IsListeningState(isListening: event.isListening);
   }
 
   /* Helper functions */

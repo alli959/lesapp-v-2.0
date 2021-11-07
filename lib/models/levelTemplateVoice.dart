@@ -10,8 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
+  Function listeningUpdate;
   String letter;
-  String answer;
   List<Icon> scoreKeeper;
   int trys;
   String correct;
@@ -21,11 +21,10 @@ class LevelTemplateVoice extends StatelessWidget {
   double fontSize;
   Widget bottomBar;
   int shadowLevel;
-  Function startListening;
 
   LevelTemplateVoice(
-      {this.letter,
-      this.answer,
+      {this.listeningUpdate,
+      this.letter,
       this.scoreKeeper,
       this.trys,
       this.correct,
@@ -34,17 +33,14 @@ class LevelTemplateVoice extends StatelessWidget {
       this.stigColor,
       this.fontSize,
       this.bottomBar,
-      this.shadowLevel,
-      this.startListening});
+      this.shadowLevel});
 
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
     _onVoiceButtonPressed() {
-      _voiceBloc.add(VoiceStartedEvent());
-      print("answer");
-      print(answer);
+      _voiceBloc.add(VoiceStartedEvent(callback: listeningUpdate));
     }
 
     return Container(
@@ -131,7 +127,7 @@ class LevelTemplateVoice extends StatelessWidget {
                       }
                       return QuestionCard(
                         cardChild: AutoSizeText(
-                          answer,
+                          "",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,
