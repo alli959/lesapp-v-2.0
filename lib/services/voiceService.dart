@@ -1,110 +1,126 @@
-// import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
-// import 'package:speech_to_text/speech_recognition_error.dart';
-// import 'package:speech_to_text/speech_recognition_result.dart';
-// import 'package:speech_to_text/speech_to_text.dart';
+import 'dart:math';
 
-// class VoiceService {
-//   bool _hasSpeech = false;
-//   bool _logEvents = false;
-//   double level = 0.0;
-//   double minSoundLevel = 50000;
-//   double maxSoundLevel = -50000;
-//   String lastWords = ' ';
-//   List<SpeechRecognitionWords> alternates;
-//   String lastError = '';
-//   String lastStatus = '';
-//   String _currentLocaleId = 'is_IS';
-//   List<LocaleName> _localeNames = [];
-//   QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
-//   final SpeechToText speech = SpeechToText();
+import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
-//   // @override
-//   // Future intitState() {
-//   //   initSpeechState();
-//   //   _switchLang('is_IS');
-//   //   displayText();
-//   //   super.initState();
-//   // }
+class VoiceService {
+  final SpeechToText speech;
+  final BuildContext context;
+  List<SpeechRecognitionWords> alternates = [];
+  bool hasSpeech = false;
+  bool logEvents = false;
+  double level = 0.0;
+  double minSoundLevel = 50000;
+  double maxSoundLevel = -50000;
+  String lastWords = ' ';
+  String lastError = ' ';
+  String lastStatus = ' ';
+  String currentLocaleID = 'is_IS';
+  dynamic localeNames = [];
+  bool isListening = false;
+  bool finalResult = false;
 
-//   // String play() {
-//   //   if (quizBrain.stars < 10) {
-//   //     return 'STIG : ';
-//   //   } else {
-//   //     return 'STIG : ';
-//   //   }
-//   // }
+  VoiceService({@required this.speech, this.context});
 
-//   // void displayText() {
-//   //   if (!started) {
-//   //     setState(() {
-//   //       letter = quizBrain.getQuestionText();
-//   //     });
-//   //     started = true;
-//   //   } else {
-//   //     soundPress++;
-//   //     if (soundPress > 2) {
-//   //       setState(() {
-//   //         enabled = false;
-//   //       });
-//   //     } else {
-//   //       print("play local asset");
-//   //     }
-//   //   }
-//   // }
+  Future speechInit() async {
+    hasSpeech = await speech.initialize(
+      onError: errorListener,
+      onStatus: statusListener,
+      debugLogging: true,
+      finalTimeout: Duration(milliseconds: 0),
+    );
+    return hasSpeech;
+  }
 
-//   void logEvent(String eventDescription) {
-//     if (_logEvents) {
-//       var eventTime = DateTime.now().toIso8601String();
-//       print('$eventTime $eventDescription');
-//     }
-//   }
-//   void errorListener(SpeechRecognitionError error) {
-//     _logEvent(
-//         'Received error status: $error, listening: ${speech.isListening}');
-//     setState(() {
-//       lastError = '${error.errorMsg} - ${error.permanent}';
-//     });
-//   }
+  void speechListen(Function resultListener) async {
+    await speech.listen(
+      onResult: resultListener,
+      listenFor: Duration(seconds: 30),
+      pauseFor: Duration(seconds: 10),
+      partialResults: true,
+      localeId: 'is_IS',
+      onSoundLevelChange: soundLevelListener,
+      cancelOnError: true,
+      listenMode: ListenMode.confirmation,
+    );
+  }
 
-//   void statusListener(String status) {
-//     _logEvent(
-//         'Received listener status: $status, listening: ${speech.isListening}');
-//     setState(() {
-//       lastStatus = '$status';
-//     });
-//     int closestVal = lastWords.toLowerCase().compareTo(
-//         letter.toLowerCase()); //compare correct answer to voice input
+  void errorListener(SpeechRecognitionError error) {
+    _logEvent(
+        'Received error status: $error, listening: ${speech.isListening}');
+    lastError = '${error.errorMsg} - ${error.permanent}';
+  }
 
-//     int closestIndex =
-//         -1; //index of closest value, if -1 then result.recongizedwords
-//     if (status == 'done') {
-//       //check if alternates are closer to correct answer
-//       for (int i = 0; i < alternates.length; i++) {
-//         String tempString = alternates[i].recognizedWords;
-//         int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-//         if (temp.abs() < closestVal.abs()) {
-//           print("temp < closestVal");
-//           print("tempString: $tempString");
-//           print("lastWords: $lastWords");
-//           print("tempInt: $temp");
-//           print("closestValInt: $closestVal");
+  // void resultListener(SpeechRecognitionResult result) {
+  //   _logEvent(
+  //       'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
+  //   lastWords = '${result.recognizedWords}';
+  //   final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
-//           closestIndex = i;
-//           closestVal = temp;
-//         }
-//       }
-//       if (closestIndex == -1) {
-//         checkAnswer(lastWords);
-//       } else {
-//         print("there was another");
-//         print(alternates[closestIndex].recognizedWords);
+  //   alternates = result.alternates;
+  //   _voiceBloc
+  //       .add(LastWordsEvent(lastWords: lastWords, alternates: alternates));
+  //   // LastWordsEvent(
+  //   //     lastWords: '${result.recognizedWords}', alternates: result.alternates);
+  // }
 
-//         setState(() {
-//           lastWords = alternates[closestIndex].recognizedWords;
-//         });
+  void soundLevelListener(double lvl) {
+    minSoundLevel = min(minSoundLevel, level);
+    maxSoundLevel = max(maxSoundLevel, level);
+    level = lvl;
+  }
 
-//         checkAnswer(alternates[closestIndex].recognizedWords);
-//       }
-//     }
-//   }
-// }
+  Stream<VoiceState> statusListener(String status) async* {
+    _logEvent(
+        'Received listener status: $status, listening: ${speech.isListening}');
+    lastStatus = status;
+    if (status == 'done') {
+      print("STATUS = DONE");
+      print("{lastWords: ${lastWords}\n alternates: ${alternates}}");
+      yield WordsChange(lastWords: lastWords, alternates: alternates);
+    }
+    // int closestVal = lastWords.toLowerCase().compareTo(
+    //     letter.toLowerCase()); //compare correct answer to voice input
+
+    // int closestIndex =
+    //     -1; //index of closest value, if -1 then result.recongizedwords
+    // if (status == 'done') {
+    //   //check if alternates are closer to correct answer
+    //   for (int i = 0; i < alternates.length; i++) {
+    //     String tempString = alternates[i].recognizedWords;
+    //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
+    //     if (temp.abs() < closestVal.abs()) {
+    //       print("temp < closestVal");
+    //       print("tempString: $tempString");
+    //       print("lastWords: $lastWords");
+    //       print("tempInt: $temp");
+    //       print("closestValInt: $closestVal");
+
+    //       closestIndex = i;
+    //       closestVal = temp;
+    //     }
+    //   }
+    //   if (closestIndex == -1) {
+    //     checkAnswer(lastWords);
+    //   } else {
+    //     print("there was another");
+    //     print(alternates[closestIndex].recognizedWords);
+
+    //     setState(() {
+    //       lastWords = alternates[closestIndex].recognizedWords;
+    //     });
+
+    //     checkAnswer(alternates[closestIndex].recognizedWords);
+    //   }
+    // }
+  }
+
+  void _logEvent(String eventDescription) {
+    var eventTime = DateTime.now().toIso8601String();
+    print('$eventTime $eventDescription');
+  }
+}

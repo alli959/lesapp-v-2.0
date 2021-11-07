@@ -1,5 +1,6 @@
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
+import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
@@ -71,7 +72,7 @@ void main() async {
   print("below is body");
   print(response.body.toString());
 
-  final SpeechToText _speech = SpeechToText();
+  final SpeechToText speech = SpeechToText();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -83,8 +84,8 @@ void main() async {
         RepositoryProvider(create: (context) {
           return DatabaseService();
         }),
-        RepositoryProvider(create: (context) {
-          return SpeechToText();
+        RepositoryProvider<VoiceService>(create: (context) {
+          return VoiceService(speech: speech, context: context);
         }),
       ],
       child: BlocProvider<AuthenticationBloc>(

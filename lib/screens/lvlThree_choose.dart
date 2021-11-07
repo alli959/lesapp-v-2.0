@@ -27,7 +27,7 @@ class LvlThreeChoose extends StatelessWidget {
         },
         buttonTextOne: 'Stuttar setningar',
         buttonTextTwo: 'Lengri setningar',
-        buttonTextThree: 'talgreining',
+        buttonTextThree: 'Talgreining',
         appBarText: 'Setningar',
         appBarColor: lightBlue,
         image: 'assets/images/level_buttons-3.png');

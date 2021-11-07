@@ -156,3 +156,9 @@ const tinyText = TextStyle(
     fontFamily: 'Metropolis-Regular.otf',
     fontWeight: FontWeight.w500,
     fontSize: 14);
+
+const tinyblack = TextStyle(
+    fontFamily: 'Metropolis-Regular.otf',
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: Colors.black);

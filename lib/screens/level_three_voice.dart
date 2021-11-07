@@ -6,6 +6,7 @@ import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
@@ -21,7 +22,7 @@ class LevelThreeVoice extends StatelessWidget {
   static const String id = 'level_three_short_voice';
   @override
   Widget build(BuildContext context) {
-    final _speech = RepositoryProvider.of<SpeechToText>(context);
+    final _speech = RepositoryProvider.of<VoiceService>(context);
 
     return BlocProvider<VoiceBloc>(
       create: (context) => VoiceBloc(_speech),
