@@ -69,12 +69,19 @@ class VoiceHasInitialized extends VoiceState {
   List<Object> get props => [hasSpeech];
 }
 
-class VoiceStart extends VoiceState {}
+class VoiceStart extends VoiceState {
+  final bool isListening;
+
+  VoiceStart({@required this.isListening});
+
+  @override
+  List<Object> get props => [isListening];
+}
 
 class VoiceStop extends VoiceState {
   final String lastWords;
 
-  VoiceStop({@required this.lastWords});
+  VoiceStop({this.lastWords});
 
   @override
   List<Object> get props => [lastWords];
@@ -117,4 +124,13 @@ class SoundLevelState extends VoiceState {
 
   @override
   List<Object> get props => [level];
+}
+
+class IsListeningState extends VoiceState {
+  final bool isListening;
+
+  IsListeningState({@required this.isListening});
+
+  @override
+  List<Object> get props => [isListening];
 }

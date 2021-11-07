@@ -64,13 +64,13 @@ class Welcome extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 0.0, top: 2),
                       child: Text(
                         'Útskrá',
-                        style: tinyText,
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
                   ),
                 ),
                 automaticallyImplyLeading: false,
-                title: Text('LesApp'),
+                title: Text('LesApp', style: TextStyle(color: Colors.black)),
               ),
               endDrawer: SideMenu(),
               body: Padding(

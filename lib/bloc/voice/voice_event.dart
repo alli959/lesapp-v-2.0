@@ -7,9 +7,23 @@ abstract class VoiceEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class VoiceInitializeEvent extends VoiceEvent {}
+class VoiceInitializeEvent extends VoiceEvent {
+  final Function callback;
 
-class VoiceStartedEvent extends VoiceEvent {}
+  VoiceInitializeEvent({@required this.callback});
+
+  @override
+  List<Object> get props => [callback];
+}
+
+class VoiceStartedEvent extends VoiceEvent {
+  final Function callback;
+
+  VoiceStartedEvent({@required this.callback});
+
+  @override
+  List<Object> get props => [callback];
+}
 
 class VoiceStoppedEvent extends VoiceEvent {}
 
@@ -28,7 +42,7 @@ class LastWordsEvent extends VoiceEvent {
   final String lastWords;
   final List<SpeechRecognitionWords> alternates;
 
-  LastWordsEvent({@required this.lastWords, @required this.alternates});
+  LastWordsEvent({@required this.lastWords, this.alternates});
 
   @override
   List<Object> get props => [lastWords, alternates];
@@ -50,4 +64,13 @@ class SoundLevelEvent extends VoiceEvent {
 
   @override
   List<Object> get props => [level];
+}
+
+class isListeningEvent extends VoiceEvent {
+  final bool isListening;
+
+  isListeningEvent({@required this.isListening});
+
+  @override
+  List<Object> get props => [isListening];
 }

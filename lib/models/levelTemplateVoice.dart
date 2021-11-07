@@ -10,8 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
+  Function listeningUpdate;
   String letter;
-  String answer;
   List<Icon> scoreKeeper;
   int trys;
   String correct;
@@ -21,11 +21,10 @@ class LevelTemplateVoice extends StatelessWidget {
   double fontSize;
   Widget bottomBar;
   int shadowLevel;
-  Function startListening;
 
   LevelTemplateVoice(
-      {this.letter,
-      this.answer,
+      {this.listeningUpdate,
+      this.letter,
       this.scoreKeeper,
       this.trys,
       this.correct,
@@ -34,17 +33,14 @@ class LevelTemplateVoice extends StatelessWidget {
       this.stigColor,
       this.fontSize,
       this.bottomBar,
-      this.shadowLevel,
-      this.startListening});
+      this.shadowLevel});
 
   @override
   Widget build(BuildContext context) {
-    print(context);
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
     _onVoiceButtonPressed() {
-      print("Voice Bloc Pressed");
-      _voiceBloc.add(VoiceStartedEvent());
+      _voiceBloc.add(VoiceStartedEvent(callback: listeningUpdate));
     }
 
     return Container(
@@ -104,24 +100,51 @@ class LevelTemplateVoice extends StatelessWidget {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                  child: QuestionCard(
-                    cardChild: AutoSizeText(
-                      answer,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Metropolis-Regular.otf',
-                        fontWeight: FontWeight.w800,
-                        fontSize: fontSize,
-                        shadows: <Shadow>[
-                          Shadow(
-                            offset: Offset(3.0, 3.0),
-                            blurRadius: 20.0,
-                            color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                  child: BlocBuilder<VoiceBloc, VoiceState>(
+                    builder: (context, state) {
+                      if (state is WordsChange) {
+                        print("STATE LAST WORDS");
+                        print(state.lastWords);
+                        return QuestionCard(
+                          cardChild: AutoSizeText(
+                            state.lastWords,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Metropolis-Regular.otf',
+                              fontWeight: FontWeight.w800,
+                              fontSize: fontSize,
+                              shadows: <Shadow>[
+                                Shadow(
+                                  offset: Offset(3.0, 3.0),
+                                  blurRadius: 20.0,
+                                  color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
+                        );
+                      }
+                      return QuestionCard(
+                        cardChild: AutoSizeText(
+                          "",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Metropolis-Regular.otf',
+                            fontWeight: FontWeight.w800,
+                            fontSize: fontSize,
+                            shadows: <Shadow>[
+                              Shadow(
+                                offset: Offset(3.0, 3.0),
+                                blurRadius: 20.0,
+                                color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
