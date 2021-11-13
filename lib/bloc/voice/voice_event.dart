@@ -42,20 +42,24 @@ class UpdateEvent extends VoiceEvent {
   final String lastWords;
   final List<SpeechRecognitionWords> alternates;
   final bool isListening;
+  final String question;
 
-  UpdateEvent({this.lastWords, this.alternates, this.isListening});
+  UpdateEvent(
+      {this.lastWords, this.alternates, this.isListening, this.question});
 
   @override
   List<Object> get props => [lastWords, alternates, isListening];
 }
 
-class VoiceStatusEvent extends VoiceEvent {
-  final String lastStatus;
+class FindBestLastWordEvent extends VoiceEvent {
+  final String lastWords;
+  final List<SpeechRecognitionWords> alternates;
+  final String question;
 
-  VoiceStatusEvent({@required this.lastStatus});
+  FindBestLastWordEvent({this.lastWords, this.alternates, this.question});
 
   @override
-  List<Object> get props => [lastStatus];
+  List<Object> get props => [lastWords, alternates];
 }
 
 class SoundLevelEvent extends VoiceEvent {
@@ -67,11 +71,11 @@ class SoundLevelEvent extends VoiceEvent {
   List<Object> get props => [level];
 }
 
-class isListeningEvent extends VoiceEvent {
-  final bool isListening;
+class NewQuestionEvent extends VoiceEvent {
+  final String question;
 
-  isListeningEvent({@required this.isListening});
+  NewQuestionEvent({@required this.question});
 
   @override
-  List<Object> get props => [isListening];
+  List<Object> get props => [question];
 }

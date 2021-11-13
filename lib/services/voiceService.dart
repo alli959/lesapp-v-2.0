@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -23,6 +24,8 @@ class VoiceService {
   dynamic localeNames = [];
   bool isListening = false;
   bool finalResult = false;
+  String question = ' ';
+  QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
 
   VoiceService({@required this.speech, this.context});
 
@@ -113,7 +116,118 @@ class VoiceService {
   //     checkAnswer(alternates[closestIndex].recognizedWords);
   //   }
   // }
+  String displayText() {
+    var question = quizBrain.getQuestionText();
+    return question;
+  }
+
+  dynamic bestLastWord(String lastWords, String question,
+      List<SpeechRecognitionWords> alternates) {
+    print("inBestLastWordsFunction !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    print("${alternates}");
+    print(lastWords);
+    print(question);
+    int closestVal = lastWords.toLowerCase().compareTo(
+        question.toLowerCase()); //compare correct answer to voice input
+
+    int closestIndex =
+        -1; //index of closest value, if -1 then result.recongizedwords
+    //check if alternates are closer to correct answer
+    for (int i = 0; i < alternates.length; i++) {
+      String tempString = alternates[i].recognizedWords;
+      int temp = tempString.toLowerCase().compareTo(question.toLowerCase());
+      if (temp.abs() < closestVal.abs()) {
+        print("temp < closestVal");
+        print("tempString: $tempString");
+        print("lastWords: $lastWords");
+        print("tempInt: $temp");
+        print("closestValInt: $closestVal");
+
+        closestIndex = i;
+        closestVal = temp;
+      }
+    }
+
+    if (closestIndex == -1) {
+      return lastWords;
+    } else {
+      print("there was another");
+      print(alternates[closestIndex].recognizedWords);
+
+      lastWords = alternates[closestIndex].recognizedWords;
+
+      return alternates[closestIndex].recognizedWords;
+    }
+  }
 }
+
+// void displayText() {
+//     if (!started) {
+//       setState(() {
+//         question = quizBrain.getQuestionText();
+//       });
+//       started = true;
+//     } else {
+//       soundPress++;
+//       if (soundPress > 2) {
+//         setState(() {
+//           enabled = false;
+//         });
+//       } else {
+//         print("play local asset");
+//       }
+//     }
+//   }
+
+//   void getNewQuestion() {
+//     setState(() {
+//       question = quizBrain.getQuestionText();
+//     });
+//     upperLetterImage = emptyImage;
+//     lowerLetterImage = emptyImage;
+//   }
+
+//   void checkAnswer(String userVoiceAnswer) {
+//     enabled = true;
+//     if (quizBrain.isFinished() == true) {
+//       scoreKeeper = [];
+//       quizBrain.reset();
+//     } else {
+//       List<String> ans = userVoiceAnswer.split(' ');
+//       List<String> q = question.split(' ');
+
+//       if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
+//         calc.correct++;
+//         scoreKeeper.add(Icon(
+//           Icons.star,
+//           color: Colors.purpleAccent,
+//           size: 31,
+//         ));
+//       } else {
+//         if (scoreKeeper.isNotEmpty) {
+//           quizBrain.stars--;
+//           scoreKeeper.removeLast();
+//         }
+//       }
+
+//       if (quizBrain.stars < 10) {
+//         getNewQuestion();
+//         qEnabled = true;
+//       } else {
+//         Timer(Duration(seconds: 1), () {
+//           Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (context) => ThreeShortFinish(
+//                 stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
+//               ),
+//             ),
+//           );
+//         });
+//       }
+//       calc.trys++;
+//     }
+//   }
 
 void _logEvent(String eventDescription) {
   var eventTime = DateTime.now().toIso8601String();

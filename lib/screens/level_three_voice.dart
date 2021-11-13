@@ -53,7 +53,7 @@ class _QuizPageState extends State<QuizPage> {
   int soundPress = 0;
   bool enabled = true;
   bool qEnabled = true;
-  String letter = ' ';
+  String question = ' ';
   String answer = ' ';
   bool started = false;
   double soundCircleSize = 100;
@@ -70,7 +70,6 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   void initState() {
-    displayText();
     super.initState();
   }
 
@@ -85,7 +84,7 @@ class _QuizPageState extends State<QuizPage> {
   void displayText() {
     if (!started) {
       setState(() {
-        letter = quizBrain.getQuestionText();
+        question = quizBrain.getQuestionText();
       });
       started = true;
     } else {
@@ -102,7 +101,7 @@ class _QuizPageState extends State<QuizPage> {
 
   void getNewQuestion() {
     setState(() {
-      letter = quizBrain.getQuestionText();
+      question = quizBrain.getQuestionText();
     });
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
@@ -115,9 +114,9 @@ class _QuizPageState extends State<QuizPage> {
       quizBrain.reset();
     } else {
       List<String> ans = userVoiceAnswer.split(' ');
-      List<String> q = letter.split(' ');
+      List<String> q = question.split(' ');
 
-      if (userVoiceAnswer.toLowerCase() == letter.toLowerCase()) {
+      if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
         calc.correct++;
         scoreKeeper.add(Icon(
           Icons.star,
@@ -154,11 +153,13 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
     listeningUpdate(String lastWords, List<SpeechRecognitionWords> alternates,
-        bool isListening) {
+        bool isListening, String question) {
+      if (!isListening) {}
       _voiceBloc.add(UpdateEvent(
           lastWords: lastWords,
           alternates: alternates,
-          isListening: isListening));
+          isListening: isListening,
+          question: question));
     }
 
     _voiceBloc.add(VoiceInitializeEvent(callback: listeningUpdate));
@@ -176,13 +177,47 @@ class _QuizPageState extends State<QuizPage> {
             }
             if (state is VoiceFailure) {}
 
+            if (state is UpdateState) {
+              return Column(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: RecognitionResultsWidget(
+                        listeningUpdate: listeningUpdate,
+                        question: question,
+                        lastWords: state.lastWords,
+                        scoreKeeper: scoreKeeper,
+                        trys: calc.trys,
+                        correct: calc.correct.toString(),
+                        stig:
+                            play() + calc.checkPoints(calc.correct, calc.trys),
+                        cardColor: cardColor,
+                        stigColor: lightBlue,
+                        fontSize: 39,
+                        bottomBar: BottomBar(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            image: 'assets/images/bottomBar_bl.png'),
+                        shadowLevel: 30),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    color: Theme.of(context).backgroundColor,
+                    child: SpeechStatusWidget(isListening: state.isListening),
+                  ),
+                ],
+              );
+            }
+
             return Column(
               children: [
                 Expanded(
                   flex: 4,
                   child: RecognitionResultsWidget(
                       listeningUpdate: listeningUpdate,
-                      letter: letter,
+                      question: question,
+                      lastWords: ' ',
                       scoreKeeper: scoreKeeper,
                       trys: calc.trys,
                       correct: calc.correct.toString(),
@@ -200,24 +235,7 @@ class _QuizPageState extends State<QuizPage> {
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   color: Theme.of(context).backgroundColor,
-                  child: SpeechStatusWidget(),
-                  // child: Center(
-                  //   child: BlocBuilder<VoiceBloc, VoiceState>(
-                  //     builder: (context, state) {
-                  //       if (state is UpdateState) {
-                  //         print("ISLISTENING STATE => ${state.isListening}");
-                  //         if (state.isListening != null) {
-                  //           return Text(
-                  //             "I'm listening...",
-                  //             style: TextStyle(fontWeight: FontWeight.bold),
-                  //           );
-                  //         }
-                  //       }
-                  //       return Text("Not listening",
-                  //           style: TextStyle(fontWeight: FontWeight.bold));
-                  //     },
-                  //   ),
-                  // ),
+                  child: SpeechStatusWidget(isListening: false),
                 ),
               ],
             );
@@ -233,7 +251,8 @@ class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
     Key key,
     @required this.listeningUpdate,
-    @required this.letter,
+    @required this.question,
+    @required this.lastWords,
     @required this.scoreKeeper,
     @required this.trys,
     @required this.correct,
@@ -245,7 +264,8 @@ class RecognitionResultsWidget extends StatelessWidget {
     @required this.shadowLevel,
   }) : super(key: key);
   final Function listeningUpdate;
-  final String letter;
+  final String question;
+  final String lastWords;
   final List<Icon> scoreKeeper;
   final int trys;
   final String correct;
@@ -258,13 +278,25 @@ class RecognitionResultsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("${fontSize}");
+    print('${cardColor}');
+    print('${stigColor}');
+    print('${shadowLevel}');
+    print('${question}');
+    print('${lastWords}');
+    print('${scoreKeeper}');
+    print('${trys}');
+    print('${correct}');
+    print('${stig}');
+    print('${bottomBar}');
     return LevelTemplateVoice(
       listeningUpdate: listeningUpdate,
       fontSize: 39,
       cardColor: cardColorLvlThree,
       stigColor: lightBlue,
       shadowLevel: 30,
-      letter: letter,
+      question: question,
+      lastWords: lastWords,
       scoreKeeper: scoreKeeper,
       trys: trys,
       correct: correct,
@@ -278,7 +310,9 @@ class RecognitionResultsWidget extends StatelessWidget {
 class SpeechStatusWidget extends StatelessWidget {
   const SpeechStatusWidget({
     Key key,
+    @required this.isListening,
   }) : super(key: key);
+  final bool isListening;
 
   @override
   Widget build(BuildContext context) {
@@ -286,21 +320,15 @@ class SpeechStatusWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 20),
       color: Theme.of(context).backgroundColor,
       child: Center(
-        child: BlocBuilder<VoiceBloc, VoiceState>(
-          builder: (context, state) {
-            if (state is UpdateState) {
-              // print("ISLISTENING STATE => ${state.isListening}");
-              if (state.isListening) {
-                return Text(
-                  "I'm listening...",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                );
-              }
-            }
-            return Text("Not listening",
-                style: TextStyle(fontWeight: FontWeight.bold));
-          },
-        ),
+        child: isListening
+            ? Text(
+                "I'm listening...",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : Text(
+                'Not listening',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
       ),
     );
   }
