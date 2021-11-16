@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
+import 'package:Lesaforrit/models/total_points.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -25,6 +26,10 @@ class VoiceService {
   bool isListening = false;
   bool finalResult = false;
   String question = ' ';
+  String nextQuestion = ' ';
+
+  TotalPoints calc = TotalPoints();
+
   QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
 
   VoiceService({@required this.speech, this.context});
@@ -119,6 +124,20 @@ class VoiceService {
   String displayText() {
     var question = quizBrain.getQuestionText();
     return question;
+  }
+
+  bool checkAnswer(String userVoiceAnswer, String question) {
+    // if (quizBrain.isFinished() == true) {
+    //   quizBrain.reset();
+    // } else {
+    List<String> ans = userVoiceAnswer.split(' ');
+    List<String> q = question.split(' ');
+
+    if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
+      return true;
+      // }
+    }
+    return false;
   }
 
   dynamic bestLastWord(String lastWords, String question,

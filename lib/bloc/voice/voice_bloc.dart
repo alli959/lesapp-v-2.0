@@ -1,3 +1,4 @@
+import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -65,9 +66,9 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapFindBestLastWordEvent(event);
     }
 
-    // if (event is VoiceStartedEvent) {
-    //   yield* _mapVoiceStartedToState(event);
-    // }
+    if (event is ScoreKeeperEvent) {
+      yield* _mapScoreKeeperToState(event);
+    }
   }
 
   Stream<VoiceState> _mapUpdateInitalizeToState(
@@ -75,21 +76,16 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield VoiceLoading();
     print("lastWords in status ${_speech.lastWords}");
     _logEvent('Initialize');
-
     String lastWords = '';
     List<SpeechRecognitionWords> alternates = [];
     bool isListening = false;
     String question = _speech.displayText();
-    print("question efter init");
-    print(question);
     _speech.question = question;
-
-    yield NewQuestionState(question: question);
     statusListener(String status) {
       _logEvent(
           'Received listener status: $status, listening: ${_speech.speech.isListening}');
-      event.callback(_speech.lastWords, _speech.alternates,
-          _speech.speech.isListening, _speech.question);
+      // event.listeningUpdate(_speech.lastWords, _speech.alternates,
+      //     _speech.speech.isListening, _speech.question);
     }
 
     try {
@@ -102,12 +98,18 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
             lastWords: lastWords,
             alternates: alternates,
             isListening: isListening,
-            question: question);
+            question: _speech.question);
         yield VoiceLanguage(currentLocaleId: 'is_IS');
       }
     } catch (e) {
       yield VoiceFailure(error: e);
     }
+
+    yield UpdateState(
+        lastWords: _speech.lastWords,
+        alternates: _speech.alternates,
+        isListening: _speech.speech.isListening,
+        question: _speech.question);
   }
 
   Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
@@ -116,12 +118,17 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     _logEvent('start listening');
-    String lastWords = '';
-    List<SpeechRecognitionWords> alternates = [];
-    bool isListening = false;
+    _speech.lastWords = ' ';
+    _speech.alternates = [];
+    // String lastWords = '';
+    // List<SpeechRecognitionWords> alternates = [];
+    // bool isListening = false;
 
-    yield UpdateState(
-        lastWords: lastWords, alternates: alternates, isListening: isListening);
+    // yield UpdateState(
+    //     lastWords: ' ',
+    //     alternates: _speech.alternates,
+    //     isListening: _speech.speech.isListening,
+    //     question: _speech.question);
 
     // Note that `listenFor` is the maximum, not the minimun, on some
     // recognition will be stopped before this value is reached.
@@ -133,26 +140,34 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
           'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
       _speech.lastWords = '${result.recognizedWords}';
       _speech.alternates = result.alternates;
-      print("${result.alternates}");
       // _speech.finalResult = result.finalResult;
       _speech.isListening = _speech.speech.isListening;
-      print("isListening in the function!!! => ${_speech.isListening}");
 
       if (!_speech.isListening) {
-        print("stopped listening");
         _speech.lastWords = _speech.bestLastWord(
             _speech.lastWords, _speech.question, _speech.alternates);
-      }
 
-      event.callback(_speech.lastWords, _speech.alternates, _speech.isListening,
-          _speech.question);
+        bool isCorrect =
+            _speech.checkAnswer(_speech.lastWords, _speech.question);
+
+        if (isCorrect) {
+          _speech.calc.correct++;
+        }
+        _speech.calc.trys++;
+        event.checkAnswer(isCorrect, !isCorrect, _speech.calc);
+      } else {
+        event.listeningUpdate(_speech.lastWords, _speech.alternates,
+            _speech.isListening, _speech.question);
+      }
     }
 
     _speech.speechListen(resultListener);
+    // yield NewQuestionState(question: _speech.question);
   }
 
   Stream<VoiceState> _mapNewQuestionEvent(NewQuestionEvent event) async* {
     String question = _speech.displayText();
+    _speech.question = question;
     yield NewQuestionState(question: question);
   }
 
@@ -160,7 +175,8 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield UpdateState(
         lastWords: event.lastWords,
         alternates: event.alternates,
-        isListening: event.isListening);
+        isListening: event.isListening,
+        question: event.question);
   }
 
   Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
@@ -169,6 +185,71 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStopEvent(VoiceStoppedEvent event) async* {
     yield VoiceStop();
+  }
+
+  Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
+    yield ScoreKeeper(add: event.add, remove: event.remove, calc: event.calc);
+    await Future.delayed(Duration(milliseconds: 200));
+    String question = _speech.displayText();
+    _speech.nextQuestion = question;
+
+    // Getting the results ready
+    List<String> questionArr = _speech.question.split(' ');
+    List<String> answerArr = _speech.lastWords.split(' ');
+    Map<String, int> mapQuestion = {};
+    Map<String, int> mapAnswer = {};
+    List<bool> questionMap = [];
+    List<bool> answerMap = [];
+
+    // Creating hashmap of questions
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
+        mapQuestion[questionArr[i].toLowerCase()] += 1;
+      } else {
+        mapQuestion[questionArr[i].toLowerCase()] = 1;
+      }
+    }
+
+    // Creating hashmap of answers
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
+        mapAnswer[answerArr[i].toLowerCase()] += 1;
+      } else {
+        mapAnswer[answerArr[i].toLowerCase()] = 1;
+      }
+    }
+
+    // Creating colorBoard for questions
+    /* TODO  IF A WORD IS DUPLICATE */
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
+        questionMap.add(true);
+      } else {
+        questionMap.add(false);
+      }
+    }
+
+    // Creating colorBoard for answers
+    /* TODO  IF A WORD IS DUPLICATE */
+
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
+        answerMap.add(true);
+      } else {
+        answerMap.add(false);
+      }
+    }
+
+    // Displaying results for 2 seconds
+    yield ShowResultState(
+        questionArr: questionArr,
+        answerArr: answerArr,
+        questionMap: questionMap,
+        answerMap: answerMap);
+    await Future.delayed(Duration(milliseconds: 5000));
+
+    _speech.question = _speech.nextQuestion;
+    yield NewQuestionState(question: _speech.question);
   }
 
   Stream<VoiceState> _mapFindBestLastWordEvent(

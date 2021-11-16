@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
   Function listeningUpdate;
+  Function checkAnswer;
   String question;
   String lastWords;
   List<Icon> scoreKeeper;
@@ -26,6 +27,7 @@ class LevelTemplateVoice extends StatelessWidget {
 
   LevelTemplateVoice(
       {this.listeningUpdate,
+      this.checkAnswer,
       this.question,
       this.lastWords,
       this.scoreKeeper,
@@ -38,12 +40,26 @@ class LevelTemplateVoice extends StatelessWidget {
       this.bottomBar,
       this.shadowLevel});
 
+  List<TextSpan> getResultText(List<String> arr, List<bool> map) {
+    List<TextSpan> resultTextMap = [];
+    for (var i = 0; i < arr.length; i++) {
+      map[i]
+          ? resultTextMap.add(TextSpan(
+              text: "${arr[i]} ",
+              style: TextStyle(color: Colors.greenAccent[400])))
+          : resultTextMap.add(TextSpan(
+              text: "${arr[i]} ", style: TextStyle(color: Colors.red)));
+    }
+    return resultTextMap;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
     _onVoiceButtonPressed() {
-      _voiceBloc.add(VoiceStartedEvent(callback: listeningUpdate));
+      _voiceBloc.add(VoiceStartedEvent(
+          listeningUpdate: listeningUpdate, checkAnswer: checkAnswer));
     }
 
     return Container(
@@ -75,23 +91,50 @@ class LevelTemplateVoice extends StatelessWidget {
                   child: BlocBuilder<VoiceBloc, VoiceState>(
                     builder: (context, state) {
                       if (state is NewQuestionState) {
+                        print(
+                            "QUESTION FROM NEW QUESTION STATE ${state.question}");
                         return QuestionCard(
-                          cardChild: AutoSizeText(
-                            state.question,
+                          cardChild: RichText(
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Metropolis-Regular.otf',
-                              fontWeight: FontWeight.w800,
-                              fontSize: fontSize,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(3.0, 3.0),
-                                  blurRadius: 20.0,
-                                  color: Color.fromARGB(shadowLevel, 0, 0, 0),
-                                ),
-                              ],
+                            text: TextSpan(
+                              text: state.question,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'Metropolis-Regular.otf',
+                                fontWeight: FontWeight.w800,
+                                fontSize: fontSize,
+                                shadows: <Shadow>[
+                                  Shadow(
+                                    offset: Offset(3.0, 3.0),
+                                    blurRadius: 20.0,
+                                    color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                                  ),
+                                ],
+                              ),
                             ),
+                          ),
+                        );
+                      } else if (state is ShowResultState) {
+                        return QuestionCard(
+                          cardChild: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Metropolis-Regular.otf',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: fontSize,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 20.0,
+                                      color:
+                                          Color.fromARGB(shadowLevel, 0, 0, 0),
+                                    ),
+                                  ],
+                                ),
+                                children: getResultText(
+                                    state.questionArr, state.questionMap)),
                           ),
                         );
                       }
@@ -130,30 +173,33 @@ class LevelTemplateVoice extends StatelessWidget {
                 Container(
                   child: BlocBuilder<VoiceBloc, VoiceState>(
                     builder: (context, state) {
-                      if (state is UpdateState) {
+                      if (state is ShowResultState) {
                         return QuestionCard(
-                          cardChild: AutoSizeText(
-                            state.lastWords,
+                          cardChild: RichText(
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Metropolis-Regular.otf',
-                              fontWeight: FontWeight.w800,
-                              fontSize: fontSize,
-                              shadows: <Shadow>[
-                                Shadow(
-                                  offset: Offset(3.0, 3.0),
-                                  blurRadius: 20.0,
-                                  color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                            text: TextSpan(
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Metropolis-Regular.otf',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: fontSize,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 20.0,
+                                      color:
+                                          Color.fromARGB(shadowLevel, 0, 0, 0),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                                children: getResultText(
+                                    state.answerArr, state.answerMap)),
                           ),
                         );
                       }
                       return QuestionCard(
                         cardChild: AutoSizeText(
-                          "",
+                          lastWords,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.black,

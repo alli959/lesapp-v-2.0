@@ -1,5 +1,6 @@
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
+import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
@@ -81,24 +82,6 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void displayText() {
-    if (!started) {
-      setState(() {
-        question = quizBrain.getQuestionText();
-      });
-      started = true;
-    } else {
-      soundPress++;
-      if (soundPress > 2) {
-        setState(() {
-          enabled = false;
-        });
-      } else {
-        print("play local asset");
-      }
-    }
-  }
-
   void getNewQuestion() {
     setState(() {
       question = quizBrain.getQuestionText();
@@ -107,54 +90,56 @@ class _QuizPageState extends State<QuizPage> {
     lowerLetterImage = emptyImage;
   }
 
-  void checkAnswer(String userVoiceAnswer) {
-    enabled = true;
-    if (quizBrain.isFinished() == true) {
-      scoreKeeper = [];
-      quizBrain.reset();
-    } else {
-      List<String> ans = userVoiceAnswer.split(' ');
-      List<String> q = question.split(' ');
+  // void checkAnswer(String userVoiceAnswer) {
+  //   enabled = true;
+  //   if (quizBrain.isFinished() == true) {
+  //     scoreKeeper = [];
+  //     quizBrain.reset();
+  //   } else {
+  //     List<String> ans = userVoiceAnswer.split(' ');
+  //     List<String> q = question.split(' ');
 
-      if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
-        calc.correct++;
-        scoreKeeper.add(Icon(
-          Icons.star,
-          color: Colors.purpleAccent,
-          size: 31,
-        ));
-      } else {
-        if (scoreKeeper.isNotEmpty) {
-          quizBrain.stars--;
-          scoreKeeper.removeLast();
-        }
-      }
+  //     if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
+  //       calc.correct++;
+  //       scoreKeeper.add(Icon(
+  //         Icons.star,
+  //         color: Colors.purpleAccent,
+  //         size: 31,
+  //       ));
+  //     } else {
+  //       if (scoreKeeper.isNotEmpty) {
+  //         quizBrain.stars--;
+  //         scoreKeeper.removeLast();
+  //       }
+  //     }
 
-      if (quizBrain.stars < 10) {
-        getNewQuestion();
-        qEnabled = true;
-      } else {
-        Timer(Duration(seconds: 1), () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ThreeShortFinish(
-                stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
-              ),
-            ),
-          );
-        });
-      }
-      calc.trys++;
-    }
-  }
+  //     if (quizBrain.stars < 10) {
+  //       getNewQuestion();
+  //       qEnabled = true;
+  //     } else {
+  //       Timer(Duration(seconds: 1), () {
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => ThreeShortFinish(
+  //               stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
+  //             ),
+  //           ),
+  //         );
+  //       });
+  //     }
+  //     calc.trys++;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
     listeningUpdate(String lastWords, List<SpeechRecognitionWords> alternates,
         bool isListening, String question) {
-      if (!isListening) {}
+      // if (!isListening) {
+      //   _voiceBloc.add(NewQuestionEvent(question: question));
+      // }
       _voiceBloc.add(UpdateEvent(
           lastWords: lastWords,
           alternates: alternates,
@@ -162,7 +147,11 @@ class _QuizPageState extends State<QuizPage> {
           question: question));
     }
 
-    _voiceBloc.add(VoiceInitializeEvent(callback: listeningUpdate));
+    checkAnswer(bool add, bool remove, TotalPoints calc) {
+      _voiceBloc.add(ScoreKeeperEvent(add: add, remove: remove, calc: calc));
+    }
+
+    _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
     return MaterialApp(
       home: Scaffold(
         body: BlocListener<VoiceBloc, VoiceState>(
@@ -177,6 +166,23 @@ class _QuizPageState extends State<QuizPage> {
             }
             if (state is VoiceFailure) {}
 
+            if (state is ScoreKeeper) {
+              calc = state.calc;
+              print("state is scorekeeper");
+              if (state.add) {
+                scoreKeeper.add(Icon(
+                  Icons.star,
+                  color: Colors.purpleAccent,
+                  size: 31,
+                ));
+              }
+              if (state.remove) {
+                print("SCOREKEEPER REMOVE");
+                if (scoreKeeper.isNotEmpty) {
+                  scoreKeeper.removeLast();
+                }
+              }
+            }
             if (state is UpdateState) {
               return Column(
                 children: [
@@ -184,7 +190,8 @@ class _QuizPageState extends State<QuizPage> {
                     flex: 4,
                     child: RecognitionResultsWidget(
                         listeningUpdate: listeningUpdate,
-                        question: question,
+                        checkAnswer: checkAnswer,
+                        question: state.question,
                         lastWords: state.lastWords,
                         scoreKeeper: scoreKeeper,
                         trys: calc.trys,
@@ -216,6 +223,7 @@ class _QuizPageState extends State<QuizPage> {
                   flex: 4,
                   child: RecognitionResultsWidget(
                       listeningUpdate: listeningUpdate,
+                      checkAnswer: checkAnswer,
                       question: question,
                       lastWords: ' ',
                       scoreKeeper: scoreKeeper,
@@ -251,6 +259,7 @@ class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
     Key key,
     @required this.listeningUpdate,
+    @required this.checkAnswer,
     @required this.question,
     @required this.lastWords,
     @required this.scoreKeeper,
@@ -264,6 +273,7 @@ class RecognitionResultsWidget extends StatelessWidget {
     @required this.shadowLevel,
   }) : super(key: key);
   final Function listeningUpdate;
+  final Function checkAnswer;
   final String question;
   final String lastWords;
   final List<Icon> scoreKeeper;
@@ -291,6 +301,7 @@ class RecognitionResultsWidget extends StatelessWidget {
     print('${bottomBar}');
     return LevelTemplateVoice(
       listeningUpdate: listeningUpdate,
+      checkAnswer: checkAnswer,
       fontSize: 39,
       cardColor: cardColorLvlThree,
       stigColor: lightBlue,

@@ -8,21 +8,22 @@ abstract class VoiceEvent extends Equatable {
 }
 
 class VoiceInitializeEvent extends VoiceEvent {
-  final Function callback;
+  final Function listeningUpdate;
 
-  VoiceInitializeEvent({@required this.callback});
+  VoiceInitializeEvent({@required this.listeningUpdate});
 
   @override
-  List<Object> get props => [callback];
+  List<Object> get props => [listeningUpdate];
 }
 
 class VoiceStartedEvent extends VoiceEvent {
-  final Function callback;
+  final Function listeningUpdate;
+  final Function checkAnswer;
 
-  VoiceStartedEvent({@required this.callback});
+  VoiceStartedEvent({@required this.listeningUpdate, this.checkAnswer});
 
   @override
-  List<Object> get props => [callback];
+  List<Object> get props => [listeningUpdate, checkAnswer];
 }
 
 class VoiceStoppedEvent extends VoiceEvent {}
@@ -48,7 +49,7 @@ class UpdateEvent extends VoiceEvent {
       {this.lastWords, this.alternates, this.isListening, this.question});
 
   @override
-  List<Object> get props => [lastWords, alternates, isListening];
+  List<Object> get props => [lastWords, alternates, isListening, question];
 }
 
 class FindBestLastWordEvent extends VoiceEvent {
@@ -78,4 +79,15 @@ class NewQuestionEvent extends VoiceEvent {
 
   @override
   List<Object> get props => [question];
+}
+
+class ScoreKeeperEvent extends VoiceEvent {
+  final bool add;
+  final bool remove;
+  final TotalPoints calc;
+
+  ScoreKeeperEvent({this.add, this.remove, this.calc});
+
+  @override
+  List<Object> get props => [add, remove, calc];
 }

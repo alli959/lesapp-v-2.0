@@ -148,3 +148,27 @@ class NewQuestionState extends VoiceState {
   @override
   List<Object> get props => [question];
 }
+
+class ShowResultState extends VoiceState {
+  final List<String> questionArr;
+  final List<String> answerArr;
+  final List<bool> questionMap;
+  final List<bool> answerMap;
+
+  ShowResultState(
+      {this.questionArr, this.answerArr, this.questionMap, this.answerMap});
+
+  @override
+  List<Object> get props => [questionArr, answerArr, questionMap, answerMap];
+}
+
+class ScoreKeeper extends VoiceState {
+  final bool add;
+  final bool remove;
+  final TotalPoints calc;
+
+  ScoreKeeper({this.add, this.remove, this.calc});
+
+  @override
+  List<Object> get props => [add, remove, calc];
+}
