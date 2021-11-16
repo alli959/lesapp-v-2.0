@@ -1,3 +1,4 @@
+import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -46,6 +47,10 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapVoiceStartedEvent(event);
     }
 
+    if (event is NewQuestionEvent) {
+      yield* _mapNewQuestionEvent(event);
+    }
+
     if (event is UpdateEvent) {
       yield* _mapLastWordsEvent(event);
     }
@@ -54,38 +59,34 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapSoundLevelEvent(event);
     }
 
-    if (event is VoiceStatusEvent) {
-      yield* _mapVoiceStatusToState(event);
-    }
-
     if (event is VoiceStoppedEvent) {
       yield* _mapVoiceStopEvent(event);
     }
-
-    if (event is isListeningEvent) {
-      yield* _mapVoiceIsListeningEvent(event);
+    if (event is FindBestLastWordEvent) {
+      yield* _mapFindBestLastWordEvent(event);
     }
 
-    // if (event is VoiceStartedEvent) {
-    //   yield* _mapVoiceStartedToState(event);
-    // }
+    if (event is ScoreKeeperEvent) {
+      yield* _mapScoreKeeperToState(event);
+    }
   }
 
   Stream<VoiceState> _mapUpdateInitalizeToState(
       VoiceInitializeEvent event) async* {
     yield VoiceLoading();
+    print("lastWords in status ${_speech.lastWords}");
     _logEvent('Initialize');
-
-    statusListener(String status) {
-      _logEvent(
-          'Received listener status: $status, listening: ${_speech.speech.isListening}');
-      event.callback(
-          _speech.lastWords, _speech.alternates, _speech.speech.isListening);
-    }
-
     String lastWords = '';
     List<SpeechRecognitionWords> alternates = [];
     bool isListening = false;
+    String question = _speech.displayText();
+    _speech.question = question;
+    statusListener(String status) {
+      _logEvent(
+          'Received listener status: $status, listening: ${_speech.speech.isListening}');
+      // event.listeningUpdate(_speech.lastWords, _speech.alternates,
+      //     _speech.speech.isListening, _speech.question);
+    }
 
     try {
       // initialize the speech
@@ -96,12 +97,19 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         yield UpdateState(
             lastWords: lastWords,
             alternates: alternates,
-            isListening: isListening);
+            isListening: isListening,
+            question: _speech.question);
         yield VoiceLanguage(currentLocaleId: 'is_IS');
       }
     } catch (e) {
       yield VoiceFailure(error: e);
     }
+
+    yield UpdateState(
+        lastWords: _speech.lastWords,
+        alternates: _speech.alternates,
+        isListening: _speech.speech.isListening,
+        question: _speech.question);
   }
 
   Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
@@ -110,47 +118,65 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     _logEvent('start listening');
+    _speech.lastWords = ' ';
+    _speech.alternates = [];
+    // String lastWords = '';
+    // List<SpeechRecognitionWords> alternates = [];
+    // bool isListening = false;
 
-    // if (isListening == null) {
-    //   print("isListening ===== null");
-    //   isListening = false;
-    // }
-    // print("IS LISTENING, ${isListening}");
     // yield UpdateState(
-    //   lastWords: lastWords,
-    //   alternates: alternates,
-    //   isListening: isListening,
-    // );
-    // yield WordsChange(lastWords: '');
+    //     lastWords: ' ',
+    //     alternates: _speech.alternates,
+    //     isListening: _speech.speech.isListening,
+    //     question: _speech.question);
 
     // Note that `listenFor` is the maximum, not the minimun, on some
     // recognition will be stopped before this value is reached.
     // Similarly `pauseFor` is a maximum not a minimum and may be ignored
     // on some devices.
     resultListener(SpeechRecognitionResult result) {
+      print("lastWords in result ${_speech.lastWords}");
       _logEvent(
           'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
       _speech.lastWords = '${result.recognizedWords}';
       _speech.alternates = result.alternates;
-      _speech.finalResult = result.finalResult;
+      // _speech.finalResult = result.finalResult;
       _speech.isListening = _speech.speech.isListening;
-      print("isListening in the function!!! => ${_speech.isListening}");
-      event.callback(
-          _speech.lastWords, _speech.alternates, _speech.isListening);
+
+      if (!_speech.isListening) {
+        _speech.lastWords = _speech.bestLastWord(
+            _speech.lastWords, _speech.question, _speech.alternates);
+
+        bool isCorrect =
+            _speech.checkAnswer(_speech.lastWords, _speech.question);
+
+        if (isCorrect) {
+          _speech.calc.correct++;
+        }
+        _speech.calc.trys++;
+        event.checkAnswer(isCorrect, !isCorrect, _speech.calc);
+      } else {
+        event.listeningUpdate(_speech.lastWords, _speech.alternates,
+            _speech.isListening, _speech.question);
+      }
     }
 
     _speech.speechListen(resultListener);
+    // yield NewQuestionState(question: _speech.question);
   }
 
-  Stream<VoiceState> _mapVoiceStatusToState(VoiceStatusEvent event) async* {
-    yield VoiceStatusState(lastStatus: event.lastStatus);
+  Stream<VoiceState> _mapNewQuestionEvent(NewQuestionEvent event) async* {
+    String question = _speech.displayText();
+    _speech.question = question;
+    yield NewQuestionState(question: question);
   }
 
   Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
     yield UpdateState(
         lastWords: event.lastWords,
         alternates: event.alternates,
-        isListening: event.isListening);
+        isListening: event.isListening,
+        question: event.question);
   }
 
   Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
@@ -161,8 +187,111 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield VoiceStop();
   }
 
-  Stream<VoiceState> _mapVoiceIsListeningEvent(isListeningEvent event) async* {
-    yield IsListeningState(isListening: event.isListening);
+  Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
+    yield ScoreKeeper(add: event.add, remove: event.remove, calc: event.calc);
+    await Future.delayed(Duration(milliseconds: 200));
+    String question = _speech.displayText();
+    _speech.nextQuestion = question;
+
+    // Getting the results ready
+    List<String> questionArr = _speech.question.split(' ');
+    List<String> answerArr = _speech.lastWords.split(' ');
+    Map<String, int> mapQuestion = {};
+    Map<String, int> mapAnswer = {};
+    List<bool> questionMap = [];
+    List<bool> answerMap = [];
+
+    // Creating hashmap of questions
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
+        mapQuestion[questionArr[i].toLowerCase()] += 1;
+      } else {
+        mapQuestion[questionArr[i].toLowerCase()] = 1;
+      }
+    }
+
+    // Creating hashmap of answers
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
+        mapAnswer[answerArr[i].toLowerCase()] += 1;
+      } else {
+        mapAnswer[answerArr[i].toLowerCase()] = 1;
+      }
+    }
+
+    // Creating colorBoard for questions
+    /* TODO  IF A WORD IS DUPLICATE */
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
+        questionMap.add(true);
+      } else {
+        questionMap.add(false);
+      }
+    }
+
+    // Creating colorBoard for answers
+    /* TODO  IF A WORD IS DUPLICATE */
+
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
+        answerMap.add(true);
+      } else {
+        answerMap.add(false);
+      }
+    }
+
+    // Displaying results for 2 seconds
+    yield ShowResultState(
+        questionArr: questionArr,
+        answerArr: answerArr,
+        questionMap: questionMap,
+        answerMap: answerMap);
+    await Future.delayed(Duration(milliseconds: 5000));
+
+    _speech.question = _speech.nextQuestion;
+    yield NewQuestionState(question: _speech.question);
+  }
+
+  Stream<VoiceState> _mapFindBestLastWordEvent(
+      FindBestLastWordEvent event) async* {
+    String lastWords = event.lastWords;
+    List<SpeechRecognitionWords> alternates = event.alternates;
+    String question = event.question;
+
+    // int closestVal = lastWords.toLowerCase().compareTo(
+    //     letter.toLowerCase()); //compare correct answer to voice input
+
+    // int closestIndex =
+    //     -1; //index of closest value, if -1 then result.recongizedwords
+    // if (status == 'done') {
+    //   //check if alternates are closer to correct answer
+    //   for (int i = 0; i < alternates.length; i++) {
+    //     String tempString = alternates[i].recognizedWords;
+    //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
+    //     if (temp.abs() < closestVal.abs()) {
+    //       print("temp < closestVal");
+    //       print("tempString: $tempString");
+    //       print("lastWords: $lastWords");
+    //       print("tempInt: $temp");
+    //       print("closestValInt: $closestVal");
+
+    //       closestIndex = i;
+    //       closestVal = temp;
+    //     }
+    //   }
+    //   if (closestIndex == -1) {
+    //     checkAnswer(lastWords);
+    //   } else {
+    //     print("there was another");
+    //     print(alternates[closestIndex].recognizedWords);
+
+    //     setState(() {
+    //       lastWords = alternates[closestIndex].recognizedWords;
+    //     });
+
+    //     checkAnswer(alternates[closestIndex].recognizedWords);
+    //   }
+    // }
   }
 
   /* Helper functions */
