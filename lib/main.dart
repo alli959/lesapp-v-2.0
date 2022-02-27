@@ -1,5 +1,7 @@
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
+import 'package:Lesaforrit/screens/level_one_voice.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
+import 'package:Lesaforrit/screens/level_two_voice.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
@@ -124,8 +126,10 @@ class lesApp extends StatelessWidget {
         LevelTemplate.id: (context) => LevelTemplate(),
         LevelOne.id: (context) => LevelOne(),
         LevelOneCap.id: (context) => LevelOneCap(),
+        LevelOneVoice.id: (context) => LevelOneVoice(),
         LevelTwo.id: (context) => LevelTwo(),
         LevelTwoShort.id: (context) => LevelTwoShort(),
+        LevelTwoVoice.id: (contraxt) => LevelTwoVoice(),
         LevelFinish.id: (context) => LevelFinish(),
         LevelThree.id: (context) => LevelThree(),
         LevelThreeShort.id: (context) => LevelThreeShort(),

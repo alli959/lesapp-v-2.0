@@ -20,14 +20,14 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:async';
 import 'dart:math';
 
-class LevelThreeVoice extends StatelessWidget {
-  static const String id = 'level_three_short_voice';
+class LevelOneVoice extends StatelessWidget {
+  static const String id = 'level_One_voice';
   @override
   Widget build(BuildContext context) {
     final _speech = RepositoryProvider.of<VoiceService>(context);
 
     return BlocProvider<VoiceBloc>(
-      create: (context) => VoiceBloc(_speech, 'level_3'),
+      create: (context) => VoiceBloc(_speech, 'level_1'),
       child: Scaffold(
         appBar: AppBar(backgroundColor: guli, title: Text('Raddgreining')),
         endDrawer: SideMenu(),
@@ -171,20 +171,16 @@ class _QuizPageState extends State<QuizPage> {
         body: BlocListener<VoiceBloc, VoiceState>(
           listener: (context, state) {
             if (state is VoiceFailure) {
-              print("VOICEBLOC STATE AFTER FAILURE ${_voiceBloc.state}");
               print("voice failure, why is this happening?");
             }
           },
           child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
             if (state is VoiceLoading) {
-              print("VOICEBLOC STATE AFTER Voice Loading ${_voiceBloc.state}");
               return Loading();
             }
             if (state is VoiceFailure) {}
 
             if (state is ScoreKeeper) {
-              print("VOICEBLOC STATE AFTER ScoreKeeper ${_voiceBloc.state}");
-
               calc = state.calc;
               if (state.fivePoints) {
                 scoreKeeper.add(Icon(
@@ -374,19 +370,28 @@ class SpeechStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      color: Theme.of(context).backgroundColor,
-      child: Center(
-        child: isListening
-            ? Text(
-                "Að hlusta...",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            : Text(
-                'Ekki að hlusta',
+        padding: EdgeInsets.symmetric(vertical: 20),
+        color: Theme.of(context).backgroundColor,
+        child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
+          if (state is VoiceFailure) {
+            return Center(
+              child: Text(
+                "Ekki að hlusta",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-      ),
-    );
+            );
+          }
+          return Center(
+            child: isListening
+                ? Text(
+                    "Að hlusta...",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )
+                : Text(
+                    'Ekki að hlusta',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+          );
+        }));
   }
 }

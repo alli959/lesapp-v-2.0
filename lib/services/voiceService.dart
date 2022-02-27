@@ -1,7 +1,9 @@
-import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlTwo_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,117 +29,148 @@ class VoiceService {
   bool finalResult = false;
   String question = ' ';
   String nextQuestion = ' ';
+  double points = 0;
+  List<bool> questionMap = [];
+  List<bool> answerMap = [];
+  List<String> questionArr = [];
+  List<String> answerArr = [];
 
   TotalPoints calc = TotalPoints();
 
-  QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
+  QuizBrainLvlThree quizBrainLvlThree = QuizBrainLvlThree();
+  QuizBrainLvlTwo quizBrainLvlTwo = QuizBrainLvlTwo();
+  QuizBrainLvlOne quizBrainLvlOne = QuizBrainLvlOne();
+
+  Function onError;
 
   VoiceService({@required this.speech, this.context});
 
-  Future speechInit(statusListener) async {
+  Future speechInit(Function statusListener) async {
     hasSpeech = await speech.initialize(
       onError: errorListener,
       onStatus: statusListener,
       debugLogging: true,
       finalTimeout: Duration(milliseconds: 0),
     );
+    this.onError = onError;
     return hasSpeech;
   }
 
   void speechListen(Function resultListener) {
-    speech.listen(
-      onResult: resultListener,
-      listenFor: Duration(seconds: 30),
-      pauseFor: Duration(seconds: 10),
-      partialResults: true,
-      localeId: 'is_IS',
-      onSoundLevelChange: soundLevelListener,
-      cancelOnError: true,
-      listenMode: ListenMode.confirmation,
-    );
+    try {
+      speech.listen(
+        onResult: resultListener,
+        listenFor: Duration(seconds: 30),
+        pauseFor: Duration(seconds: 10),
+        partialResults: true,
+        localeId: 'is_IS',
+        onSoundLevelChange: soundLevelListener,
+        cancelOnError: false,
+        listenMode: ListenMode.confirmation,
+      );
+    } catch (err) {
+      print("THERE WAS AN ERROR ${err}");
+    }
   }
 
   void errorListener(SpeechRecognitionError error) {
+    print("there was an error ${error}");
+    this.onError("test");
     _logEvent(
         'Received error status: $error, listening: ${speech.isListening}');
     lastError = '${error.errorMsg} - ${error.permanent}';
   }
 
-  // void resultListener(SpeechRecognitionResult result) {
-  //   _logEvent(
-  //       'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-  //   lastWords = '${result.recognizedWords}';
-  //   final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-
-  //   alternates = result.alternates;
-  //   _voiceBloc
-  //       .add(LastWordsEvent(lastWords: lastWords, alternates: alternates));
-  //   // LastWordsEvent(
-  //   //     lastWords: '${result.recognizedWords}', alternates: result.alternates);
-  // }
-
   void soundLevelListener(double lvl) {
-    minSoundLevel = min(minSoundLevel, level);
-    maxSoundLevel = max(maxSoundLevel, level);
+    minSoundLevel = math.min(minSoundLevel, level);
+    maxSoundLevel = math.max(maxSoundLevel, level);
     level = lvl;
   }
 
-  // void statusListener(String status) {
-  //   _logEvent(
-  //       'Received listener status: $status, listening: ${speech.isListening}');
-  //   lastStatus = status;
-
-  // int closestVal = lastWords.toLowerCase().compareTo(
-  //     letter.toLowerCase()); //compare correct answer to voice input
-
-  // int closestIndex =
-  //     -1; //index of closest value, if -1 then result.recongizedwords
-  // if (status == 'done') {
-  //   //check if alternates are closer to correct answer
-  //   for (int i = 0; i < alternates.length; i++) {
-  //     String tempString = alternates[i].recognizedWords;
-  //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-  //     if (temp.abs() < closestVal.abs()) {
-  //       print("temp < closestVal");
-  //       print("tempString: $tempString");
-  //       print("lastWords: $lastWords");
-  //       print("tempInt: $temp");
-  //       print("closestValInt: $closestVal");
-
-  //       closestIndex = i;
-  //       closestVal = temp;
-  //     }
-  //   }
-  //   if (closestIndex == -1) {
-  //     checkAnswer(lastWords);
-  //   } else {
-  //     print("there was another");
-  //     print(alternates[closestIndex].recognizedWords);
-
-  //     setState(() {
-  //       lastWords = alternates[closestIndex].recognizedWords;
-  //     });
-
-  //     checkAnswer(alternates[closestIndex].recognizedWords);
-  //   }
-  // }
-  String displayText() {
-    var question = quizBrain.getQuestionText();
+  String displayText(level) {
+    var question;
+    if (level == "level_3") {
+      question = quizBrainLvlThree.getQuestionText();
+    }
+    if (level == "level_2") {
+      question = quizBrainLvlTwo.getQuestionText();
+    }
+    if (level == "level_1") {
+      question = quizBrainLvlOne.getQuestionText();
+    }
     return question;
   }
 
-  bool checkAnswer(String userVoiceAnswer, String question) {
+  Map<String, Object> checkAnswer(String userVoiceAnswer, String question) {
     // if (quizBrain.isFinished() == true) {
     //   quizBrain.reset();
     // } else {
-    List<String> ans = userVoiceAnswer.split(' ');
-    List<String> q = question.split(' ');
 
-    if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
-      return true;
-      // }
+    int totalCorrect = 0;
+    int totalIncorrect = 0;
+    List<String> questionArr = userVoiceAnswer.split(' ');
+    List<String> answerArr = question.split(' ');
+    Map<String, int> mapQuestion = {};
+    Map<String, int> mapAnswer = {};
+    List<bool> questionMap = [];
+    List<bool> answerMap = [];
+    // Creating hashmap of questions
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
+        mapQuestion[questionArr[i].toLowerCase()] += 1;
+      } else {
+        mapQuestion[questionArr[i].toLowerCase()] = 1;
+      }
     }
-    return false;
+
+    // Creating hashmap of answers
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
+        mapAnswer[answerArr[i].toLowerCase()] += 1;
+      } else {
+        mapAnswer[answerArr[i].toLowerCase()] = 1;
+      }
+    }
+
+    // Creating colorBoard for questions
+    /* TODO  IF A WORD IS DUPLICATE */
+    for (var i = 0; i < questionArr.length; i++) {
+      if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
+        questionMap.add(true);
+      } else {
+        questionMap.add(false);
+      }
+    }
+
+    // Creating colorBoard for answers
+    /* TODO  IF A WORD IS DUPLICATE */
+
+    for (var i = 0; i < answerArr.length; i++) {
+      if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
+        totalCorrect += 1;
+        answerMap.add(true);
+      } else {
+        totalIncorrect += 1;
+        answerMap.add(false);
+      }
+    }
+
+    // calculating points
+    double points = totalCorrect / (totalCorrect + totalIncorrect);
+
+    return {
+      "points": points,
+      "correct": totalCorrect,
+      "questionMap": questionMap,
+      "answerMap": answerMap,
+      "questionArr": questionArr,
+      "answerArr": answerArr
+    };
+    // if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
+    //   return true;
+    //   // }
+    // }
+    // return false;
   }
 
   dynamic bestLastWord(String lastWords, String question,
@@ -180,73 +213,37 @@ class VoiceService {
   }
 }
 
-// void displayText() {
-//     if (!started) {
-//       setState(() {
-//         question = quizBrain.getQuestionText();
-//       });
-//       started = true;
-//     } else {
-//       soundPress++;
-//       if (soundPress > 2) {
-//         setState(() {
-//           enabled = false;
-//         });
-//       } else {
-//         print("play local asset");
-//       }
-//     }
-//   }
+List<Widget> positionFinder(
+    double controllerVal, double maxControllerVal, double midX, double midY) {
+  List<Widget> returnVal = [];
 
-//   void getNewQuestion() {
-//     setState(() {
-//       question = quizBrain.getQuestionText();
-//     });
-//     upperLetterImage = emptyImage;
-//     lowerLetterImage = emptyImage;
-//   }
+  if (controllerVal / maxControllerVal < 0.5) {
+    returnVal.add(
+      Transform.rotate(
+          angle: controllerVal * 2 * math.pi,
+          child: Image.asset('assets/images/star.png')),
+    );
 
-//   void checkAnswer(String userVoiceAnswer) {
-//     enabled = true;
-//     if (quizBrain.isFinished() == true) {
-//       scoreKeeper = [];
-//       quizBrain.reset();
-//     } else {
-//       List<String> ans = userVoiceAnswer.split(' ');
-//       List<String> q = question.split(' ');
+    return returnVal;
+  } else if (controllerVal / maxControllerVal < 0.7) {
+    returnVal.add(Positioned(
+        child: Image.asset('assets/images/explotion6.png'),
+        width: 300,
+        height: 243,
+        left: midX,
+        top: midY));
 
-//       if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
-//         calc.correct++;
-//         scoreKeeper.add(Icon(
-//           Icons.star,
-//           color: Colors.purpleAccent,
-//           size: 31,
-//         ));
-//       } else {
-//         if (scoreKeeper.isNotEmpty) {
-//           quizBrain.stars--;
-//           scoreKeeper.removeLast();
-//         }
-//       }
+    return returnVal;
+  }
 
-//       if (quizBrain.stars < 10) {
-//         getNewQuestion();
-//         qEnabled = true;
-//       } else {
-//         Timer(Duration(seconds: 1), () {
-//           Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => ThreeShortFinish(
-//                 stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
-//               ),
-//             ),
-//           );
-//         });
-//       }
-//       calc.trys++;
-//     }
-//   }
+  returnVal.add(Positioned(
+      child: Image.asset('assets/images/star.png'),
+      width: 300 * (controllerVal / maxControllerVal),
+      height: 243 * (controllerVal / maxControllerVal),
+      left: midX,
+      top: midY));
+  return returnVal;
+}
 
 void _logEvent(String eventDescription) {
   var eventTime = DateTime.now().toIso8601String();

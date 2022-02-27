@@ -5,6 +5,7 @@ import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -16,9 +17,11 @@ part 'voice_state.dart';
 class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   // final SpeechToText _speech;
   final VoiceService _speech;
+  final String level;
 
-  VoiceBloc(VoiceService speech)
+  VoiceBloc(VoiceService speech, String level)
       : _speech = speech,
+        level = level,
         super(VoiceInitial(
           hasSpeech: false,
           logEvents: false,
@@ -79,13 +82,20 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     String lastWords = '';
     List<SpeechRecognitionWords> alternates = [];
     bool isListening = false;
-    String question = _speech.displayText();
+    String question = _speech.displayText(level);
     _speech.question = question;
+
     statusListener(String status) {
       _logEvent(
           'Received listener status: $status, listening: ${_speech.speech.isListening}');
+      print("I'm at the status listener");
       // event.listeningUpdate(_speech.lastWords, _speech.alternates,
       //     _speech.speech.isListening, _speech.question);
+    }
+
+    onError(String test) {
+      print("there was an error");
+      event.listeningUpdate(' ', alternates, false, _speech.question);
     }
 
     try {
@@ -101,6 +111,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
             question: _speech.question);
         yield VoiceLanguage(currentLocaleId: 'is_IS');
       }
+      print("was there a speech?");
     } catch (e) {
       yield VoiceFailure(error: e);
     }
@@ -113,22 +124,25 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
+    print("THERE WAS AN FAILURE");
     yield VoiceFailure(error: event.error);
   }
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     _logEvent('start listening');
-    _speech.lastWords = ' ';
+    // _speech.lastWords = ' ';
     _speech.alternates = [];
+    _speech.isListening = true;
+
     // String lastWords = '';
     // List<SpeechRecognitionWords> alternates = [];
     // bool isListening = false;
 
-    // yield UpdateState(
-    //     lastWords: ' ',
-    //     alternates: _speech.alternates,
-    //     isListening: _speech.speech.isListening,
-    //     question: _speech.question);
+    yield UpdateState(
+        lastWords: ' ',
+        alternates: _speech.alternates,
+        isListening: true,
+        question: _speech.question);
 
     // Note that `listenFor` is the maximum, not the minimun, on some
     // recognition will be stopped before this value is reached.
@@ -147,26 +161,63 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         _speech.lastWords = _speech.bestLastWord(
             _speech.lastWords, _speech.question, _speech.alternates);
 
-        bool isCorrect =
+        Map<String, Object> points =
             _speech.checkAnswer(_speech.lastWords, _speech.question);
+        double finalPoints = points['points'];
+        _speech.points = finalPoints;
+        _speech.questionMap = points['questionMap'];
+        _speech.answerMap = points['answerMap'];
+        _speech.questionArr = points['questionArr'];
+        _speech.answerArr = points['answerArr'];
 
-        if (isCorrect) {
-          _speech.calc.correct++;
+        print("answerMAp = ${_speech.answerMap}");
+
+        // the trys are each word
+        _speech.calc.trys += _speech.questionArr.length;
+        _speech.calc.correct += points['correct'];
+
+        bool onePoint = (finalPoints <= 0.2);
+        bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
+        bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
+        bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
+        bool fivePoints = (finalPoints > 0.8);
+
+        if (fivePoints) {
+          print("five Points");
         }
-        _speech.calc.trys++;
-        event.checkAnswer(isCorrect, !isCorrect, _speech.calc);
+        if (fourPoints) {
+          print("four Points");
+        }
+        if (threePoints) {
+          print("three Points");
+        }
+        if (twoPoints) {
+          print("Two Points");
+        }
+        if (onePoint) {
+          print("one Points");
+        }
+
+        event.checkAnswer(onePoint, twoPoints, threePoints, fourPoints,
+            fivePoints, _speech.calc);
       } else {
         event.listeningUpdate(_speech.lastWords, _speech.alternates,
             _speech.isListening, _speech.question);
       }
     }
 
-    _speech.speechListen(resultListener);
+    try {
+      _speech.speechListen(resultListener);
+    } catch (err) {
+      print("error = ${err}");
+
+      yield VoiceFailure(error: err);
+    }
     // yield NewQuestionState(question: _speech.question);
   }
 
   Stream<VoiceState> _mapNewQuestionEvent(NewQuestionEvent event) async* {
-    String question = _speech.displayText();
+    String question = _speech.displayText(level);
     _speech.question = question;
     yield NewQuestionState(question: question);
   }
@@ -188,67 +239,36 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
-    yield ScoreKeeper(add: event.add, remove: event.remove, calc: event.calc);
+    yield ScoreKeeper(
+        onePoint: event.onePoint,
+        twoPoints: event.twoPoints,
+        threePoints: event.threePoints,
+        fourPoints: event.fourPoints,
+        fivePoints: event.fivePoints,
+        calc: event.calc);
     await Future.delayed(Duration(milliseconds: 200));
-    String question = _speech.displayText();
+    String question = _speech.displayText(level);
     _speech.nextQuestion = question;
 
     // Getting the results ready
-    List<String> questionArr = _speech.question.split(' ');
-    List<String> answerArr = _speech.lastWords.split(' ');
-    Map<String, int> mapQuestion = {};
-    Map<String, int> mapAnswer = {};
-    List<bool> questionMap = [];
-    List<bool> answerMap = [];
+    List<String> questionArr = _speech.questionArr;
+    List<String> answerArr = _speech.answerArr;
+    List<bool> questionMap = _speech.questionMap;
+    List<bool> answerMap = _speech.answerMap;
 
-    // Creating hashmap of questions
-    for (var i = 0; i < questionArr.length; i++) {
-      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
-        mapQuestion[questionArr[i].toLowerCase()] += 1;
-      } else {
-        mapQuestion[questionArr[i].toLowerCase()] = 1;
-      }
-    }
-
-    // Creating hashmap of answers
-    for (var i = 0; i < answerArr.length; i++) {
-      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
-        mapAnswer[answerArr[i].toLowerCase()] += 1;
-      } else {
-        mapAnswer[answerArr[i].toLowerCase()] = 1;
-      }
-    }
-
-    // Creating colorBoard for questions
-    /* TODO  IF A WORD IS DUPLICATE */
-    for (var i = 0; i < questionArr.length; i++) {
-      if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
-        questionMap.add(true);
-      } else {
-        questionMap.add(false);
-      }
-    }
-
-    // Creating colorBoard for answers
-    /* TODO  IF A WORD IS DUPLICATE */
-
-    for (var i = 0; i < answerArr.length; i++) {
-      if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
-        answerMap.add(true);
-      } else {
-        answerMap.add(false);
-      }
-    }
-
-    // Displaying results for 2 seconds
+    print("THIS IS THE QUESTIONARR ${questionArr}");
     yield ShowResultState(
         questionArr: questionArr,
         answerArr: answerArr,
         questionMap: questionMap,
         answerMap: answerMap);
-    await Future.delayed(Duration(milliseconds: 5000));
+    await Future.delayed(Duration(milliseconds: 3000));
 
     _speech.question = _speech.nextQuestion;
+    _speech.questionMap = [];
+    _speech.answerMap = [];
+    _speech.questionArr = [];
+    _speech.answerArr = [];
     yield NewQuestionState(question: _speech.question);
   }
 

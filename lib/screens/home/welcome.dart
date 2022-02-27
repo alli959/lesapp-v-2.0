@@ -112,7 +112,7 @@ class Welcome extends StatelessWidget {
 
                                     Navigator.of(context)
                                         .pushNamedAndRemoveUntil(
-                                            LvlTwoChoose.id,
+                                            LvlOneChoose.id,
                                             (Route<dynamic> route) => false);
                                   },
                                 ),

@@ -163,12 +163,31 @@ class ShowResultState extends VoiceState {
 }
 
 class ScoreKeeper extends VoiceState {
-  final bool add;
-  final bool remove;
-  final TotalPoints calc;
+  final bool onePoint;
+  final bool twoPoints;
+  final bool threePoints;
+  final bool fourPoints;
+  final bool fivePoints;
+  TotalPoints calc;
 
-  ScoreKeeper({this.add, this.remove, this.calc});
+  ScoreKeeper(
+      {this.onePoint,
+      this.twoPoints,
+      this.threePoints,
+      this.fourPoints,
+      this.fivePoints,
+      this.calc});
 
   @override
-  List<Object> get props => [add, remove, calc];
+  List<Object> get props =>
+      [onePoint, twoPoints, threePoints, fourPoints, fivePoints, calc];
+}
+
+class CorrectAnimation extends VoiceState {
+  final List<Widget> animation;
+
+  CorrectAnimation({this.animation});
+
+  @override
+  List<Object> get props => [animation];
 }

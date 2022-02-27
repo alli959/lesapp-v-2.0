@@ -82,12 +82,22 @@ class NewQuestionEvent extends VoiceEvent {
 }
 
 class ScoreKeeperEvent extends VoiceEvent {
-  final bool add;
-  final bool remove;
+  final bool onePoint;
+  final bool twoPoints;
+  final bool threePoints;
+  final bool fourPoints;
+  final bool fivePoints;
   final TotalPoints calc;
 
-  ScoreKeeperEvent({this.add, this.remove, this.calc});
+  ScoreKeeperEvent(
+      {this.onePoint,
+      this.twoPoints,
+      this.threePoints,
+      this.fourPoints,
+      this.fivePoints,
+      this.calc});
 
   @override
-  List<Object> get props => [add, remove, calc];
+  List<Object> get props =>
+      [onePoint, twoPoints, threePoints, fourPoints, fivePoints, calc];
 }
