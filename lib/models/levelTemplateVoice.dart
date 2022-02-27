@@ -45,8 +45,7 @@ class LevelTemplateVoice extends StatelessWidget {
     for (var i = 0; i < arr.length; i++) {
       map[i]
           ? resultTextMap.add(TextSpan(
-              text: "${arr[i]} ",
-              style: TextStyle(color: Colors.greenAccent[400])))
+              text: "${arr[i]} ", style: TextStyle(color: Colors.greenAccent)))
           : resultTextMap.add(TextSpan(
               text: "${arr[i]} ", style: TextStyle(color: Colors.red)));
     }
@@ -92,6 +91,8 @@ class LevelTemplateVoice extends StatelessWidget {
                     builder: (context, state) {
                       if (state is NewQuestionState) {
                         print(
+                            "VOICEBLOC STATE AFTER NEW QUESTION STATE ${_voiceBloc.state}");
+                        print(
                             "QUESTION FROM NEW QUESTION STATE ${state.question}");
                         return QuestionCard(
                           cardChild: RichText(
@@ -115,6 +116,8 @@ class LevelTemplateVoice extends StatelessWidget {
                           ),
                         );
                       } else if (state is ShowResultState) {
+                        print(
+                            "VOICEBLOC STATE AFTER ShowResultState ${_voiceBloc.state}");
                         return QuestionCard(
                           cardChild: RichText(
                             textAlign: TextAlign.center,
@@ -134,7 +137,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                   ],
                                 ),
                                 children: getResultText(
-                                    state.questionArr, state.questionMap)),
+                                    state.answerArr, state.answerMap)),
                           ),
                         );
                       }
@@ -174,6 +177,8 @@ class LevelTemplateVoice extends StatelessWidget {
                   child: BlocBuilder<VoiceBloc, VoiceState>(
                     builder: (context, state) {
                       if (state is ShowResultState) {
+                        print(
+                            "VOICEBLOC STATE AFTER ShowResultState ${_voiceBloc}");
                         return QuestionCard(
                           cardChild: RichText(
                             textAlign: TextAlign.center,
@@ -193,7 +198,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                   ],
                                 ),
                                 children: getResultText(
-                                    state.answerArr, state.answerMap)),
+                                    state.questionArr, state.questionMap)),
                           ),
                         );
                       }
@@ -222,6 +227,23 @@ class LevelTemplateVoice extends StatelessWidget {
               ],
             ),
           ),
+
+          // // animation
+          // Expanded(
+          //   child: Stack(
+          //     children: [
+          //       BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
+          //         if (state is CorrectAnimation) {
+          //           print("CORRECTANIMATION");
+          //           return Stack(children: state.animation);
+          //         }
+          //         return Padding(
+          //             padding: const EdgeInsets.all(8.0),
+          //             child: SizedBox.shrink());
+          //       }),
+          //     ],
+          //   ),
+          // ),
           Column(
             children: [
               Row(
@@ -236,7 +258,7 @@ class LevelTemplateVoice extends StatelessWidget {
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
                         cardChild: Text(
-                          'RÉTT :  ' + correct + ' af ' + trys.toString(),
+                          'Rétt Orð:  ' + correct + ' af ' + trys.toString(),
                           style: correctTrys,
                         ),
                       ),

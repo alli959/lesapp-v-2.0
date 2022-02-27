@@ -22,11 +22,14 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+
+
 android {
-    compileSdkVersion 28
+    compileSdkVersion 31
 
     lintOptions {
         disable 'InvalidPackage'
@@ -35,10 +38,18 @@ android {
     defaultConfig {
         applicationId "thuri.Lesaforrit"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 31
         multiDexEnabled true  // bætti við ut af error
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     buildTypes {
@@ -56,4 +67,6 @@ flutter {
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.0.0')
     implementation 'com.android.support:multidex:1.0.3'  // bætti v. utaf error
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
 }

@@ -30,6 +30,7 @@ dependencies:
   rflutter_alert: ^1.0.2
   flutter_aws_s3_client: ^0.6.0
   speech_to_text: ^5.1.1
+  flutter_sound_lite: ^8.5.0
 
 dev_dependencies:
   auto_size_text: ^2.1.0
@@ -61,3 +62,6 @@ flutter:
         - asset: fonts/Metropolis-RegularItalic.otf
         - asset: fonts/Metropolis-SemiBold.otf
         - asset: fonts/Metropolis-Thin.otf
+    - family: MyCustomFlutterApp
+      fonts:
+        - asset: assets/icons/MyCustomFlutterApp.ttf

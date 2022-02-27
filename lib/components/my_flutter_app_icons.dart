@@ -11,7 +11,7 @@
 ///      fonts:
 ///       - asset: fonts/MyFlutterApp.ttf
 ///
-/// 
+///
 /// * Elusive, Copyright (C) 2013 by Aristeides Stathopoulos
 ///         Author:    Aristeides Stathopoulos
 ///         License:   SIL (http://scripts.sil.org/OFL)
@@ -27,8 +27,19 @@ class MyFlutterApp {
   MyFlutterApp._();
 
   static const _kFontFam = 'MyFlutterApp';
+  static const _customkFontFam = 'MyCustomFlutterApp';
   static const _kFontPkg = null;
 
-  static const IconData home = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData user = IconData(0xf007, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData home =
+      IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData user =
+      IconData(0xf007, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData onepoint =
+      IconData(0xe800, fontFamily: _customkFontFam, fontPackage: _kFontPkg);
+  static const IconData twopoints =
+      IconData(0xe801, fontFamily: _customkFontFam, fontPackage: _kFontPkg);
+  static const IconData threepoints =
+      IconData(0xe802, fontFamily: _customkFontFam, fontPackage: _kFontPkg);
+  static const IconData fourpoints =
+      IconData(0xe803, fontFamily: _customkFontFam, fontPackage: _kFontPkg);
 }
