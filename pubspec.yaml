@@ -32,6 +32,7 @@ dependencies:
   speech_to_text: ^5.1.1
   flutter_sound_lite: ^8.5.0
   http: ^0.13.4
+  flutter_cache_manager: ^3.3.0
 
 dev_dependencies:
   auto_size_text: ^2.1.0

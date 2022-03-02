@@ -7,6 +7,7 @@ import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_short.dart';
+import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo_short.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
@@ -41,7 +42,7 @@ class QuizPage extends StatefulWidget {
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
   Letters letters = Letters();
-  QuizBrainLvlThreeShort quizBrain = QuizBrainLvlThreeShort();
+  QuizBrainLvlThreeEasy quizBrain = QuizBrainLvlThreeEasy();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -61,6 +62,8 @@ class _QuizPageState extends State<QuizPage> {
   String upperLetterImage = 'assets/images/empty.png';
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
+  String typeofgame = 'sentences';
+  String typeofdifficulty = 'easy'; // change depending on player skill
   Color letterColorOne = Colors.black;
   Color letterColorTwo = Colors.black;
 
@@ -73,7 +76,7 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void sound() {
+  void sound() async {
     if (!started) {
       setState(() {
         letterOne = quizBrain.getQuestionText1();
@@ -189,6 +192,7 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    quizBrain.getData();
     return LevelTemplate(
         fontSize: 39,
         shadowLevel: 30,

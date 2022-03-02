@@ -2,6 +2,9 @@ import 'dart:convert';
 // import 'package:projectPath/model/product.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/data.dart';
+import 'dart:convert' show utf8;
+
 class GetData {
   String typeofgame;
   String typeofdifficulty;
@@ -11,17 +14,23 @@ class GetData {
     this.typeofdifficulty = typeofdifficulty;
   }
 
-  Future<List<Object>> getProducts() async {
+  Future<List<Data>> getData() async {
     var url = Uri.https(
-        'www.si7jh53lg1.execute-api.eu-west-1.amazonaws.com',
-        '/dev/get',
-        {typeofgame: this.typeofgame, typeofdifficulty: this.typeofdifficulty});
-    // var url = Uri.parse(
-    //     'https://si7jh53lg1.execute-api.eu-west-1.amazonaws.com/dev/get');
-    return http.get(url).then((http.Response response) {
+        'si7jh53lg1.execute-api.eu-west-1.amazonaws.com', '/dev/get', {
+      "typeofgame": this.typeofgame,
+      "typeofdifficulty": this.typeofdifficulty
+    });
+    return await http.get(url, headers: {
+      "Content-Type": 'application/json',
+      "charset": "utf-8"
+    }).then((http.Response response) {
+      print("response is ${response.body}");
       final int statusCode = response.statusCode;
       if (statusCode == 200) {
-        final temp = json.decode(response.body);
+        Iterable l = json.fuse(utf8).decode(response.bodyBytes);
+        List<Data> temp =
+            List<Data>.from(l.map((model) => Data.fromJson(model)));
+        print("temp is $temp");
 
         return temp;
       }
