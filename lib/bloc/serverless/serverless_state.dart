@@ -12,11 +12,10 @@ class ServerlessLoading extends ServerlessState {}
 class ServerlessFailure extends ServerlessState {}
 
 class ServerlessFetch extends ServerlessState {
-  String typeofgame = "sentences";
-  String typeofgamedifficulty = "easy";
+  final List<Question> questionBank;
 
-  ServerlessFetch({@required this.typeofgame, this.typeofgamedifficulty});
+  ServerlessFetch({@required this.questionBank});
 
   @override
-  List<Object> get props => [typeofgame, typeofgamedifficulty];
+  List<Object> get props => [questionBank];
 }

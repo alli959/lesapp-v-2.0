@@ -14,6 +14,11 @@ class GetData {
     this.typeofdifficulty = typeofdifficulty;
   }
 
+  void setData(String typeofgame, String typeofdifficutly) {
+    this.typeofgame = typeofgame;
+    this.typeofdifficulty = typeofdifficutly;
+  }
+
   Future<List<Data>> getData() async {
     var url = Uri.https(
         'si7jh53lg1.execute-api.eu-west-1.amazonaws.com', '/dev/get', {

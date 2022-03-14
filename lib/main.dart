@@ -1,7 +1,9 @@
+import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/screens/level_one_voice.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
 import 'package:Lesaforrit/screens/level_two_voice.dart';
+import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
@@ -88,6 +90,9 @@ void main() async {
         }),
         RepositoryProvider<VoiceService>(create: (context) {
           return VoiceService(speech: speech, context: context);
+        }),
+        RepositoryProvider<GetData>(create: (context) {
+          return GetData("sentences", "easy");
         }),
       ],
       child: BlocProvider<AuthenticationBloc>(

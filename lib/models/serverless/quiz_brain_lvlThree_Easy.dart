@@ -27,7 +27,10 @@ class QuizBrainLvlThreeEasy {
   String typeofgame = "sentences";
   String typeofgamedifficulty = "easy";
   GetData getdata;
-  List<Question> _questionBank = [];
+  List<Question> _questionBank = [
+    Question('Lítil græn eðla', true, 'soundLevelThree/short/04.mp3'),
+    Question('Ási hjólar hratt', true, 'soundLevelThree/short/05.mp3'),
+  ];
   Stream<FileResponse> fileStream;
 
   void addCache(url) async {
@@ -35,32 +38,43 @@ class QuizBrainLvlThreeEasy {
     print(fileStream);
   }
 
-  void getData() async {
-    if (this.data.length > 0) {
-      return;
-    }
-    this.getdata = GetData(this.typeofgame, this.typeofgamedifficulty);
-    List<Data> data = await getdata.getData();
-    this.data = data;
-
-    for (var i = 0; i < data.length; i++) {
-      Data value = data[i];
-      List<int> textEncode = utf8.encode(value.Text);
-      String textDecode = utf8.decode(textEncode);
-      print("data Text is ${textDecode}");
-      Question question = Question(textDecode, true, value.Dora);
-      _questionBank.add(question);
-    }
+  void addData(List<Question> questionbank) {
+    this._questionBank = questionbank;
   }
+  // void getData() async {
+  //   if (this.data.length > 0) {
+  //     return;
+  //   }
+  //   this.getdata = GetData(this.typeofgame, this.typeofgamedifficulty);
+  //   List<Data> data = await getdata.getData();
+  //   this.data = data;
+
+  //   for (var i = 0; i < data.length; i++) {
+  //     Data value = data[i];
+  //     List<int> textEncode = utf8.encode(value.Text);
+  //     String textDecode = utf8.decode(textEncode);
+  //     print("data Text is ${textDecode}");
+  //     Question question = Question(textDecode, true, value.Dora);
+  //     _questionBank.add(question);
+  //   }
+  // }
 
   // Hljóð prufa
 
   // H L J Ó Ð
   Future<AudioPlayer> playLocalAsset() async {
     if (whichSound == 1) {
-      await player.play(sound1, isLocal: false);
+      try {
+        await player.play(sound1, isLocal: false);
+      } catch (err) {
+        print("there was an error playing sound $err");
+      }
     } else {
-      await player.play(sound2, isLocal: false);
+      try {
+        await player.play(sound2, isLocal: false);
+      } catch (err) {
+        print("there was an error playing sound $err");
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
@@ -9,32 +10,41 @@ import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_short.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo_short.dart';
+import 'package:Lesaforrit/services/get_data.dart';
+import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/shared/constants.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'level_three_short_finish.dart';
 
 // B O R D  E I T T
 class LevelThreeShort extends StatelessWidget {
   static const String id = 'level_three_short';
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: guli,
-        title: Text('Stuttar setningar'),
-      ),
-      endDrawer: SideMenu(),
-      body: QuizPage(),
-    );
+    return BlocProvider<ServerlessBloc>(
+        create: (context) {
+          final _data = RepositoryProvider.of<GetData>(context);
+          return ServerlessBloc(_data, 'sentences', 'easy')..add(FetchEvent());
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: guli,
+            title: Text('Stuttar setningar'),
+          ),
+          endDrawer: SideMenu(),
+          body: QuizPage(),
+        ));
   }
 }
 
 class QuizPage extends StatefulWidget {
+  QuizPage({Key key}) : super(key: key);
+
   @override
   _QuizPageState createState() => _QuizPageState();
 }
@@ -192,50 +202,113 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    quizBrain.getData();
-    return LevelTemplate(
-        fontSize: 39,
-        shadowLevel: 30,
-        cardColor: cardColorLvlThree,
-        stigColor: lightBlue,
-        soundCircleSize: soundCircleSize,
-        soundPad: soundPad,
-        soundPadBottom: soundPadBottom,
-        soundIconSize: soundIconSize,
-        enabled: enabled,
-        onPressed: !enabled ? null : () => sound(),
-        upperLetterImage: upperLetterImage,
-        lowerLetterImage: lowerLetterImage,
-        letterOne: letterOne,
-        letterTwo: letterTwo,
-        onPress: !qEnabled
-            ? null
-            : () {
-                check(true);
-                Future.delayed(const Duration(milliseconds: 1400), () {
-                  setState(() {
-                    checkAnswer(true);
+    final _serverlessBloc = BlocProvider.of<ServerlessBloc>(context);
+    // _serverlessBloc
+    //     .add(FetchEvent(typeofgame: "sentences", typeofgamedifficulty: "easy"));
+
+    // getter() {
+    //   _serverlessBloc.add(FetchEvent());
+    // }
+
+    return BlocBuilder<ServerlessBloc, ServerlessState>(
+        builder: (context, state) {
+      if (state is ServerlessLoading) {
+        print("loading going on");
+        return Loading();
+      }
+      if (state is ServerlessFetch) {
+        print("state is serverlessfetch");
+        quizBrain.addData(state.questionBank);
+        return (LevelTemplate(
+            fontSize: 39,
+            shadowLevel: 30,
+            cardColor: cardColorLvlThree,
+            stigColor: lightBlue,
+            soundCircleSize: soundCircleSize,
+            soundPad: soundPad,
+            soundPadBottom: soundPadBottom,
+            soundIconSize: soundIconSize,
+            enabled: enabled,
+            onPressed: !enabled ? null : () => sound(),
+            upperLetterImage: upperLetterImage,
+            lowerLetterImage: lowerLetterImage,
+            letterOne: letterOne,
+            letterTwo: letterTwo,
+            onPress: !qEnabled
+                ? null
+                : () {
+                    check(true);
+                    Future.delayed(const Duration(milliseconds: 1400), () {
+                      setState(() {
+                        checkAnswer(true);
+                      });
+                    });
+                  },
+            onPress2: !qEnabled
+                ? null
+                : () {
+                    check(false);
+                    Future.delayed(const Duration(milliseconds: 1400), () {
+                      setState(() {
+                        checkAnswer(false);
+                      });
+                    });
+                  },
+            scoreKeeper: scoreKeeper,
+            trys: calc.trys.toString(),
+            correct: calc.correct.toString(),
+            bottomBar: BottomBar(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                image: 'assets/images/bottomBar_bl.png'),
+            stig: play() + calc.checkPoints(calc.correct, calc.trys)));
+      }
+      print("state is neither serverlessfetch nor loading");
+      return (LevelTemplate(
+          fontSize: 39,
+          shadowLevel: 30,
+          cardColor: cardColorLvlThree,
+          stigColor: lightBlue,
+          soundCircleSize: soundCircleSize,
+          soundPad: soundPad,
+          soundPadBottom: soundPadBottom,
+          soundIconSize: soundIconSize,
+          enabled: enabled,
+          onPressed: !enabled ? null : () => sound(),
+          upperLetterImage: upperLetterImage,
+          lowerLetterImage: lowerLetterImage,
+          letterOne: letterOne,
+          letterTwo: letterTwo,
+          onPress: !qEnabled
+              ? null
+              : () {
+                  check(true);
+                  Future.delayed(const Duration(milliseconds: 1400), () {
+                    setState(() {
+                      checkAnswer(true);
+                    });
                   });
-                });
-              },
-        onPress2: !qEnabled
-            ? null
-            : () {
-                check(false);
-                Future.delayed(const Duration(milliseconds: 1400), () {
-                  setState(() {
-                    checkAnswer(false);
+                },
+          onPress2: !qEnabled
+              ? null
+              : () {
+                  check(false);
+                  Future.delayed(const Duration(milliseconds: 1400), () {
+                    setState(() {
+                      checkAnswer(false);
+                    });
                   });
-                });
+                },
+          scoreKeeper: scoreKeeper,
+          trys: calc.trys.toString(),
+          correct: calc.correct.toString(),
+          bottomBar: BottomBar(
+              onTap: () {
+                Navigator.pop(context);
               },
-        scoreKeeper: scoreKeeper,
-        trys: calc.trys.toString(),
-        correct: calc.correct.toString(),
-        bottomBar: BottomBar(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            image: 'assets/images/bottomBar_bl.png'),
-        stig: play() + calc.checkPoints(calc.correct, calc.trys));
+              image: 'assets/images/bottomBar_bl.png'),
+          stig: play() + calc.checkPoints(calc.correct, calc.trys)));
+    });
   }
 }
