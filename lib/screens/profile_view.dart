@@ -6,6 +6,9 @@ import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/user/authentication_bloc.dart';
 
 class ProfileView extends StatelessWidget {
   static const String id = 'profile view';
@@ -32,11 +35,18 @@ class ProfileView extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              width:
-                  MediaQuery.of(context).size.width, // ætti að miðjusetja allt
-              // height: MediaQuery.of(context).size.height,
-              child: MyProfile(),
-            ),
+                width: MediaQuery.of(context)
+                    .size
+                    .width, // ætti að miðjusetja allt
+                // height: MediaQuery.of(context).size.height,
+                child: BlocProvider<AuthenticationBloc>(
+                  create: (context) {
+                    final _authService =
+                        RepositoryProvider.of<AuthService>(context);
+                    return AuthenticationBloc(_authService)..add(GetUid());
+                  },
+                  child: MyProfile(),
+                )),
           ),
         ],
       ),

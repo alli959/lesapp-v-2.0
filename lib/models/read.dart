@@ -1,25 +1,31 @@
 class Read {
   final String name;
-  final String score;
-  final String scoreCaps;
-  final String scoreTwo;
-  final String scoreTwoLong;
-  final String scoreThree;
-  final String scoreThreeLong;
   final String age;
   final String readingStage;
+  final String lvlOneCapsScore;
+  final String lvlOneScore;
+  final String lvlOneVoiceScore;
+  final String lvlThreeEasyScore;
+  final String lvlThreeMediumScore;
+  final String lvlThreeVoiceScore;
+  final String lvlTwoEasyScore;
+  final String lvlTwoMediumScore;
+  final String lvlTwoVoiceScore;
   final double totalpoints;
 
   Read({
     this.name,
-    this.score,
-    this.scoreCaps,
-    this.scoreTwo,
-    this.scoreTwoLong,
-    this.scoreThree,
-    this.scoreThreeLong,
     this.age,
     this.readingStage,
+    this.lvlOneCapsScore,
+    this.lvlOneScore,
+    this.lvlOneVoiceScore,
+    this.lvlThreeEasyScore,
+    this.lvlThreeMediumScore,
+    this.lvlThreeVoiceScore,
+    this.lvlTwoEasyScore,
+    this.lvlTwoMediumScore,
+    this.lvlTwoVoiceScore,
     this.totalpoints,
   });
 }

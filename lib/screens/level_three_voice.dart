@@ -7,6 +7,7 @@ import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
+import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -46,7 +47,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   Letters letters = Letters();
-  QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
+  QuizBrainLvlThreeVoice quizBrain = QuizBrainLvlThreeVoice();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -184,6 +185,7 @@ class _QuizPageState extends State<QuizPage> {
 
             if (state is ScoreKeeper) {
               print("VOICEBLOC STATE AFTER ScoreKeeper ${_voiceBloc.state}");
+              quizBrain.stars++;
 
               calc = state.calc;
               if (state.fivePoints) {
@@ -221,6 +223,19 @@ class _QuizPageState extends State<QuizPage> {
                 if (scoreKeeper.isNotEmpty) {
                   scoreKeeper.removeLast();
                 }
+              }
+              if (quizBrain.isFinished()) {
+                Timer(Duration(seconds: 1), () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ThreeVoiceFinish(
+                        stig: (calc.calculatePoints(calc.correct, calc.trys)) *
+                            100,
+                      ),
+                    ),
+                  );
+                });
               }
               // if (state.remove) {
               //   print("SCOREKEEPER REMOVE");

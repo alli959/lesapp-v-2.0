@@ -100,8 +100,8 @@ class LevelFin extends StatelessWidget {
         if (snapshot.hasData) {
           UserData userData = snapshot.data;
           double stigamet = stig;
-          if (double.parse(userData.scoreCaps) > stigamet) {
-            stigamet = double.parse(userData.scoreCaps);
+          if (double.parse(userData.lvlTwoEasyScore) > stigamet) {
+            stigamet = double.parse(userData.lvlTwoEasyScore);
             highestScore = '';
           }
           return finish.FinishMethod(

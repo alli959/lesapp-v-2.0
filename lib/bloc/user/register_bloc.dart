@@ -34,14 +34,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           event.email,
           event.password,
           event.name,
-          event.score,
-          event.scoreCaps,
           event.age,
           event.readingStage,
-          event.scoreTwo,
-          event.scoreTwoLong,
-          event.scoreThree,
-          event.scoreThreeLong);
+          event.lvlOneCapsScore,
+          event.lvlOneScore,
+          event.lvlOneVoiceScore,
+          event.lvlThreeEasyScore,
+          event.lvlThreeMediumScore,
+          event.lvlThreeVoiceScore,
+          event.lvlTwoEasyScore,
+          event.lvlTwoMediumScore,
+          event.lvlTwoVoiceScore);
 
       if (usr != null) {
         _authenticationBloc.add(UserRegister(usr: usr));

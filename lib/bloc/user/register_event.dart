@@ -11,12 +11,15 @@ class RegisterWithEmailButtonPressed extends RegisterEvent {
   final String name;
   final String age;
   final String readingStage;
-  final String score = '0';
-  final String scoreCaps = '0';
-  final String scoreTwo = '0';
-  final String scoreTwoLong = '0';
-  final String scoreThree = '0';
-  final String scoreThreeLong = '0';
+  final String lvlOneCapsScore = '0';
+  final String lvlOneScore = '0';
+  final String lvlOneVoiceScore = '0';
+  final String lvlThreeEasyScore = '0';
+  final String lvlThreeMediumScore = '0';
+  final String lvlThreeVoiceScore = '0';
+  final String lvlTwoEasyScore = '0';
+  final String lvlTwoMediumScore = '0';
+  final String lvlTwoVoiceScore = '0';
 
   RegisterWithEmailButtonPressed(
       {@required this.email,
@@ -32,11 +35,14 @@ class RegisterWithEmailButtonPressed extends RegisterEvent {
         name,
         age,
         readingStage,
-        score,
-        scoreCaps,
-        scoreTwo,
-        scoreTwoLong,
-        scoreThree,
-        scoreThreeLong,
+        lvlOneCapsScore,
+        lvlOneScore,
+        lvlOneVoiceScore,
+        lvlThreeEasyScore,
+        lvlThreeMediumScore,
+        lvlThreeVoiceScore,
+        lvlTwoEasyScore,
+        lvlTwoMediumScore,
+        lvlTwoVoiceScore,
       ];
 }

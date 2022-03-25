@@ -26,6 +26,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // }
 
 class Authenticate extends StatelessWidget {
+  static const String id = 'Authenticate';
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(

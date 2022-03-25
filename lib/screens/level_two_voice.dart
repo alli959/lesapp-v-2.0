@@ -46,7 +46,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   Letters letters = Letters();
-  QuizBrainLvlThree quizBrain = QuizBrainLvlThree();
+  QuizBrainLvlThreeVoice quizBrain = QuizBrainLvlThreeVoice();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();

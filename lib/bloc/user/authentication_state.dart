@@ -44,3 +44,12 @@ class AuthenticationFailure extends AuthenticationState {
   @override
   List<Object> get props => [message];
 }
+
+class UserUid extends AuthenticationState {
+  final String uid;
+
+  UserUid({@required this.uid});
+
+  @override
+  List<Object> get props => [uid];
+}

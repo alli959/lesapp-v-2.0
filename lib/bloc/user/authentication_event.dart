@@ -32,3 +32,5 @@ class UserRegister extends AuthenticationEvent {
 class LoginScreenToggle extends AuthenticationEvent {}
 
 class RegisterScreenToggle extends AuthenticationEvent {}
+
+class GetUid extends AuthenticationEvent {}

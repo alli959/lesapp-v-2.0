@@ -37,9 +37,9 @@ class VoiceService {
 
   TotalPoints calc = TotalPoints();
 
-  QuizBrainLvlThree quizBrainLvlThree = QuizBrainLvlThree();
-  QuizBrainLvlTwo quizBrainLvlTwo = QuizBrainLvlTwo();
-  QuizBrainLvlOne quizBrainLvlOne = QuizBrainLvlOne();
+  QuizBrainLvlThreeVoice quizBrainLvlThree = QuizBrainLvlThreeVoice();
+  QuizBrainLvlTwoVoice quizBrainLvlTwo = QuizBrainLvlTwoVoice();
+  QuizBrainLvlOneVoice quizBrainLvlOne = QuizBrainLvlOneVoice();
 
   Function onError;
 
@@ -210,6 +210,19 @@ class VoiceService {
 
       return alternates[closestIndex].recognizedWords;
     }
+  }
+
+  void reset() {
+    lastWords = ' ';
+    lastError = ' ';
+    lastStatus = ' ';
+    question = ' ';
+    nextQuestion = ' ';
+    points = 0;
+    questionMap = [];
+    answerMap = [];
+    questionArr = [];
+    answerArr = [];
   }
 }
 

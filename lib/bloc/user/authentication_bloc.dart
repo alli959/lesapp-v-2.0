@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../models/read.dart';
+
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
@@ -36,6 +38,12 @@ class AuthenticationBloc
     }
     if (event is LoginScreenToggle) {
       yield* _mapLoginScreenState(event);
+    }
+    if (event is GetUid) {
+      yield* _mapGetUidToState(event);
+    }
+    if (event is GetUid) {
+      yield* _mapGetUidToState(event);
     }
     if (event is RegisterScreenToggle) {
       yield* _mapRegisterScreenState(event);
@@ -86,5 +94,20 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapRegisterScreenState(
       RegisterScreenToggle event) async* {
     yield RegisterScreen();
+  }
+
+  Stream<AuthenticationState> _mapGetUidToState(GetUid event) async* {
+    yield AuthenticationLoading();
+    try {
+      await Future.delayed(Duration(milliseconds: 500));
+      final currentUser = await _authService.getCurrentUser();
+      if (currentUser != null) {
+        final uid = await _authService.getCurrentUserID();
+        yield UserUid(uid: uid);
+      }
+    } on FirebaseAuthException catch (e) {
+      yield AuthenticationFailure(
+          message: e.message ?? 'An unknown error occurred');
+    }
   }
 }

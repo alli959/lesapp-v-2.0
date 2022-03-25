@@ -7,7 +7,6 @@ import 'package:Lesaforrit/screens/home/read_tile.dart';
 import 'package:Lesaforrit/screens/home/score_chart.dart';
 import 'package:Lesaforrit/screens/home/user_list.dart';
 import 'package:Lesaforrit/screens/home/welcome.dart';
-import 'package:Lesaforrit/screens/level_finish.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
 import 'package:Lesaforrit/screens/level_one_cap.dart';
 import 'package:Lesaforrit/screens/level_one_caps_finish.dart';

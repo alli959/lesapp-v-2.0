@@ -17,7 +17,7 @@ class UserDataUpdate extends DatabaseState {
 }
 
 class UserScoreUpdate extends DatabaseState {
-  final UserData userData;
+  final Stream<UserData> userData;
 
   UserScoreUpdate({@required this.userData});
 
@@ -30,3 +30,21 @@ class DatabaseUnitialized extends DatabaseState {}
 class DatabaseLoading extends DatabaseState {}
 
 class DatabaseFailure extends DatabaseState {}
+
+class UserDataState extends DatabaseState {
+  final Stream<UserData> userdata;
+
+  UserDataState({@required this.userdata});
+
+  @override
+  List<Object> get props => [userdata];
+}
+
+class UsersState extends DatabaseState {
+  final Stream<List<Read>> users;
+
+  UsersState({@required this.users});
+
+  @override
+  List<Object> get props => [users];
+}

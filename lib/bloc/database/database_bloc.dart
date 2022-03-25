@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../../models/read.dart';
+
 part 'database_event.dart';
 part 'database_state.dart';
 
@@ -23,6 +25,12 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     if (event is UpdateUserScore) {
       yield* _mapUpdateUserScoreToState(event);
     }
+    if (event is GetUserData) {
+      yield* _mapUserDataToState(event);
+    }
+    if (event is GetUsers) {
+      yield* _mapUsersToState(event);
+    }
   }
 
   Stream<DatabaseState> _mapUpdateUserDataToState(UpdateUserData event) async* {
@@ -31,14 +39,17 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     try {
       dynamic userData = await _databaseService.updateUserData(
           event.name,
-          event.score,
-          event.scoreCaps,
           event.age,
           event.readingStage,
-          event.scoreTwo,
-          event.scoreTwoLong,
-          event.scoreThree,
-          event.scoreThreeLong);
+          event.lvlOneCapsScore,
+          event.lvlOneScore,
+          event.lvlOneVoiceScore,
+          event.lvlThreeEasyScore,
+          event.lvlThreeMediumScore,
+          event.lvlThreeVoiceScore,
+          event.lvlTwoEasyScore,
+          event.lvlTwoMediumScore,
+          event.lvlTwoVoiceScore);
 
       if (userData != null) {
         yield UserDataUpdate(userData: userData);
@@ -50,14 +61,35 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
 
   Stream<DatabaseState> _mapUpdateUserScoreToState(
       UpdateUserScore event) async* {
+    print("score in bloc is ${event.score}");
     yield DatabaseLoading();
 
     try {
-      dynamic userData = await _databaseService.updateUserScore(event.score);
+      await _databaseService.updateUserScore(event.score, event.typeof);
 
-      if (userData != null) {
-        yield UserScoreUpdate(userData: userData);
-      }
+      Stream<UserData> userData = _databaseService.userData;
+      yield UserScoreUpdate(userData: userData);
+    } catch (e) {
+      yield DatabaseFailure();
+    }
+  }
+
+  Stream<DatabaseState> _mapUserDataToState(GetUserData event) async* {
+    yield DatabaseLoading();
+
+    try {
+      Stream<UserData> userData = _databaseService.userData;
+      yield UserDataState(userdata: userData);
+    } catch (e) {
+      yield DatabaseFailure();
+    }
+  }
+
+  Stream<DatabaseState> _mapUsersToState(GetUsers event) async* {
+    yield DatabaseLoading();
+    try {
+      Stream<List<Read>> users = DatabaseService().users;
+      yield UsersState(users: users);
     } catch (e) {
       yield DatabaseFailure();
     }

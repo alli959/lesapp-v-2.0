@@ -58,14 +58,17 @@ class AuthService {
       String email,
       String password,
       String name,
-      String score,
-      String scoreCaps,
       String age,
       String readingStage,
-      String scoreTwo,
-      String scoreTwoLong,
-      String ScoreThree,
-      String ScoreThreeLong) async {
+      String lvlOneCapsScore,
+      String lvlOneScore,
+      String lvlOneVoiceScore,
+      String lvlThreeEasyScore,
+      String lvlThreeMediumScore,
+      String lvlThreeVoiceScore,
+      String lvlTwoEasyScore,
+      String lvlTwoMediumScore,
+      String lvlTwoVoiceScore) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -73,15 +76,19 @@ class AuthService {
 
       // create a new document for the user with the uid
       await DatabaseService(uid: user.uid).updateUserData(
-          name,
-          score,
-          scoreCaps,
-          age,
-          readingStage,
-          scoreTwo,
-          scoreTwoLong,
-          ScoreThree,
-          ScoreThreeLong);
+        name,
+        age,
+        readingStage,
+        lvlOneCapsScore,
+        lvlOneScore,
+        lvlOneVoiceScore,
+        lvlThreeEasyScore,
+        lvlThreeMediumScore,
+        lvlThreeVoiceScore,
+        lvlTwoEasyScore,
+        lvlTwoMediumScore,
+        lvlTwoVoiceScore,
+      );
 
       return _userFromFirebaseUser(user);
     } catch (e) {

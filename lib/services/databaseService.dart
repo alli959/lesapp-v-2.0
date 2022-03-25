@@ -14,53 +14,66 @@ class DatabaseService {
   //document er í auth // Þetta fall skrifar gildi í Firebase. Gildi í gæsalöppum verða að stemma
   Future updateUserData(
       String name,
-      String score,
-      String scoreCaps,
       String age,
       String readingStage,
-      String scoreTwo,
-      String scoreTwoLong,
-      String scoreThree,
-      String scoreThreeLong) async {
+      String lvlOneCapsScore,
+      String lvlOneScore,
+      String lvlOneVoiceScore,
+      String lvlThreeEasyScore,
+      String lvlThreeMediumScore,
+      String lvlThreeVoiceScore,
+      String lvlTwoEasyScore,
+      String lvlTwoMediumScore,
+      String lvlTwoVoiceScore) async {
     return await lesaCollection.doc(uid).set({
-      'age': age,
       'name': name,
+      'age': age,
       'readingStage': readingStage,
-      'score': score,
-      'scoreCaps': scoreCaps,
-      'scoreTwo': scoreTwo,
-      'scoreTwoLong': scoreTwoLong,
-      'scoreThree': scoreThree,
-      'scoreThreeLong': scoreThreeLong,
+      'lvlOneCapsScore': lvlOneCapsScore,
+      'lvlOneScore': lvlOneScore,
+      'lvlOneVoiceScore': lvlOneVoiceScore,
+      'lvlThreeEasyScore': lvlThreeEasyScore,
+      'lvlThreeMediumScore': lvlThreeMediumScore,
+      'lvlThreeVoiceScore': lvlThreeVoiceScore,
+      'lvlTwoEasyScore': lvlTwoEasyScore,
+      'lvlTwoMediumScore': lvlTwoMediumScore,
+      'lvlTwoVoiceScore': lvlTwoVoiceScore
     });
   }
 
   //document er í auth
-  Future updateUserScore(String score) async {
-    return await lesaCollection.doc(uid).set({
-      'score': score,
+  Future updateUserScore(String score, String typeof) async {
+    return await lesaCollection.doc(uid).update({
+      typeof: score,
     });
   }
 
   // read list from snapshot
   List<Read> _readListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((document) {
-      double totalpoints = double.parse(document['score']) +
-          double.parse(document['scoreTwo']) +
-          double.parse(document['scoreThree']) +
-          double.parse(document['scoreCaps']) +
-          double.parse(document['scoreTwoLong']) +
-          double.parse(document['scoreThreeLong']);
+      double totalpoints = double.parse(document['lvlOneCapsScore']) +
+          double.parse(document['lvlOneScore']) +
+          double.parse(document['lvlOneVoiceScore']) +
+          double.parse(document['lvlThreeEasyScore']) +
+          double.parse(document['lvlThreeMediumScore']) +
+          double.parse(document['lvlThreeVoiceScore']) +
+          double.parse(document['lvlTwoEasyScore']) +
+          double.parse(document['lvlTwoMediumScore']) +
+          double.parse(document['lvlTwoVoiceScore']);
+
       return Read(
         name: document['name'] ?? '',
-        score: document['score'] ?? '',
-        scoreCaps: document['scoreCaps'] ?? '',
-        scoreTwo: document['scoreTwo'] ?? '',
-        scoreTwoLong: document['scoreTwoLong'] ?? '',
-        scoreThree: document['scoreThree'] ?? '',
-        scoreThreeLong: document['scoreThreeLong'] ?? '',
         age: document['age'] ?? '',
         readingStage: document['readingStage'] ?? '',
+        lvlOneCapsScore: document['lvlOneCapsScore'] ?? '',
+        lvlOneScore: document['lvlOneScore'] ?? '',
+        lvlOneVoiceScore: document['lvlOneVoiceScore'] ?? '',
+        lvlThreeEasyScore: document['lvlThreeEasyScore'] ?? '',
+        lvlThreeMediumScore: document['lvlThreeMediumScore'] ?? '',
+        lvlThreeVoiceScore: document['lvlThreeVoiceScore'] ?? '',
+        lvlTwoEasyScore: document['lvlTwoEasyScore'] ?? '',
+        lvlTwoMediumScore: document['lvlTwoMediumScore'] ?? '',
+        lvlTwoVoiceScore: document['lvlTwoVoiceScore'] ?? '',
         totalpoints: totalpoints,
       );
     }).toList();
@@ -78,12 +91,15 @@ class DatabaseService {
         name: snapshot['name'],
         age: snapshot['age'],
         readingStage: snapshot['readingStage'],
-        score: snapshot['score'],
-        scoreCaps: snapshot['scoreCaps'],
-        scoreTwo: snapshot['scoreTwo'],
-        scoreTwoLong: snapshot['scoreTwoLong'],
-        scoreThree: snapshot['scoreThree'],
-        scoreThreeLong: snapshot['scoreThreeLong']);
+        lvlOneCapsScore: snapshot['lvlOneCapsScore'],
+        lvlOneScore: snapshot['lvlOneScore'],
+        lvlOneVoiceScore: snapshot['lvlOneVoiceScore'],
+        lvlThreeEasyScore: snapshot['lvlThreeEasyScore'],
+        lvlThreeMediumScore: snapshot['lvlThreeMediumScore'],
+        lvlThreeVoiceScore: snapshot['lvlThreeVoiceScore'],
+        lvlTwoEasyScore: snapshot['lvlTwoEasyScore'],
+        lvlTwoMediumScore: snapshot['lvlTwoMediumScore'],
+        lvlTwoVoiceScore: snapshot['lvlTwoVoiceScore']);
   }
 
   // Get user document

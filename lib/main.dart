@@ -12,7 +12,6 @@ import 'package:Lesaforrit/screens/authenticate/sign_in.dart';
 import 'package:Lesaforrit/screens/home/score_chart.dart';
 import 'package:Lesaforrit/models/set_score.dart';
 import 'package:Lesaforrit/screens/home/welcome.dart';
-import 'package:Lesaforrit/screens/level_finish.dart';
 import 'package:Lesaforrit/screens/level_one_cap.dart';
 import 'package:Lesaforrit/screens/level_one_caps_finish.dart';
 import 'package:Lesaforrit/screens/level_three.dart';
@@ -57,25 +56,6 @@ import 'package:flutter/foundation.dart';
 // }
 
 void main() async {
-  // S3 IMPORT
-  const region = "eu-west-1";
-  const bucketId = "lesapp-data";
-  final AwsS3Client s3client = AwsS3Client(
-      region: region,
-      host: "s3.$region.amazonaws.com",
-      bucketId: bucketId,
-      accessKey: "AKIA3TGGOOO6EHBNOH7W",
-      secretKey: "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");
-
-  final listBucketResult =
-      await s3client.listObjects(prefix: "assets/sound/", delimiter: "/");
-  print("below is bucketresult");
-  print(listBucketResult.toString());
-
-  final response = await s3client.getObject("assets/sound/a.mp3");
-  print("below is body");
-  print(response.body.toString());
-
   final SpeechToText speech = SpeechToText();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -135,7 +115,6 @@ class lesApp extends StatelessWidget {
         LevelTwo.id: (context) => LevelTwo(),
         LevelTwoShort.id: (context) => LevelTwoShort(),
         LevelTwoVoice.id: (contraxt) => LevelTwoVoice(),
-        LevelFinish.id: (context) => LevelFinish(),
         LevelThree.id: (context) => LevelThree(),
         LevelThreeShort.id: (context) => LevelThreeShort(),
         LevelThreeVoice.id: (context) => LevelThreeVoice(),

@@ -4,7 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 import 'package:Lesaforrit/shared/audio.dart';
 
-class QuizBrainLvlTwo {
+class QuizBrainLvlTwoVoice {
   // Audio audio = Audio();
   int _question = 0;
   int correct = 0;

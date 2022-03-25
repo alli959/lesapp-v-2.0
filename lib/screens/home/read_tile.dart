@@ -9,27 +9,36 @@ class ReadTile extends StatelessWidget {
   ReadTile({this.read, this.rank});
 
   String concat() {
-    String zero = read.score;
-    String one = read.scoreCaps;
-    String two = read.scoreTwo;
-    String twoLong = read.scoreTwoLong;
-    String three = read.scoreThree;
-    String threeLong = read.scoreThreeLong;
+    String zero = read.lvlOneScore;
+    String one = read.lvlOneCapsScore;
+    String oneVoice = read.lvlOneVoiceScore;
+    String two = read.lvlTwoEasyScore;
+    String twoLong = read.lvlTwoMediumScore;
+    String twoVoice = read.lvlTwoVoiceScore;
+    String three = read.lvlThreeEasyScore;
+    String threeLong = read.lvlThreeMediumScore;
+    String threeVoice = read.lvlThreeVoiceScore;
     double total = read.totalpoints;
     String concat = 'HEILDARSTIG: ' +
         total.toStringAsFixed(0) +
-        '\n1) Hástafir: ' +
+        '\n1)\n   Hástafir:    ' +
         one +
-        ',           Lágstafir: ' +
+        ',\n   Lágstafir:   ' +
         zero +
-        '\n2) Stutt orð: ' +
+        ',\n   Lesin orð:  ' +
+        oneVoice +
+        '\n2)\n   Stutt orð:   ' +
         two +
-        '          Löng orð: ' +
+        ',\n   Löng orð:   ' +
         twoLong +
-        '\n3) Stuttar setn.: ' +
+        ',\n   Lesin orð:  ' +
+        twoVoice +
+        '\n3)\n   Stuttar setningar:   ' +
         three +
-        '    Langar setn.: ' +
-        threeLong;
+        ',\n   Langar setningar:   ' +
+        threeLong +
+        ',\n   Lesnar setningar:   ' +
+        threeVoice;
     return concat;
   }
 

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>951560671825-kt39v18u4kpmoh9lhth697o70f13mvnb.apps.googleusercontent.com</string>
+	<string>442416405550-q48is7ee4db0u1kfpnk2klonarok5em9.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.951560671825-kt39v18u4kpmoh9lhth697o70f13mvnb</string>
+	<string>com.googleusercontent.apps.442416405550-q48is7ee4db0u1kfpnk2klonarok5em9</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAsbvVlPTDIILXQECXOz7ObQuvUVDSSCPk</string>
+	<string>AIzaSyDTiBgUusYd06imFFvqTPlVaVF3RW6Vwu8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>951560671825</string>
+	<string>442416405550</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>thuri.Lesaforrit</string>
 	<key>PROJECT_ID</key>
-	<string>lesapp-v2</string>
+	<string>lesaforrit-b0c23</string>
 	<key>STORAGE_BUCKET</key>
-	<string>lesapp-v2.appspot.com</string>
+	<string>lesaforrit-b0c23.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:951560671825:ios:74f6dc5db672cc5df69e70</string>
+	<string>1:442416405550:ios:56ba7e2cf981724803d3bf</string>
 	<key>DATABASE_URL</key>
-	<string>https://lesapp-v2.europe-west1.firebasedatabase.app</string>
+	<string>https://lesaforrit-b0c23.firebaseio.com</string>
 </dict>
 </plist>
