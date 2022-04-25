@@ -29,8 +29,10 @@ class LevelOneCap extends StatelessWidget {
         },
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: guli,
-            title: Text('Hástafir'),
+            backgroundColor: appBar,
+            title: Text('Hástafir',
+                style: TextStyle(fontSize: 22, color: Colors.black)),
+            iconTheme: IconThemeData(size: 36, color: Colors.black),
           ),
           endDrawer: SideMenu(),
           body: QuizPage(),
@@ -55,8 +57,8 @@ class _QuizPageState extends State<QuizPage> {
   int soundPress = 0;
   bool enabled = true;
   bool qEnabled = true;
-  String letterOne = ' ';
-  String letterTwo = ' ';
+  String letterOne = '';
+  String letterTwo = '';
   bool started = false;
   double soundCircleSize = 100;
   double soundPad = 100;
@@ -72,14 +74,14 @@ class _QuizPageState extends State<QuizPage> {
 
   String play() {
     if (quizBrain.stars < 10) {
-      quizBrain.playLocalAsset();
+      quizBrain.playSecondaryAsset();
       return 'STIG : ';
     } else {
       return 'STIG : ';
     }
   }
 
-  void sound() {
+  void soundDora() {
     if (!started) {
       setState(() {
         letterOne = quizBrain.getQuestionText1();
@@ -98,7 +100,31 @@ class _QuizPageState extends State<QuizPage> {
           enabled = false;
         });
       } else {
-        quizBrain.playLocalAsset();
+        quizBrain.playDora();
+      }
+    }
+  }
+
+  void soundKarl() {
+    if (!started) {
+      setState(() {
+        letterOne = quizBrain.getQuestionText1();
+        letterTwo = quizBrain.getQuestionText2();
+        enabled = true;
+        soundCircleSize = 55;
+        soundPad = 0.0;
+        soundPadBottom = 10;
+        soundIconSize = 35;
+      });
+      started = true;
+    } else {
+      soundPress++;
+      if (soundPress > 2) {
+        setState(() {
+          enabled = false;
+        });
+      } else {
+        quizBrain.playKarl();
       }
     }
   }
@@ -194,7 +220,7 @@ class _QuizPageState extends State<QuizPage> {
         print("state is serverlessfetch");
         quizBrain.addData(state.questionBank);
         return (LevelTemplate(
-            fontSize: 125,
+            fontSize: 100,
             cardColor: cardColor,
             stigColor: lightCyan,
             shadowLevel: 145,
@@ -203,7 +229,8 @@ class _QuizPageState extends State<QuizPage> {
             soundPadBottom: soundPadBottom,
             soundIconSize: soundIconSize,
             enabled: enabled,
-            onPressed: !enabled ? null : () => sound(),
+            onPressed: !enabled ? null : () => soundDora(),
+            onPressed2: !enabled ? null : () => soundKarl(),
             upperLetterImage: upperLetterImage,
             lowerLetterImage: lowerLetterImage,
             letterOne: letterOne,
@@ -240,7 +267,7 @@ class _QuizPageState extends State<QuizPage> {
       }
       print("state is neither serverlessfetch nor loading");
       return (LevelTemplate(
-          fontSize: 125,
+          fontSize: 100,
           cardColor: cardColor,
           stigColor: lightCyan,
           shadowLevel: 145,
@@ -249,7 +276,8 @@ class _QuizPageState extends State<QuizPage> {
           soundPadBottom: soundPadBottom,
           soundIconSize: soundIconSize,
           enabled: enabled,
-          onPressed: !enabled ? null : () => sound(),
+          onPressed: !enabled ? null : () => soundDora(),
+          onPressed2: !enabled ? null : () => soundKarl(),
           upperLetterImage: upperLetterImage,
           lowerLetterImage: lowerLetterImage,
           letterOne: letterOne,

@@ -87,29 +87,39 @@ class VoiceService {
     level = lvl;
   }
 
-  String displayText(level) {
+  String displayText(lvl) {
     var question;
-    if (level == "level_3") {
+    if (lvl == "level_3") {
       question = quizBrainLvlThree.getQuestionText();
     }
-    if (level == "level_2") {
+    if (lvl == "level_2") {
       question = quizBrainLvlTwo.getQuestionText();
     }
-    if (level == "level_1") {
+    if (lvl == "level_1") {
       question = quizBrainLvlOne.getQuestionText();
     }
     return question;
   }
 
-  Map<String, Object> checkAnswer(String userVoiceAnswer, String question) {
+  Map<String, Object> checkAnswer(
+      String userVoiceAnswer, String question, String lvl) {
     // if (quizBrain.isFinished() == true) {
     //   quizBrain.reset();
     // } else {
 
+    if (lvl == "level_1") {
+      print("question = $question");
+      print("answer = $userVoiceAnswer");
+
+      if (question[0].toLowerCase() == userVoiceAnswer[0].toLowerCase()) {
+        userVoiceAnswer = question;
+      }
+    }
+
     int totalCorrect = 0;
     int totalIncorrect = 0;
-    List<String> questionArr = userVoiceAnswer.split(' ');
-    List<String> answerArr = question.split(' ');
+    List<String> questionArr = question.split(' ');
+    List<String> answerArr = userVoiceAnswer.split(' ');
     Map<String, int> mapQuestion = {};
     Map<String, int> mapAnswer = {};
     List<bool> questionMap = [];
@@ -223,6 +233,9 @@ class VoiceService {
     answerMap = [];
     questionArr = [];
     answerArr = [];
+    calc.correct = 0;
+    calc.finalPoints = 0.0;
+    calc.trys = 0;
   }
 }
 

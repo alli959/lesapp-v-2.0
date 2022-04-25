@@ -59,7 +59,8 @@ class Finish {
         appBar: AppBar(
           leading: Container(),
           backgroundColor: appBarColor,
-          title: Text(appBarText),
+          title: Text(appBarText,
+              style: TextStyle(fontSize: 22, color: Colors.white)),
         ),
         // endDrawer: SideMenu(),
         body: Container(

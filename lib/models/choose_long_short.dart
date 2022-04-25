@@ -33,7 +33,8 @@ class Choose extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
-        title: Text(appBarText),
+        title: Text(appBarText, style: TextStyle(fontSize: 24)),
+        iconTheme: IconThemeData(size: 40, color: Colors.white),
       ),
       endDrawer: SideMenu(),
       body: Column(

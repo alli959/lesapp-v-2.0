@@ -30,7 +30,13 @@ class LevelThreeVoice extends StatelessWidget {
     return BlocProvider<VoiceBloc>(
       create: (context) => VoiceBloc(_speech, 'level_3'),
       child: Scaffold(
-        appBar: AppBar(backgroundColor: guli, title: Text('Raddgreining')),
+        appBar: AppBar(
+          backgroundColor: appBar,
+          title: Text('Raddgreining Setninga',
+              style: TextStyle(
+                  fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
+          iconTheme: IconThemeData(size: 36, color: Colors.black),
+        ),
         endDrawer: SideMenu(),
         body: QuizPage(),
       ),
@@ -225,6 +231,7 @@ class _QuizPageState extends State<QuizPage> {
                 }
               }
               if (quizBrain.isFinished()) {
+                _voiceBloc.add(ResetEvent());
                 Timer(Duration(seconds: 1), () {
                   Navigator.push(
                     context,
@@ -264,13 +271,14 @@ class _QuizPageState extends State<QuizPage> {
                         fontSize: 39,
                         bottomBar: BottomBar(
                             onTap: () {
+                              _voiceBloc.add(ResetEvent());
                               Navigator.pop(context);
                             },
                             image: 'assets/images/bottomBar_bl.png'),
                         shadowLevel: 30),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     color: Theme.of(context).backgroundColor,
                     child: SpeechStatusWidget(isListening: state.isListening),
                   ),
@@ -296,13 +304,15 @@ class _QuizPageState extends State<QuizPage> {
                       fontSize: 39,
                       bottomBar: BottomBar(
                           onTap: () {
+                            print("tapped");
+                            _voiceBloc.add(ResetEvent());
                             Navigator.pop(context);
                           },
                           image: 'assets/images/bottomBar_bl.png'),
                       shadowLevel: 30),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   color: Theme.of(context).backgroundColor,
                   child: SpeechStatusWidget(isListening: false),
                 ),
@@ -389,8 +399,7 @@ class SpeechStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      color: Theme.of(context).backgroundColor,
+      padding: EdgeInsets.symmetric(vertical: 5),
       child: Center(
         child: isListening
             ? Text(

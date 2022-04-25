@@ -72,6 +72,10 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     if (event is ScoreKeeperEvent) {
       yield* _mapScoreKeeperToState(event);
     }
+
+    if (event is ResetEvent) {
+      yield* _mapResetEventToState(event);
+    }
   }
 
   Stream<VoiceState> _mapUpdateInitalizeToState(
@@ -162,7 +166,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
             _speech.lastWords, _speech.question, _speech.alternates);
 
         Map<String, Object> points =
-            _speech.checkAnswer(_speech.lastWords, _speech.question);
+            _speech.checkAnswer(_speech.lastWords, _speech.question, level);
         double finalPoints = points['points'];
         _speech.points = finalPoints;
         _speech.questionMap = points['questionMap'];
@@ -312,6 +316,12 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     //     checkAnswer(alternates[closestIndex].recognizedWords);
     //   }
     // }
+  }
+
+  Stream<VoiceState> _mapResetEventToState(ResetEvent event) async* {
+    yield VoiceLoading();
+    _speech.reset();
+    yield ResetState();
   }
 
   /* Helper functions */

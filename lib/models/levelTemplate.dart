@@ -18,6 +18,7 @@ class LevelTemplate extends StatelessWidget {
   String letterOne;
   String letterTwo;
   Function onPressed;
+  Function onPressed2;
   Function onPress;
   Function onPress2;
   List<Icon> scoreKeeper;
@@ -41,6 +42,7 @@ class LevelTemplate extends StatelessWidget {
       this.letterOne,
       this.letterTwo,
       this.onPressed,
+      this.onPressed2,
       this.onPress,
       this.onPress2,
       this.scoreKeeper,
@@ -78,15 +80,59 @@ class LevelTemplate extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding:
-                    EdgeInsets.fromLTRB(0, soundPad + 25, 0, soundPadBottom),
-                child: RoundIconButton(
-                  icon: Icons.volume_up,
-                  iconSize: soundIconSize,
-                  circleSize: soundCircleSize,
-                  onPressed: onPressed,
-                ),
-              ),
+                  padding:
+                      EdgeInsets.fromLTRB(0, soundPad + 25, 0, soundPadBottom),
+                  child: letterOne.length == 0
+                      ? RoundIconButton(
+                          icon: Icons.play_arrow_rounded,
+                          iconSize: soundIconSize,
+                          circleSize: soundCircleSize,
+                          onPressed: onPressed,
+                        )
+                      : Stack(children: <Widget>[
+                          Center(
+                              child: Padding(
+                            // H O M E
+                            padding: const EdgeInsets.fromLTRB(0, 15, 140, 0),
+                            child: ElevatedButton(
+                              onPressed: onPressed,
+                              child: Icon(Icons.volume_up),
+                              style: ButtonStyle(
+                                shape:
+                                    MaterialStateProperty.all(CircleBorder()),
+                                padding: MaterialStateProperty.all(
+                                    EdgeInsets.all(20)),
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.blue), // <-- Button color
+                              ),
+                            ),
+                          )),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(140, 15, 0, 0),
+                              child: ElevatedButton(
+                                onPressed: onPressed2,
+                                child: Icon(Icons.volume_up),
+                                style: ButtonStyle(
+                                  shape:
+                                      MaterialStateProperty.all(CircleBorder()),
+                                  padding: MaterialStateProperty.all(
+                                      EdgeInsets.all(20)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.red), // <-- Button color
+                                ),
+                              ),
+                            ),
+                          )
+                        ]))
+
+              //       RoundIconButton(
+              //           icon: Icons.volume_up,
+              //           iconSize: soundIconSize,
+              //           circleSize: soundCircleSize,
+              //           onPressed: onPressed,
+              //           color: Colors.black),
+              // ),
             ],
           ),
 

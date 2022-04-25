@@ -31,8 +31,10 @@ class LevelThree extends StatelessWidget {
         },
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: guli,
-            title: Text('Langar setningar'),
+            backgroundColor: appBar,
+            title: Text('Lengri setningar',
+                style: TextStyle(fontSize: 22, color: Colors.black)),
+            iconTheme: IconThemeData(size: 36, color: Colors.black),
           ),
           endDrawer: SideMenu(),
           body: QuizPage(),
@@ -59,8 +61,8 @@ class _QuizPageState extends State<QuizPage> {
   int soundPress = 0;
   bool enabled = true;
   bool qEnabled = true;
-  String letterOne = ' ';
-  String letterTwo = ' ';
+  String letterOne = '';
+  String letterTwo = '';
   bool started = false;
   double soundCircleSize = 100;
   double soundPad = 100;

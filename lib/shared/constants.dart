@@ -5,8 +5,8 @@ Color(0xFF81FFE9); Blái
 Color(0xFF009df4); skærbláar stjörnur
  */
 
-const appBar = Color(0xFFEBFF42);
-const guli = Color(0xFFE0FF62);
+const appBar = Color.fromARGB(255, 235, 255, 66);
+const guli = Color.fromRGBO(224, 255, 98, 1);
 const blai = Color(0xFF81FFE9);
 const kBottomContainerHeight = 100.0; //
 const kActiveCardColour = Color(0xFF81FFE9);

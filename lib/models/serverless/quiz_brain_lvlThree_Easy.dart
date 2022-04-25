@@ -27,6 +27,7 @@ class QuizBrainLvlThreeEasy {
   String typeofgame = "sentences";
   String typeofgamedifficulty = "easy";
   GetData getdata;
+  bool hasInitialized = false;
   List<Question> _questionBank = [
     Question('Lítil græn eðla', true, 'soundLevelThree/short/04.mp3'),
     Question('Ási hjólar hratt', true, 'soundLevelThree/short/05.mp3'),
@@ -40,6 +41,7 @@ class QuizBrainLvlThreeEasy {
 
   void addData(List<Question> questionbank) {
     this._questionBank = questionbank;
+    hasInitialized = true;
   }
   // void getData() async {
   //   if (this.data.length > 0) {
@@ -63,19 +65,32 @@ class QuizBrainLvlThreeEasy {
 
   // H L J Ó Ð
   Future<AudioPlayer> playLocalAsset() async {
-    if (whichSound == 1) {
-      try {
-        await player.play(sound1, isLocal: false);
-      } catch (err) {
-        print("there was an error playing sound $err");
-      }
-    } else {
-      try {
-        await player.play(sound2, isLocal: false);
-      } catch (err) {
-        print("there was an error playing sound $err");
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound2 is $sound2");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        try {
+          await player.play(sound1, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      } else {
+        if (sound2 == null) {
+          return null;
+        }
+        try {
+          await player.play(sound2, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
       }
     }
+    return null;
   }
 
   void stop() async {

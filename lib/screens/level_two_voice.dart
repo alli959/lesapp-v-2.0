@@ -7,6 +7,7 @@ import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
+import 'package:Lesaforrit/screens/level_two_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -29,7 +30,13 @@ class LevelTwoVoice extends StatelessWidget {
     return BlocProvider<VoiceBloc>(
       create: (context) => VoiceBloc(_speech, 'level_2'),
       child: Scaffold(
-        appBar: AppBar(backgroundColor: guli, title: Text('Raddgreining')),
+        appBar: AppBar(
+          backgroundColor: appBar,
+          title: Text('Raddgreining Orða',
+              style: TextStyle(
+                  fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
+          iconTheme: IconThemeData(size: 36, color: Colors.black),
+        ),
         endDrawer: SideMenu(),
         body: QuizPage(),
       ),
@@ -181,6 +188,7 @@ class _QuizPageState extends State<QuizPage> {
             if (state is VoiceFailure) {}
 
             if (state is ScoreKeeper) {
+              quizBrain.stars++;
               calc = state.calc;
               if (state.fivePoints) {
                 scoreKeeper.add(Icon(
@@ -218,12 +226,20 @@ class _QuizPageState extends State<QuizPage> {
                   scoreKeeper.removeLast();
                 }
               }
-              // if (state.remove) {
-              //   print("SCOREKEEPER REMOVE");
-              //   if (scoreKeeper.isNotEmpty) {
-              //     scoreKeeper.removeLast();
-              //   }
-              // }
+              if (quizBrain.isFinished()) {
+                _voiceBloc.add(ResetEvent());
+                Timer(Duration(seconds: 1), () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TwoVoiceFinish(
+                        stig: (calc.calculatePoints(calc.correct, calc.trys)) *
+                            100,
+                      ),
+                    ),
+                  );
+                });
+              }
             }
             if (state is UpdateState) {
               return Column(
@@ -240,19 +256,20 @@ class _QuizPageState extends State<QuizPage> {
                         correct: calc.correct.toString(),
                         stig:
                             play() + calc.checkPoints(calc.correct, calc.trys),
-                        cardColor: cardColor,
-                        stigColor: lightBlue,
+                        cardColor: cardColorLvlTwo,
+                        stigColor: lightGreen,
                         fontSize: 39,
                         bottomBar: BottomBar(
                             onTap: () {
+                              _voiceBloc.add(ResetEvent());
                               Navigator.pop(context);
                             },
                             image: 'assets/images/bottomBar_bl.png'),
                         shadowLevel: 30),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    color: Theme.of(context).backgroundColor,
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: Color.fromARGB(255, 109, 223, 112),
                     child: SpeechStatusWidget(isListening: state.isListening),
                   ),
                 ],
@@ -272,19 +289,20 @@ class _QuizPageState extends State<QuizPage> {
                       trys: calc.trys,
                       correct: calc.correct.toString(),
                       stig: play() + calc.checkPoints(calc.correct, calc.trys),
-                      cardColor: cardColor,
-                      stigColor: lightBlue,
+                      cardColor: cardColorLvlTwo,
+                      stigColor: lightGreen,
                       fontSize: 39,
                       bottomBar: BottomBar(
                           onTap: () {
+                            _voiceBloc.add(ResetEvent());
                             Navigator.pop(context);
                           },
                           image: 'assets/images/bottomBar_bl.png'),
                       shadowLevel: 30),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  color: Theme.of(context).backgroundColor,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  color: Color.fromARGB(255, 109, 223, 112),
                   child: SpeechStatusWidget(isListening: false),
                 ),
               ],
@@ -345,8 +363,8 @@ class RecognitionResultsWidget extends StatelessWidget {
       listeningUpdate: listeningUpdate,
       checkAnswer: checkAnswer,
       fontSize: 39,
-      cardColor: cardColorLvlThree,
-      stigColor: lightBlue,
+      cardColor: cardColorLvlTwo,
+      stigColor: lightGreen,
       shadowLevel: 30,
       question: question,
       lastWords: lastWords,
@@ -370,8 +388,7 @@ class SpeechStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      color: Theme.of(context).backgroundColor,
+      padding: EdgeInsets.symmetric(vertical: 5),
       child: Center(
         child: isListening
             ? Text(

@@ -30,6 +30,7 @@ class BottomBar extends StatelessWidget {
                 iconSize: 35,
                 circleSize: 55,
                 onPressed: () {
+                  onTap();
                   Navigator.pushNamed(context, Welcome.id);
                 },
                 size: null,
@@ -45,6 +46,7 @@ class BottomBar extends StatelessWidget {
                 iconSize: 35,
                 circleSize: 55,
                 onPressed: () {
+                  onTap();
                   Navigator.pushNamed(context, ProfileView.id);
                 },
                 size: null,

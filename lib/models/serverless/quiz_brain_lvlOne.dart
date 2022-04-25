@@ -21,12 +21,15 @@ class QuizBrainLvlOne {
   int trys = 0;
   String sound1;
   String sound2;
+  String sound1Secondary;
+  String sound2Secondary;
   int whichSound;
   int stars = 0;
   double finalscore;
   String typeofgame = "letters";
   bool isCap;
   GetData getdata;
+  bool hasInitialized = false;
 
   QuizBrainLvlOne(bool cap) {
     this.isCap = cap;
@@ -61,6 +64,7 @@ class QuizBrainLvlOne {
         }
       }
     }
+    hasInitialized = true;
   }
   // void getData() async {
   //   if (this.data.length > 0) {
@@ -84,19 +88,153 @@ class QuizBrainLvlOne {
 
   // H L J Ó Ð
   Future<AudioPlayer> playLocalAsset() async {
-    if (whichSound == 1) {
-      try {
-        await player.play(sound1, isLocal: false);
-      } catch (err) {
-        print("there was an error playing sound $err");
-      }
-    } else {
-      try {
-        await player.play(sound2, isLocal: false);
-      } catch (err) {
-        print("there was an error playing sound $err");
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound2 is $sound2");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        try {
+          await player.play(sound1, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      } else {
+        if (sound2 == null) {
+          return null;
+        }
+        try {
+          await player.play(sound2, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
       }
     }
+    return null;
+  }
+
+  Future<AudioPlayer> playSecondaryAsset() async {
+    if (hasInitialized) {
+      print("sound1 secondary is $sound1Secondary");
+      print("sound2 secondary is $sound2Secondary");
+      if (whichSound == 1) {
+        if (sound1Secondary == null) {
+          return null;
+        }
+        try {
+          await player.play(sound1Secondary, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      } else {
+        if (sound2Secondary == null) {
+          return null;
+        }
+        try {
+          await player.play(sound2Secondary, isLocal: false);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playKarl() async {
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound2 is $sound2");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        var sound1FileEnding = sound1.split('_')[1];
+        if (sound1FileEnding == 'Karl.mp3') {
+          try {
+            await player.play(sound1, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            await player.play(sound1Secondary, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      } else {
+        var sound2FileEnding = sound2.split('_')[1];
+        if (sound2FileEnding == 'Karl.mp3') {
+          try {
+            await player.play(sound2, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            await player.play(sound2Secondary, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playDora() async {
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound2 is $sound2");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        var sound1FileEnding = sound1.split('_')[1];
+        if (sound1FileEnding == 'Dora.mp3') {
+          try {
+            await player.play(sound1, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            await player.play(sound1Secondary, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      } else {
+        var sound2FileEnding = sound2.split('_')[1];
+        if (sound2FileEnding == 'Dora.mp3') {
+          try {
+            await player.play(sound2, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            await player.play(sound2Secondary, isLocal: false);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      }
+    }
+    return null;
   }
 
   void stop() async {
@@ -162,6 +300,7 @@ class QuizBrainLvlOne {
     _question1 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
     sound1 = _questionBank[_question1].file;
+    sound1Secondary = _questionBank[_question1].file2;
     return _questionBank[_question1].questionText;
   }
 
@@ -172,9 +311,12 @@ class QuizBrainLvlOne {
     if (_question1 == _question2) {
       _question2++;
       sound2 = _questionBank[_question2].file;
+      sound2Secondary = _questionBank[_question2].file2;
       return _questionBank[_question2].questionText;
-    } else
+    } else {
       sound2 = _questionBank[_question2].file;
+      sound2Secondary = _questionBank[_question2].file2;
+    }
     return _questionBank[_question2].questionText;
   }
 

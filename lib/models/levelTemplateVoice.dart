@@ -24,6 +24,7 @@ class LevelTemplateVoice extends StatelessWidget {
   double fontSize;
   Widget bottomBar;
   int shadowLevel;
+  bool isLetters = false;
 
   LevelTemplateVoice(
       {this.listeningUpdate,
@@ -38,7 +39,8 @@ class LevelTemplateVoice extends StatelessWidget {
       this.stigColor,
       this.fontSize,
       this.bottomBar,
-      this.shadowLevel});
+      this.shadowLevel,
+      this.isLetters});
 
   List<TextSpan> getResultText(List<String> arr, List<bool> map) {
     List<TextSpan> resultTextMap = [];
@@ -137,7 +139,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                   ],
                                 ),
                                 children: getResultText(
-                                    state.answerArr, state.answerMap)),
+                                    state.questionArr, state.questionMap)),
                           ),
                         );
                       }
@@ -198,7 +200,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                   ],
                                 ),
                                 children: getResultText(
-                                    state.questionArr, state.questionMap)),
+                                    state.answerArr, state.answerMap)),
                           ),
                         );
                       }
@@ -257,10 +259,21 @@ class LevelTemplateVoice extends StatelessWidget {
                       child: ReusableCard(
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
-                        cardChild: Text(
-                          'Rétt Orð:  ' + correct + ' af ' + trys.toString(),
-                          style: correctTrys,
-                        ),
+                        cardChild: isLetters == true
+                            ? Text(
+                                'Réttir Stafir:  ' +
+                                    correct +
+                                    ' af ' +
+                                    trys.toString(),
+                                style: correctTrys,
+                              )
+                            : Text(
+                                'Rétt Orð:  ' +
+                                    correct +
+                                    ' af ' +
+                                    trys.toString(),
+                                style: correctTrys,
+                              ),
                       ),
                     ),
                   ),
@@ -310,15 +323,17 @@ class LevelTemplateVoice extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            child: Column(children: <Widget>[
-              bottomBar,
-              IconButton(
-                icon: Icon(Icons.mic),
-                onPressed: () => _onVoiceButtonPressed(),
-              ),
-            ]),
-          ),
+
+          Column(children: <Widget>[
+            RoundIconButton(
+              color: Colors.transparent,
+              icon: Icons.mic,
+              iconSize: 35,
+              circleSize: 55,
+              onPressed: () => _onVoiceButtonPressed(),
+            ),
+            bottomBar
+          ]),
         ],
       ),
     );

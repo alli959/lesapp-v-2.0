@@ -46,7 +46,7 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
       List<int> textEncode = utf8.encode(value.Text);
       String textDecode = utf8.decode(textEncode);
       print("data Text is ${textDecode}");
-      Question question = Question(textDecode, true, value.Dora);
+      Question question = Question(textDecode, true, value.Dora, value.Karl);
       questionBank.add(question);
     }
 

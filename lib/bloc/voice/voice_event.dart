@@ -101,3 +101,5 @@ class ScoreKeeperEvent extends VoiceEvent {
   List<Object> get props =>
       [onePoint, twoPoints, threePoints, fourPoints, fivePoints, calc];
 }
+
+class ResetEvent extends VoiceEvent {}

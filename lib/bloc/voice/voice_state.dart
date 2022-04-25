@@ -191,3 +191,5 @@ class CorrectAnimation extends VoiceState {
   @override
   List<Object> get props => [animation];
 }
+
+class ResetState extends VoiceState {}

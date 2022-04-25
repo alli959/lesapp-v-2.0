@@ -1,24 +1,25 @@
+import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlOne_cap.dart';
-import 'package:Lesaforrit/screens/level_two_short.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlTwo_voice.dart';
+import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
+import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
+import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
+import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
+import 'package:Lesaforrit/services/auth.dart';
+import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
-import '../models/quiz_brain_lvlOne_voice.dart';
-import '../models/quiz_brain_lvlThree_voice.dart';
-import '../models/quiz_brain_lvlTwo_voice.dart';
-import '../models/serverless/quiz_brain_lvlOne.dart';
-import '../models/serverless/quiz_brain_lvlThree_Easy.dart';
-import '../models/serverless/quiz_brain_lvlThree_Medium.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
-import '../models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import '../models/set_score.dart';
-import '../services/auth.dart';
 import 'home/welcome.dart';
-import 'level_two.dart';
+import 'level_three.dart';
+import 'level_three_short.dart';
 import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
@@ -26,14 +27,13 @@ import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import 'package:Lesaforrit/models/usr.dart';
 
-import 'lvlOne_choose.dart';
 import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
-class TwoFinish extends StatelessWidget {
-  TwoFinish({@required this.stig});
+class OneVoiceFinish extends StatelessWidget {
+  OneVoiceFinish({@required this.stig});
   double stig;
-  static const String id = 'TwoFinish';
+  static const String id = 'OneVoiceFinish';
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +44,9 @@ class TwoFinish extends StatelessWidget {
         },
         child: LevelFin(
           stig: stig,
-          image: 'assets/images/fish_skuggi-04.png',
+          image: 'assets/images/bear_shadow.png',
           undertext: '\n stig fyrir þetta borð!',
-          appBarText: 'Löng orð',
+          appBarText: 'Upplesnir Stafir',
         ));
   }
 }
@@ -70,10 +70,10 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlTwoMediumScore'));
+                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
-          currentScoreTwoLong: stigamet.toStringAsFixed(0),
+          currentScoreVoice: stigamet.toStringAsFixed(0),
           level: LvlTwoChoose.id,
           text: 'Borð 2: Orð',
         ));
@@ -85,10 +85,10 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlTwoMediumScore'));
+                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
-          currentScoreTwoLong: stigamet.toStringAsFixed(0),
+          currentScoreVoice: stigamet.toStringAsFixed(0),
           level: LvlThreeChoose.id,
           text: 'Borð 3: Setningar',
         ));
@@ -100,10 +100,10 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlTwoMediumScore'));
+                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
-          currentScoreTwoLong: stigamet.toStringAsFixed(0),
+          currentScoreVoice: stigamet.toStringAsFixed(0),
           level: Welcome.id,
           text: 'Heim',
         ));
@@ -137,6 +137,8 @@ class LevelFin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    VoiceService voiceService = RepositoryProvider.of<VoiceService>(context);
+    voiceService.reset();
     String highestScore = '\n Þú slóst metið þitt!';
     return (BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
@@ -158,7 +160,7 @@ class LevelFin extends StatelessWidget {
           button1(stigamet, state.uid),
           button2(stigamet, state.uid),
           button3(stigamet, state.uid),
-          cardColorLvlTwo,
+          cardColorLvlThree,
         );
       }
       double stigamet = stig;
@@ -173,7 +175,7 @@ class LevelFin extends StatelessWidget {
         button1(stigamet, ''),
         button2(stigamet, ''),
         button3(stigamet, ''),
-        cardColorLvlTwo,
+        cardColor,
       );
     }));
   }

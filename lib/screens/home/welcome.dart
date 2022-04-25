@@ -72,6 +72,7 @@ class Welcome extends StatelessWidget {
               ),
               automaticallyImplyLeading: false,
               title: Text('LesApp', style: TextStyle(color: Colors.black)),
+              iconTheme: IconThemeData(size: 40, color: Colors.black),
             ),
             endDrawer: SideMenu(),
             body: Padding(
