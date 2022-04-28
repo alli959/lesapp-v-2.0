@@ -1,38 +1,36 @@
 import 'dart:async';
-import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
+import 'package:Lesaforrit/models/quiz_brain_lvlOne_cap.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/serverless/serverless_bloc.dart';
-import '../models/quiz_brain.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/models/total_points.dart';
-import 'package:Lesaforrit/screens/level_one_finish.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/serverless/serverless_bloc.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
+import 'level_one_caps_finish.dart';
 
 // B O R D  E I T T
-class LevelOne extends StatelessWidget {
-  static const String id = 'level_one';
+class LevelOneCap extends StatelessWidget {
+  static const String id = 'level_one_cap';
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'letters', 'low')..add(FetchEvent());
+          return ServerlessBloc(_data, 'letters', 'cap')..add(FetchEvent());
         },
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: appBar,
-            title: Text('Lágstafir',
+            title: Text('Hástafir',
                 style: TextStyle(fontSize: 22, color: Colors.black)),
             iconTheme: IconThemeData(size: 36, color: Colors.black),
           ),
@@ -52,7 +50,7 @@ class QuizPage extends StatefulWidget {
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
   Letters letters = Letters();
-  QuizBrainLvlOne quizBrain = QuizBrainLvlOne(false);
+  QuizBrainLvlOne quizBrain = QuizBrainLvlOne(true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -70,8 +68,6 @@ class _QuizPageState extends State<QuizPage> {
   String lowerLetterImageCorrect = 'assets/images/star.png';
   String upperLetterImage = 'assets/images/empty.png';
   String lowerLetterImage = 'assets/images/empty.png';
-  String upperLetterImageIncorrect = 'assets/images/sorryWrong.png';
-  String lowerLetterImageIncorrect = 'assets/images/sorryWrong.png';
   String emptyImage = 'assets/images/empty.png';
   Color letterColorOne = Colors.black;
   Color letterColorTwo = Colors.black;
@@ -85,14 +81,67 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void checkAnswer(bool wasCorrect) {
+  void soundDora() {
+    print("At soundDora");
+    if (!started) {
+      setState(() {
+        letterOne = quizBrain.getQuestionText1();
+        letterTwo = quizBrain.getQuestionText2();
+        enabled = true;
+        soundCircleSize = 55;
+        soundPad = 0.0;
+        soundPadBottom = 10;
+        soundIconSize = 35;
+      });
+      started = true;
+    } else {
+      // soundPress++;
+      // if (soundPress > 2) {
+      //   print("soundPress > 2 on Dóra....");
+      //   setState(() {
+      //     enabled = false;
+      //   });
+      // }
+      //  else {
+      quizBrain.playDora();
+      // }
+    }
+  }
+
+  void soundKarl() {
+    print("At soundKarl");
+    if (!started) {
+      setState(() {
+        letterOne = quizBrain.getQuestionText1();
+        letterTwo = quizBrain.getQuestionText2();
+        enabled = true;
+        soundCircleSize = 55;
+        soundPad = 0.0;
+        soundPadBottom = 10;
+        soundIconSize = 35;
+      });
+      started = true;
+    } else {
+      // soundPress++;
+      // if (soundPress > 2) {
+      //   print("soundpress > 2......");
+      //   setState(() {
+      //     enabled = false;
+      //   });
+      // } else {
+      quizBrain.playKarl();
+      // }
+    }
+  }
+
+  void checkAnswer(bool userPickedAnswer) {
     enabled = true;
     soundPress = 0;
     if (quizBrain.isFinished() == true) {
       scoreKeeper = [];
       quizBrain.reset(); // empty scorekeeper
     } else {
-      if (wasCorrect) {
+      if (userPickedAnswer == quizBrain.getCorrectAnswer()) {
         // Notandi  valdi  R É T T  //  C O R R E C T
         calc.correct++;
         calc.trys++;
@@ -121,32 +170,37 @@ class _QuizPageState extends State<QuizPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => OneFinish(
+            builder: (context) => OneCapsFinish(
               stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
             ),
           ),
         );
-        //Navigator.of(context).pop(); // ????? sleppa?
       });
     }
   }
 
-  void check(answer) {
-    if (answer == 'upperCorrect') {
-      upperLetterImage = upperLetterImageCorrect;
-      quizBrain.playCorrect();
-    }
-    if (answer == 'lowerCorrect') {
-      quizBrain.playCorrect();
-      lowerLetterImage = lowerLetterImageCorrect;
-    }
-    if (answer == 'upperIncorrect') {
-      quizBrain.playIncorrect();
-      upperLetterImage = upperLetterImageIncorrect;
-    }
-    if (answer == 'lowerIncorrect') {
-      quizBrain.playIncorrect();
-      lowerLetterImage = lowerLetterImageIncorrect;
+  void check(bool userAnswered) {
+    qEnabled = false;
+    if (userAnswered == true) {
+      if (userAnswered == quizBrain.getCorrectAnswer()) {
+        setState(() {
+          upperLetterImage = upperLetterImageCorrect;
+        });
+      } else {
+        setState(() {
+          upperLetterImage = 'assets/images/sorryWrong.png';
+        });
+      }
+    } else {
+      if (userAnswered == quizBrain.getCorrectAnswer()) {
+        setState(() {
+          lowerLetterImage = lowerLetterImageCorrect;
+        });
+      } else {
+        setState(() {
+          lowerLetterImage = 'assets/images/sorryWrong.png';
+        });
+      }
     }
   }
 
@@ -155,7 +209,6 @@ class _QuizPageState extends State<QuizPage> {
     letterTwo = quizBrain.getQuestionText2();
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
-    play();
   }
 
   @override
@@ -173,36 +226,51 @@ class _QuizPageState extends State<QuizPage> {
         if (!started) {
           quizBrain.addData(state.questionBank);
         }
-      }
-      if (state is CheckAnswerState) {
-        print("State of checkAnswerState iss $state");
-        if (state.upperImageCorrect) {
-          check('upperCorrect');
-        }
-        if (state.lowerImageCorrect) {
-          check('lowerCorrect');
-        }
-        if (state.upperImageIncorrect) {
-          check('upperIncorrect');
-        }
-        if (state.lowerImageIncorrect) {
-          check('lowerIncorrect');
-        }
-      }
-      if (state is NewQuestionState) {
-        checkAnswer(state.wasCorrect);
-      }
-
-      if (state is PlayGameState) {
-        letterOne = quizBrain.getQuestionText1();
-        letterTwo = quizBrain.getQuestionText2();
-        enabled = true;
-        soundCircleSize = 55;
-        soundPad = 0.0;
-        soundPadBottom = 10;
-        soundIconSize = 35;
-        started = true;
-        quizBrain.playLocalAsset();
+        return (LevelTemplate(
+            fontSize: 100,
+            cardColor: cardColor,
+            stigColor: lightCyan,
+            shadowLevel: 145,
+            soundCircleSize: soundCircleSize,
+            soundPad: soundPad,
+            soundPadBottom: soundPadBottom,
+            soundIconSize: soundIconSize,
+            enabled: enabled,
+            onPressed: !enabled ? null : () => soundDora(),
+            onPressed2: !enabled ? null : () => soundKarl(),
+            upperLetterImage: upperLetterImage,
+            lowerLetterImage: lowerLetterImage,
+            letterOne: letterOne,
+            letterTwo: letterTwo,
+            onPress: !qEnabled
+                ? null
+                : () {
+                    check(true);
+                    Future.delayed(const Duration(milliseconds: 1000), () {
+                      setState(() {
+                        checkAnswer(true);
+                      });
+                    });
+                  },
+            onPress2: !qEnabled
+                ? null
+                : () {
+                    check(false);
+                    Future.delayed(const Duration(milliseconds: 1000), () {
+                      setState(() {
+                        checkAnswer(false);
+                      });
+                    });
+                  },
+            scoreKeeper: scoreKeeper,
+            trys: calc.trys.toString(),
+            correct: calc.correct.toString(),
+            bottomBar: BottomBar(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                image: 'assets/images/bottomBar_ye.png'),
+            stig: play() + calc.checkPoints(calc.correct, calc.trys)));
       }
       print("state is neither serverlessfetch nor loading");
       return (LevelTemplate(
@@ -215,9 +283,8 @@ class _QuizPageState extends State<QuizPage> {
           soundPadBottom: soundPadBottom,
           soundIconSize: soundIconSize,
           enabled: enabled,
-          onPlay: !enabled ? null : () => _serverlessBloc.add(PlayGameEvent()),
-          onPressed: !enabled ? null : () => quizBrain.playDora(),
-          onPressed2: !enabled ? null : () => quizBrain.playKarl(),
+          onPressed: !enabled ? null : () => soundDora(),
+          onPressed2: !enabled ? null : () => soundKarl(),
           upperLetterImage: upperLetterImage,
           lowerLetterImage: lowerLetterImage,
           letterOne: letterOne,
@@ -225,16 +292,18 @@ class _QuizPageState extends State<QuizPage> {
           onPress: !qEnabled
               ? null
               : () {
-                  _serverlessBloc.add(CheckAnswerEvent(
-                      userAnswer: true,
-                      correctAnswer: quizBrain.getCorrectAnswer()));
+                  check(true);
+                  Future.delayed(const Duration(milliseconds: 1000), () {
+                    checkAnswer(true);
+                  });
                 },
           onPress2: !qEnabled
               ? null
               : () {
-                  _serverlessBloc.add(CheckAnswerEvent(
-                      userAnswer: false,
-                      correctAnswer: quizBrain.getCorrectAnswer()));
+                  check(false);
+                  Future.delayed(const Duration(milliseconds: 1000), () {
+                    checkAnswer(false);
+                  });
                 },
           scoreKeeper: scoreKeeper,
           trys: calc.trys.toString(),
@@ -244,7 +313,7 @@ class _QuizPageState extends State<QuizPage> {
                 Navigator.pop(context);
               },
               image: 'assets/images/bottomBar_ye.png'),
-          stig: "STIG : ${calc.checkPoints(calc.correct, calc.trys)}"));
+          stig: play() + calc.checkPoints(calc.correct, calc.trys)));
     });
   }
 }

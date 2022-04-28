@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:flutter_cache_manager/file.dart';
+
 import '../question.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
@@ -9,18 +13,26 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'dart:convert' show utf8;
 
+import '../question_cache.dart';
+
 class QuizBrainLvlTwoMedium {
+  String correctSound = 'sound/correct_sound.mp3';
+  String incorrectSound = 'sound/incorrect_sound.mp3';
   List<Object> data = [];
   // Audio audio = Audio();
   AudioCache cache = AudioCache();
   AudioPlayer player = AudioPlayer();
   AudioPlayer spilari = AudioPlayer();
+  AudioPlayer correctPlayer = AudioPlayer();
+  AudioPlayer incorrectPlayer = AudioPlayer();
   int _question1 = 0;
   int _question2 = 0;
   int correct = 0;
   int trys = 0;
   String sound1;
   String sound2;
+  String sound1Secondary;
+  String sound2Secondary;
   int whichSound;
   int stars = 0;
   double finalscore;
@@ -34,14 +46,46 @@ class QuizBrainLvlTwoMedium {
   ];
   Stream<FileResponse> fileStream;
 
-  void addCache(url) async {
-    fileStream = DefaultCacheManager().getFileStream(url, withProgress: true);
-    print(fileStream);
+  List<QuestionCache> _questionCache = [];
+
+  void addCache(List<Question> questions) async {
+    for (var i = 0; i < questions.length; i++) {
+      File file1 = await DefaultCacheManager().getSingleFile(questions[i].file);
+      File file2 =
+          await DefaultCacheManager().getSingleFile(questions[i].file2);
+      QuestionCache q = QuestionCache(
+          questions[i].questionText, questions[i].questionAnswer, file1, file2);
+      _questionCache.add(q);
+    }
   }
 
   void addData(List<Question> questionbank) {
     this._questionBank = questionbank;
     hasInitialized = true;
+  }
+
+  Future<AudioPlayer> playCorrect() async {
+    try {
+      correctPlayer = await cache.play(correctSound, volume: 0.7);
+      await Future.delayed(Duration(milliseconds: 1000));
+      correctPlayer.stop();
+    } catch (err) {
+      print("there was an error playing correct sound $err");
+      return null;
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playIncorrect() async {
+    try {
+      incorrectPlayer = await cache.play(incorrectSound, volume: 0.7);
+      await Future.delayed(Duration(milliseconds: 1000));
+      incorrectPlayer.stop();
+    } catch (err) {
+      print("there was an error playing correct sound");
+      return null;
+    }
+    return null;
   }
   // void getData() async {
   //   if (this.data.length > 0) {
@@ -73,7 +117,9 @@ class QuizBrainLvlTwoMedium {
           return null;
         }
         try {
-          await player.play(sound1, isLocal: false);
+          File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
@@ -83,10 +129,163 @@ class QuizBrainLvlTwoMedium {
           return null;
         }
         try {
-          await player.play(sound2, isLocal: false);
+          File file1 = await DefaultCacheManager().getSingleFile(sound2);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playSecondaryAsset() async {
+    if (hasInitialized) {
+      print("sound1 secondary is $sound1Secondary");
+      print("sound2 secondary is $sound2Secondary");
+      if (whichSound == 1) {
+        if (sound1Secondary == null) {
+          return null;
+        }
+        try {
+          File file1 =
+              await DefaultCacheManager().getSingleFile(sound1Secondary);
+          Uint8List bytes = file1.readAsBytesSync();
+          await player.playBytes(bytes);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      } else {
+        if (sound2Secondary == null) {
+          return null;
+        }
+        try {
+          File file1 =
+              await DefaultCacheManager().getSingleFile(sound2Secondary);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
+        } catch (err) {
+          print("there was an error playing sound $err");
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playKarl() async {
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound1Secondary is $sound1Secondary");
+      print("sound2 is $sound2");
+      print("sound2Secondary is $sound2Secondary");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        var sound1FileEnding = sound1.split('_')[1];
+        if (sound1FileEnding == 'Karl.mp3') {
+          try {
+            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound1Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      } else {
+        var sound2FileEnding = sound2.split('_')[1];
+        if (sound2FileEnding == 'Karl.mp3') {
+          try {
+            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound2Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playDora() async {
+    if (hasInitialized) {
+      print("sound1 is $sound1");
+      print("sound1Secondary is $sound1Secondary");
+      print("sound2 is $sound2");
+      print("sound2 is $sound2Secondary");
+      if (whichSound == 1) {
+        if (sound1 == null) {
+          return null;
+        }
+        var sound1FileEnding = sound1.split('_')[1];
+        if (sound1FileEnding == 'Dora.mp3') {
+          try {
+            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound1Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        }
+      } else {
+        var sound2FileEnding = sound2.split('_')[1];
+        if (sound2FileEnding == 'Dora.mp3') {
+          try {
+            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
+        } else {
+          try {
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound2Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
+          } catch (err) {
+            print("there was an error playing sound $err");
+            return null;
+          }
         }
       }
     }
@@ -156,6 +355,7 @@ class QuizBrainLvlTwoMedium {
     _question1 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
     sound1 = _questionBank[_question1].file;
+    sound1Secondary = _questionBank[_question1].file2;
     return _questionBank[_question1].questionText;
   }
 
@@ -166,9 +366,12 @@ class QuizBrainLvlTwoMedium {
     if (_question1 == _question2) {
       _question2++;
       sound2 = _questionBank[_question2].file;
+      sound2Secondary = _questionBank[_question2].file2;
       return _questionBank[_question2].questionText;
-    } else
+    } else {
       sound2 = _questionBank[_question2].file;
+      sound2Secondary = _questionBank[_question2].file2;
+    }
     return _questionBank[_question2].questionText;
   }
 

@@ -7,12 +7,12 @@ abstract class ServerlessEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchEvent extends ServerlessEvent {
-  // final String typeofgame;
-  // final String typeofgamedifficulty;
+class PlayGameEvent extends ServerlessEvent {}
 
-  // FetchEvent({@required this.typeofgame, this.typeofgamedifficulty});
+class FetchEvent extends ServerlessEvent {}
 
-  // @override
-  // List<Object> get props => [typeofgame, typeofgamedifficulty];
+class CheckAnswerEvent extends ServerlessEvent {
+  final bool userAnswer;
+  final bool correctAnswer;
+  CheckAnswerEvent({this.userAnswer, this.correctAnswer});
 }

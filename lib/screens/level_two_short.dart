@@ -67,6 +67,8 @@ class _QuizPageState extends State<QuizPage> {
 
   String upperLetterImageCorrect = 'assets/images/star.png';
   String lowerLetterImageCorrect = 'assets/images/star.png';
+  String upperLetterImageIncorrect = 'assets/images/sorryWrong.png';
+  String lowerLetterImageIncorrect = 'assets/images/sorryWrong.png';
   String upperLetterImage = 'assets/images/empty.png';
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
@@ -82,31 +84,7 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void sound() {
-    if (!started) {
-      setState(() {
-        letterOne = quizBrain.getQuestionText1();
-        letterTwo = quizBrain.getQuestionText2();
-        enabled = true;
-        soundCircleSize = 55;
-        soundPad = 0.0;
-        soundPadBottom = 10;
-        soundIconSize = 35;
-      });
-      started = true;
-    } else {
-      soundPress++;
-      if (soundPress > 2) {
-        setState(() {
-          enabled = false;
-        });
-      } else {
-        quizBrain.playLocalAsset();
-      }
-    }
-  }
-
-  void checkAnswer(bool userPickedAnswer) {
+  void checkAnswer(bool wasCorrect) {
     enabled = true;
     soundPress = 0;
 
@@ -114,7 +92,7 @@ class _QuizPageState extends State<QuizPage> {
       scoreKeeper = [];
       quizBrain.reset(); // empty scorekeeper
     } else {
-      if (userPickedAnswer == quizBrain.getCorrectAnswer()) {
+      if (wasCorrect) {
         // Notandi  valdi  R É T T  //  C O R R E C T
         calc.correct++;
         calc.trys++;
@@ -154,37 +132,22 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  // Athugar svar notanda og setur stjörnu eða kross eftir hvort sé rétt
-  void check(bool userAnswered) {
-    qEnabled = false;
-    if (userAnswered == true) {
-      // NOTANDI VALDI EFRI STAF
-      if (userAnswered == quizBrain.getCorrectAnswer()) {
-        setState(() {
-          // og það var rétt svar
-          upperLetterImage = upperLetterImageCorrect;
-        });
-      } else {
-        // Neðri stafur var hins vegar rétt svar
-        setState(() {
-          upperLetterImage = 'assets/images/sorryWrong.png';
-          // lowerLetterImage = 'assets/images/sorryCorrect.png';
-        });
-      }
-    } else {
-      // NOTANDI VALDI NEÐRI STAF
-      if (userAnswered == quizBrain.getCorrectAnswer()) {
-        setState(() {
-          // og það var rétt svar
-          lowerLetterImage = lowerLetterImageCorrect;
-        });
-      } else {
-        // Efri stafur er hins vegar rétt svar
-        setState(() {
-          lowerLetterImage = 'assets/images/sorryWrong.png';
-          // upperLetterImage = 'assets/images/sorryCorrect.png';
-        });
-      }
+  void check(answer) {
+    if (answer == 'upperCorrect') {
+      upperLetterImage = upperLetterImageCorrect;
+      quizBrain.playCorrect();
+    }
+    if (answer == 'lowerCorrect') {
+      quizBrain.playCorrect();
+      lowerLetterImage = lowerLetterImageCorrect;
+    }
+    if (answer == 'upperIncorrect') {
+      quizBrain.playIncorrect();
+      upperLetterImage = upperLetterImageIncorrect;
+    }
+    if (answer == 'lowerIncorrect') {
+      quizBrain.playIncorrect();
+      lowerLetterImage = lowerLetterImageIncorrect;
     }
   }
 
@@ -193,6 +156,7 @@ class _QuizPageState extends State<QuizPage> {
     letterTwo = quizBrain.getQuestionText2();
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
+    play();
   }
 
   @override
@@ -207,54 +171,40 @@ class _QuizPageState extends State<QuizPage> {
       }
       if (state is ServerlessFetch) {
         print("state is serverlessfetch");
-        quizBrain.addData(state.questionBank);
-
-        return (LevelTemplate(
-            fontSize: 78,
-            cardColor: cardColorLvlTwo,
-            stigColor: lightGreen,
-            shadowLevel: 145,
-            soundCircleSize: soundCircleSize,
-            soundPad: soundPad,
-            soundPadBottom: soundPadBottom,
-            soundIconSize: soundIconSize,
-            enabled: enabled,
-            onPressed: !enabled ? null : () => sound(),
-            upperLetterImage: upperLetterImage,
-            lowerLetterImage: lowerLetterImage,
-            letterOne: letterOne,
-            letterTwo: letterTwo,
-            onPress: !qEnabled
-                ? null
-                : () {
-                    check(true);
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      setState(() {
-                        checkAnswer(true);
-                      });
-                    });
-                  },
-            onPress2: !qEnabled
-                ? null
-                : () {
-                    check(false);
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      setState(() {
-                        checkAnswer(false);
-                      });
-                    });
-                  },
-            scoreKeeper: scoreKeeper,
-            trys: calc.trys.toString(),
-            correct: calc.correct.toString(),
-            bottomBar: BottomBar(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                image: 'assets/images/bottomBar_gr.png'),
-            stig: play() + calc.checkPoints(calc.correct, calc.trys)));
+        if (!started) {
+          quizBrain.addData(state.questionBank);
+        }
       }
-      print("state is neither serverlessfetch nor loading");
+      if (state is CheckAnswerState) {
+        print("State of checkAnswerState iss $state");
+        if (state.upperImageCorrect) {
+          check('upperCorrect');
+        }
+        if (state.lowerImageCorrect) {
+          check('lowerCorrect');
+        }
+        if (state.upperImageIncorrect) {
+          check('upperIncorrect');
+        }
+        if (state.lowerImageIncorrect) {
+          check('lowerIncorrect');
+        }
+      }
+      if (state is NewQuestionState) {
+        checkAnswer(state.wasCorrect);
+      }
+
+      if (state is PlayGameState) {
+        letterOne = quizBrain.getQuestionText1();
+        letterTwo = quizBrain.getQuestionText2();
+        enabled = true;
+        soundCircleSize = 55;
+        soundPad = 0.0;
+        soundPadBottom = 10;
+        soundIconSize = 35;
+        started = true;
+        quizBrain.playLocalAsset();
+      }
 
       return (LevelTemplate(
           fontSize: 78,
@@ -266,7 +216,9 @@ class _QuizPageState extends State<QuizPage> {
           soundPadBottom: soundPadBottom,
           soundIconSize: soundIconSize,
           enabled: enabled,
-          onPressed: !enabled ? null : () => sound(),
+          onPlay: !enabled ? null : () => _serverlessBloc.add(PlayGameEvent()),
+          onPressed: !enabled ? null : () => quizBrain.playDora(),
+          onPressed2: !enabled ? null : () => quizBrain.playKarl(),
           upperLetterImage: upperLetterImage,
           lowerLetterImage: lowerLetterImage,
           letterOne: letterOne,
@@ -274,22 +226,16 @@ class _QuizPageState extends State<QuizPage> {
           onPress: !qEnabled
               ? null
               : () {
-                  check(true);
-                  Future.delayed(const Duration(milliseconds: 1000), () {
-                    setState(() {
-                      checkAnswer(true);
-                    });
-                  });
+                  _serverlessBloc.add(CheckAnswerEvent(
+                      userAnswer: true,
+                      correctAnswer: quizBrain.getCorrectAnswer()));
                 },
           onPress2: !qEnabled
               ? null
               : () {
-                  check(false);
-                  Future.delayed(const Duration(milliseconds: 1000), () {
-                    setState(() {
-                      checkAnswer(false);
-                    });
-                  });
+                  _serverlessBloc.add(CheckAnswerEvent(
+                      userAnswer: false,
+                      correctAnswer: quizBrain.getCorrectAnswer()));
                 },
           scoreKeeper: scoreKeeper,
           trys: calc.trys.toString(),
@@ -299,7 +245,7 @@ class _QuizPageState extends State<QuizPage> {
                 Navigator.pop(context);
               },
               image: 'assets/images/bottomBar_gr.png'),
-          stig: play() + calc.checkPoints(calc.correct, calc.trys)));
+          stig: "STIG : ${calc.checkPoints(calc.correct, calc.trys)}"));
     });
   }
 }

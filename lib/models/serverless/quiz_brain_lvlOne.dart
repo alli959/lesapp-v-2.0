@@ -1,3 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:Lesaforrit/models/question_cache.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/file.dart';
+
 import '../question.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
@@ -10,11 +16,16 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:convert' show utf8;
 
 class QuizBrainLvlOne {
+  String correctSound = 'sound/correct_sound.mp3';
+  String incorrectSound = 'sound/incorrect_sound.mp3';
   List<Object> data = [];
   // Audio audio = Audio();
+  CacheManager cookieManager;
   AudioCache cache = AudioCache();
   AudioPlayer player = AudioPlayer();
   AudioPlayer spilari = AudioPlayer();
+  AudioPlayer correctPlayer = AudioPlayer();
+  AudioPlayer incorrectPlayer = AudioPlayer();
   int _question1 = 0;
   int _question2 = 0;
   int correct = 0;
@@ -35,36 +46,45 @@ class QuizBrainLvlOne {
     this.isCap = cap;
   }
 
-  List<Question> _questionBank = [
-    Question('A', true, 'soundLevelTwo/long/Epli.mp3'),
-    Question('B', true, 'soundLevelTwo/long/Gras.mp3'),
-  ];
+  List<Question> _questionBank = [];
+  List<QuestionCache> _questionCache = [];
 
   Stream<FileResponse> fileStream;
-
-  void addCache(url) async {
-    fileStream = DefaultCacheManager().getFileStream(url, withProgress: true);
-    print(fileStream);
+  FileResponse fileResponse;
+  void addCache(List<Question> questions) async {
+    for (var i = 0; i < questions.length; i++) {
+      File file1 = await DefaultCacheManager().getSingleFile(questions[i].file);
+      File file2 =
+          await DefaultCacheManager().getSingleFile(questions[i].file2);
+      QuestionCache q = QuestionCache(
+          questions[i].questionText, questions[i].questionAnswer, file1, file2);
+      _questionCache.add(q);
+    }
   }
 
   // I will change the backend later, for now I will just force check it
   void addData(List<Question> questionbank) {
-    if (isCap) {
-      for (var i = 0; i < questionbank.length; i++) {
-        String text = questionbank[i].questionText;
-        if (text.toUpperCase() == text) {
-          this._questionBank.add(questionbank[i]);
+    if (!hasInitialized) {
+      if (isCap) {
+        for (var i = 0; i < questionbank.length; i++) {
+          String text = questionbank[i].questionText;
+          if (text.toUpperCase() == text) {
+            this._questionBank.add(questionbank[i]);
+          }
         }
-      }
-    } else {
-      for (var i = 0; i < questionbank.length; i++) {
-        String text = questionbank[i].questionText;
-        if (text.toLowerCase() == text) {
-          this._questionBank.add(questionbank[i]);
+      } else {
+        for (var i = 0; i < questionbank.length; i++) {
+          String text = questionbank[i].questionText;
+          if (text.toLowerCase() == text) {
+            this._questionBank.add(questionbank[i]);
+          }
         }
       }
     }
     hasInitialized = true;
+    for (var i = 0; i < _questionBank.length; i++) {
+      print("questionBank letter is ${_questionBank[i].questionText}");
+    }
   }
   // void getData() async {
   //   if (this.data.length > 0) {
@@ -84,6 +104,30 @@ class QuizBrainLvlOne {
   //   }
   // }
 
+  Future<AudioPlayer> playCorrect() async {
+    try {
+      correctPlayer = await cache.play(correctSound, volume: 0.7);
+      await Future.delayed(Duration(milliseconds: 1000));
+      correctPlayer.stop();
+    } catch (err) {
+      print("there was an error playing correct sound $err");
+      return null;
+    }
+    return null;
+  }
+
+  Future<AudioPlayer> playIncorrect() async {
+    try {
+      incorrectPlayer = await cache.play(incorrectSound, volume: 0.7);
+      await Future.delayed(Duration(milliseconds: 1000));
+      incorrectPlayer.stop();
+    } catch (err) {
+      print("there was an error playing correct sound");
+      return null;
+    }
+    return null;
+  }
+
   // Hljóð prufa
 
   // H L J Ó Ð
@@ -96,7 +140,9 @@ class QuizBrainLvlOne {
           return null;
         }
         try {
-          await player.play(sound1, isLocal: false);
+          File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
@@ -106,7 +152,9 @@ class QuizBrainLvlOne {
           return null;
         }
         try {
-          await player.play(sound2, isLocal: false);
+          File file1 = await DefaultCacheManager().getSingleFile(sound2);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
@@ -125,7 +173,10 @@ class QuizBrainLvlOne {
           return null;
         }
         try {
-          await player.play(sound1Secondary, isLocal: false);
+          File file1 =
+              await DefaultCacheManager().getSingleFile(sound1Secondary);
+          Uint8List bytes = file1.readAsBytesSync();
+          await player.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
@@ -135,7 +186,10 @@ class QuizBrainLvlOne {
           return null;
         }
         try {
-          await player.play(sound2Secondary, isLocal: false);
+          File file1 =
+              await DefaultCacheManager().getSingleFile(sound2Secondary);
+          Uint8List bytes = file1.readAsBytesSync();
+          await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
           return null;
@@ -148,7 +202,9 @@ class QuizBrainLvlOne {
   Future<AudioPlayer> playKarl() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
+      print("sound1Secondary is $sound1Secondary");
       print("sound2 is $sound2");
+      print("sound2Secondary is $sound2Secondary");
       if (whichSound == 1) {
         if (sound1 == null) {
           return null;
@@ -156,14 +212,19 @@ class QuizBrainLvlOne {
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Karl.mp3') {
           try {
-            await player.play(sound1, isLocal: false);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
           }
         } else {
           try {
-            await player.play(sound1Secondary, isLocal: false);
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound1Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
@@ -173,14 +234,19 @@ class QuizBrainLvlOne {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Karl.mp3') {
           try {
-            await player.play(sound2, isLocal: false);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
           }
         } else {
           try {
-            await player.play(sound2Secondary, isLocal: false);
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound2Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
@@ -194,7 +260,9 @@ class QuizBrainLvlOne {
   Future<AudioPlayer> playDora() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
+      print("sound1Secondary is $sound1Secondary");
       print("sound2 is $sound2");
+      print("sound2 is $sound2Secondary");
       if (whichSound == 1) {
         if (sound1 == null) {
           return null;
@@ -202,14 +270,19 @@ class QuizBrainLvlOne {
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Dora.mp3') {
           try {
-            await player.play(sound1, isLocal: false);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            Uint8List bytes = file1.readAsBytesSync();
+            await player.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
           }
         } else {
           try {
-            await player.play(sound1Secondary, isLocal: false);
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound1Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
@@ -219,14 +292,19 @@ class QuizBrainLvlOne {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Dora.mp3') {
           try {
-            await player.play(sound2, isLocal: false);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;
           }
         } else {
           try {
-            await player.play(sound2Secondary, isLocal: false);
+            File file1 =
+                await DefaultCacheManager().getSingleFile(sound2Secondary);
+            Uint8List bytes = file1.readAsBytesSync();
+            await spilari.playBytes(bytes);
           } catch (err) {
             print("there was an error playing sound $err");
             return null;

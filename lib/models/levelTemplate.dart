@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:imagebutton/imagebutton.dart';
 
 class LevelTemplate extends StatelessWidget {
   static const String id = 'level_template';
@@ -21,6 +22,7 @@ class LevelTemplate extends StatelessWidget {
   Function onPressed2;
   Function onPress;
   Function onPress2;
+  Function onPlay;
   List<Icon> scoreKeeper;
   String trys;
   String correct;
@@ -45,6 +47,7 @@ class LevelTemplate extends StatelessWidget {
       this.onPressed2,
       this.onPress,
       this.onPress2,
+      this.onPlay,
       this.scoreKeeper,
       this.trys,
       this.correct,
@@ -87,52 +90,51 @@ class LevelTemplate extends StatelessWidget {
                           icon: Icons.play_arrow_rounded,
                           iconSize: soundIconSize,
                           circleSize: soundCircleSize,
-                          onPressed: onPressed,
+                          onPressed: onPlay,
                         )
-                      : Stack(children: <Widget>[
-                          Center(
-                              child: Padding(
-                            // H O M E
-                            padding: const EdgeInsets.fromLTRB(0, 15, 140, 0),
-                            child: ElevatedButton(
-                              onPressed: onPressed,
-                              child: Icon(Icons.volume_up),
-                              style: ButtonStyle(
-                                shape:
-                                    MaterialStateProperty.all(CircleBorder()),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.all(20)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.blue), // <-- Button color
+                      : Container(
+                          decoration: BoxDecoration(
+                              color: stigColor,
+                              border: Border.all(
+                                color: stigColor,
+                                width: 5,
                               ),
-                            ),
-                          )),
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(140, 15, 0, 0),
-                              child: ElevatedButton(
-                                onPressed: onPressed2,
-                                child: Icon(Icons.volume_up),
-                                style: ButtonStyle(
-                                  shape:
-                                      MaterialStateProperty.all(CircleBorder()),
-                                  padding: MaterialStateProperty.all(
-                                      EdgeInsets.all(20)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.red), // <-- Button color
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          child: Stack(children: <Widget>[
+                            Center(
+                                child: Padding(
+                              // H O M E
+                              padding: const EdgeInsets.fromLTRB(0, 0, 140, 0),
+                              child: ImageButton(
+                                children: <Widget>[],
+                                unpressedImage: Image.asset(
+                                    'assets/icons/woman_speaking.png'),
+                                pressedImage: Image.asset(
+                                    'assets/icons/woman_speaking.png'),
+                                width: 75,
+                                height: 75,
+                                onTap: onPressed,
+                              ),
+                            )),
+                            Center(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(140, 0, 0, 0),
+                                child: ImageButton(
+                                  children: <Widget>[],
+                                  unpressedImage: Image.asset(
+                                      'assets/icons/man_speaking.png'),
+                                  pressedImage: Image.asset(
+                                      'assets/icons/man_speaking.png'),
+                                  width: 75,
+                                  height: 75,
+                                  onTap: onPressed2,
                                 ),
                               ),
-                            ),
-                          )
-                        ]))
-
-              //       RoundIconButton(
-              //           icon: Icons.volume_up,
-              //           iconSize: soundIconSize,
-              //           circleSize: soundCircleSize,
-              //           onPressed: onPressed,
-              //           color: Colors.black),
-              // ),
+                            )
+                          ]),
+                        ))
             ],
           ),
 
