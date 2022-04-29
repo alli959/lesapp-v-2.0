@@ -168,11 +168,10 @@ class _QuizPageState extends State<QuizPage> {
           twoPoints: twoPoints,
           threePoints: threePoints,
           fourPoints: fourPoints,
-          fivePoints: fivePoints,
-          calc: calc));
+          fivePoints: fivePoints));
     }
 
-    _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
+    // _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
     return Container(
       child: Scaffold(
         body: BlocListener<VoiceBloc, VoiceState>(
@@ -189,7 +188,6 @@ class _QuizPageState extends State<QuizPage> {
 
             if (state is ScoreKeeper) {
               quizBrain.stars++;
-              calc = state.calc;
               if (state.fivePoints) {
                 scoreKeeper.add(Icon(
                   Icons.star,

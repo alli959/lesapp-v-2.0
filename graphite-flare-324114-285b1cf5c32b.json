@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "graphite-flare-324114",
+  "private_key_id": "285b1cf5c32b28a9308be8400fb5db983f15873d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCeviHslFM2Fmim\nGescWQ4f2Gc5WxmAdQqF1lFc6CfaojLBQjmPAXYy6mwtXC/bwUpRR0oZDy72p9tP\n+ElcZ5s6wCG1hBGpdZzYRlbCryQUey6x87o5WSWCDagPVIb4Gd/ck02A6n6y7UHC\nHjqN9VkzuJtNZ3hxf/28soRPhyNu5VaAU43PbtOyhaZsIq5GWHogxcyQU3J4QdCU\nZeLSJmMQ4F047pVSgrh3olnwMRVE+hHTg3sJXVME3eexWOYY0jFWQGXiAOKOCm9v\ncsdOQxopUAiOonlNnbN1By0b3vGQQKOeKLsvtA6Vm3gghmgrJuZ1brbisIP2rL8N\nfLL1MOyxAgMBAAECggEAA9Hqp5KJ2RVGIenMQa5L8SIS7oCodwdPVZlVc7v7dN8D\n2SjikTQqt77H6SSHhffbYGQr3o6suuSfBLLicw3kNfr4egbU/6QJU56yXkolfwpY\nJ+dH/d13vK7e8orTxPsnFbFZbgbWkzAzQvxZZ4qgrFEJiF3lz6y8j/1SF/GA0wg5\n7khHmCsGVEHqJ6SaA2MaWjcZRGB86B7eejrSiJDPPxOJNDcPTVE9NXu1olGunWXC\n9TgZrb2RQkJg03iiT3aZR2G+d9snrIoQSIACHmRLzCQ5xiTaCt8Mr0mRZtZ3VxYr\nf5o/toGRJBR4c0Ut8ZeanKA0WTI3Ci0zDQF3JD6Q5QKBgQDKhjfFFbA9550F/N6N\n9qp3HFcvl0lY7+5dBbbdnSkjUs8D6scHJmZF3Ah4qOgpkIPq2X+zxQ2OZOjFkPvP\nnM+V3M9Nvx2vdIGOfHeiKf50zzyMxIuDg3LYxmAr9wOKWJDDnu6gZ0N+CdYV36mH\nbxAL2Rem4TNaJCfyhW1KWHcJFQKBgQDIqHcqfofXa7g6PeCwumqmDFOI6oYqJzlz\nMIpmf5bripeLzT08ivTSlkHyzg7VJ+h+Ort+I2MnCRFZuFjLa53YasLc3xVTeqXJ\nr44qSN9rSky+bnNK8nMbV1IzFnVoPK1HCuowhSooy+X6qhwHM8TmnM2Cg+Eyy3yG\nKEksI6AELQKBgC9ayteOhrMy4QhxZCiVsK5BNjGukjv1firKF0QiZ2gXCMjFsNv/\nIpLbLC/qbr6pR+82BCIoxU6yUatAh2C4LeHAy8hGE87e0xxaBi8o2pK9kk7n9ic+\nKTB+0iX1kCJdKxxSoUFoY+OosSJUNfOxCHN8w4cFyVgedCjFAhUMMmkxAoGANj30\nGLSjnAQuhO/9MUjzU3e5jSV4pyR7Tzwr7ZFIBtwsI0qT5y3ZCKQ9p5k0QULMgnL2\nBB8kyoSVAB/pQPQSc1JI4tQbO7nH30FpuNyCKMqo/EF3QSdRHm74dX74tfjRDodQ\nz1TwFJ8pyBz7/qZr77srgsCLu+NuAgYZ4aivtPECgYA6S489wuXIGnw2GUDVWqJf\n39ovieFNCDGlHi3Bsy24+m3Trz/dijhMbY8OpG51fP9/vmN+lOAweJOXRqlYcWqa\n8UdBjfgqIOfuUW9iicCgBN6TCUUPgcOMhJXPmqF+1d79S2R+kRaus1EGFOMNEkaU\nxCAWOx2/V/HSdwYnIZyNhA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "speech-to-text@graphite-flare-324114.iam.gserviceaccount.com",
+  "client_id": "112233765256363441417",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speech-to-text%40graphite-flare-324114.iam.gserviceaccount.com"
+}

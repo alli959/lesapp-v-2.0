@@ -8,22 +8,26 @@ abstract class VoiceEvent extends Equatable {
 }
 
 class VoiceInitializeEvent extends VoiceEvent {
-  final Function listeningUpdate;
+  final Function statusListener;
+  final Function errorListener;
 
-  VoiceInitializeEvent({@required this.listeningUpdate});
+  VoiceInitializeEvent({
+    this.statusListener,
+    this.errorListener,
+  });
 
   @override
-  List<Object> get props => [listeningUpdate];
+  List<Object> get props => [statusListener, errorListener];
 }
 
 class VoiceStartedEvent extends VoiceEvent {
-  final Function listeningUpdate;
-  final Function checkAnswer;
+  final Function resultListener;
+  final Function soundLevelListener;
 
-  VoiceStartedEvent({@required this.listeningUpdate, this.checkAnswer});
+  VoiceStartedEvent({this.resultListener, this.soundLevelListener});
 
   @override
-  List<Object> get props => [listeningUpdate, checkAnswer];
+  List<Object> get props => [resultListener, soundLevelListener];
 }
 
 class VoiceStoppedEvent extends VoiceEvent {}
@@ -87,19 +91,26 @@ class ScoreKeeperEvent extends VoiceEvent {
   final bool threePoints;
   final bool fourPoints;
   final bool fivePoints;
-  final TotalPoints calc;
 
   ScoreKeeperEvent(
       {this.onePoint,
       this.twoPoints,
       this.threePoints,
       this.fourPoints,
-      this.fivePoints,
-      this.calc});
+      this.fivePoints});
 
   @override
-  List<Object> get props =>
-      [onePoint, twoPoints, threePoints, fourPoints, fivePoints, calc];
+  List<Object> get props => [
+        onePoint,
+        twoPoints,
+        threePoints,
+        fourPoints,
+        fivePoints,
+      ];
 }
 
 class ResetEvent extends VoiceEvent {}
+
+class IsListeningEvent extends VoiceEvent {}
+
+class IsNotListeningEvent extends VoiceEvent {}

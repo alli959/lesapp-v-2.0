@@ -6,8 +6,8 @@ import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
-import 'package:Lesaforrit/screens/level_one_voice_finish.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
+import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -21,18 +21,18 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:async';
 import 'dart:math';
 
-class LevelOneVoice extends StatelessWidget {
-  static const String id = 'level_One_voice';
+class LevelThreeVoice extends StatelessWidget {
+  static const String id = 'level_three_short_voice';
   @override
   Widget build(BuildContext context) {
     final _speech = RepositoryProvider.of<VoiceService>(context);
 
     return BlocProvider<VoiceBloc>(
-      create: (context) => VoiceBloc(_speech, 'level_1'),
+      create: (context) => VoiceBloc(_speech, 'level_3'),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: appBar,
-          title: Text('Raddgreining Stafa',
+          title: Text('Raddgreining Setninga',
               style: TextStyle(
                   fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
           iconTheme: IconThemeData(size: 36, color: Colors.black),
@@ -164,11 +164,12 @@ class _QuizPageState extends State<QuizPage> {
       TotalPoints calc,
     ) {
       _voiceBloc.add(ScoreKeeperEvent(
-          onePoint: onePoint,
-          twoPoints: twoPoints,
-          threePoints: threePoints,
-          fourPoints: fourPoints,
-          fivePoints: fivePoints));
+        onePoint: onePoint,
+        twoPoints: twoPoints,
+        threePoints: threePoints,
+        fourPoints: fourPoints,
+        fivePoints: fivePoints,
+      ));
     }
 
     // _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
@@ -177,17 +178,21 @@ class _QuizPageState extends State<QuizPage> {
         body: BlocListener<VoiceBloc, VoiceState>(
           listener: (context, state) {
             if (state is VoiceFailure) {
+              print("VOICEBLOC STATE AFTER FAILURE ${_voiceBloc.state}");
               print("voice failure, why is this happening?");
             }
           },
           child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
             if (state is VoiceLoading) {
+              print("VOICEBLOC STATE AFTER Voice Loading ${_voiceBloc.state}");
               return Loading();
             }
             if (state is VoiceFailure) {}
 
             if (state is ScoreKeeper) {
+              print("VOICEBLOC STATE AFTER ScoreKeeper ${_voiceBloc.state}");
               quizBrain.stars++;
+
               if (state.fivePoints) {
                 scoreKeeper.add(Icon(
                   Icons.star,
@@ -228,16 +233,22 @@ class _QuizPageState extends State<QuizPage> {
                 _voiceBloc.add(ResetEvent());
                 Timer(Duration(seconds: 1), () {
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OneVoiceFinish(
-                          stig:
-                              (calc.calculatePoints(calc.correct, calc.trys)) *
-                                  100,
-                        ),
-                      ));
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ThreeVoiceFinish(
+                        stig: (calc.calculatePoints(calc.correct, calc.trys)) *
+                            100,
+                      ),
+                    ),
+                  );
                 });
               }
+              // if (state.remove) {
+              //   print("SCOREKEEPER REMOVE");
+              //   if (scoreKeeper.isNotEmpty) {
+              //     scoreKeeper.removeLast();
+              //   }
+              // }
             }
             if (state is UpdateState) {
               return Column(
@@ -267,7 +278,7 @@ class _QuizPageState extends State<QuizPage> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
-                    color: lightBlue,
+                    color: Theme.of(context).backgroundColor,
                     child: SpeechStatusWidget(isListening: state.isListening),
                   ),
                 ],
@@ -292,6 +303,7 @@ class _QuizPageState extends State<QuizPage> {
                       fontSize: 39,
                       bottomBar: BottomBar(
                           onTap: () {
+                            print("tapped");
                             _voiceBloc.add(ResetEvent());
                             Navigator.pop(context);
                           },
@@ -300,7 +312,7 @@ class _QuizPageState extends State<QuizPage> {
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 10),
-                  color: lightBlue,
+                  color: Theme.of(context).backgroundColor,
                   child: SpeechStatusWidget(isListening: false),
                 ),
               ],
@@ -358,20 +370,20 @@ class RecognitionResultsWidget extends StatelessWidget {
     print('${stig}');
     print('${bottomBar}');
     return LevelTemplateVoice(
-        listeningUpdate: listeningUpdate,
-        checkAnswer: checkAnswer,
-        fontSize: 39,
-        cardColor: cardColor,
-        stigColor: lightCyan,
-        shadowLevel: 30,
-        question: question,
-        lastWords: lastWords,
-        scoreKeeper: scoreKeeper,
-        trys: trys,
-        correct: correct,
-        stig: stig,
-        bottomBar: bottomBar,
-        isLetters: true);
+      listeningUpdate: listeningUpdate,
+      checkAnswer: checkAnswer,
+      fontSize: 39,
+      cardColor: cardColorLvlThree,
+      stigColor: lightBlue,
+      shadowLevel: 30,
+      question: question,
+      lastWords: lastWords,
+      scoreKeeper: scoreKeeper,
+      trys: trys,
+      correct: correct,
+      stig: stig,
+      bottomBar: bottomBar,
+    );
   }
 }
 
@@ -386,28 +398,18 @@ class SpeechStatusWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        // height: 25,
-        padding: EdgeInsets.symmetric(vertical: 5),
-        child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
-          if (state is VoiceFailure) {
-            return Center(
-              child: Text(
-                "Ekki að hlusta",
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Center(
+        child: isListening
+            ? Text(
+                "Að hlusta...",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : Text(
+                'Ekki að hlusta',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            );
-          }
-          return Center(
-            child: isListening
-                ? Text(
-                    "Að hlusta...",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    'Ekki að hlusta',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-          );
-        }));
+      ),
+    );
   }
 }

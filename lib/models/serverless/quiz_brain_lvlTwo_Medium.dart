@@ -35,7 +35,6 @@ class QuizBrainLvlTwoMedium {
   String sound2Secondary;
   int whichSound;
   int stars = 0;
-  double finalscore;
   String typeofgame = "words";
   String typeofgamedifficulty = "medium";
   GetData getdata;
@@ -44,7 +43,6 @@ class QuizBrainLvlTwoMedium {
     Question('Epli', true, 'soundLevelTwo/long/Epli.mp3'),
     Question('Gras', true, 'soundLevelTwo/long/Gras.mp3'),
   ];
-  Stream<FileResponse> fileStream;
 
   List<QuestionCache> _questionCache = [];
 
