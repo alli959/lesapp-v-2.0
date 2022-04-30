@@ -45,7 +45,7 @@ class LevelTwoVoice extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key}) : super(key: key);
+  QuizPage({Key? key}) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -75,7 +75,7 @@ class _QuizPageState extends State<QuizPage> {
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
   Color letterColor = Colors.black;
-  Function listeningUpdate;
+  Function? listeningUpdate;
 
   @override
   void initState() {
@@ -188,31 +188,31 @@ class _QuizPageState extends State<QuizPage> {
 
             if (state is ScoreKeeper) {
               quizBrain.stars++;
-              if (state.fivePoints) {
+              if (state.fivePoints!) {
                 scoreKeeper.add(Icon(
                   Icons.star,
                   color: Colors.purpleAccent,
                   size: 31,
                 ));
-              } else if (state.fourPoints) {
+              } else if (state.fourPoints!) {
                 scoreKeeper.add(Icon(
                   MyFlutterApp.fourpoints,
                   color: Colors.purpleAccent,
                   size: 31,
                 ));
-              } else if (state.threePoints) {
+              } else if (state.threePoints!) {
                 scoreKeeper.add(Icon(
                   MyFlutterApp.threepoints,
                   color: Colors.purpleAccent,
                   size: 31,
                 ));
-              } else if (state.twoPoints) {
+              } else if (state.twoPoints!) {
                 scoreKeeper.add(Icon(
                   MyFlutterApp.twopoints,
                   color: Colors.purpleAccent,
                   size: 31,
                 ));
-              } else if (state.onePoint) {
+              } else if (state.onePoint!) {
                 scoreKeeper.add(Icon(
                   MyFlutterApp.onepoint,
                   color: Colors.purpleAccent,
@@ -247,8 +247,8 @@ class _QuizPageState extends State<QuizPage> {
                     child: RecognitionResultsWidget(
                         listeningUpdate: listeningUpdate,
                         checkAnswer: checkAnswer,
-                        question: state.question,
-                        lastWords: state.lastWords,
+                        question: state.question!,
+                        lastWords: state.lastWords!,
                         scoreKeeper: scoreKeeper,
                         trys: calc.trys,
                         correct: calc.correct.toString(),
@@ -268,7 +268,7 @@ class _QuizPageState extends State<QuizPage> {
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     color: Color.fromARGB(255, 109, 223, 112),
-                    child: SpeechStatusWidget(isListening: state.isListening),
+                    child: SpeechStatusWidget(isListening: state.isListening!),
                   ),
                 ],
               );
@@ -315,20 +315,20 @@ class _QuizPageState extends State<QuizPage> {
 /// Displays the most recently recognized words and the sound level.
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
-    Key key,
-    @required this.listeningUpdate,
-    @required this.checkAnswer,
-    @required this.question,
-    @required this.lastWords,
-    @required this.scoreKeeper,
-    @required this.trys,
-    @required this.correct,
-    @required this.stig,
-    @required this.cardColor,
-    @required this.stigColor,
-    @required this.fontSize,
-    @required this.bottomBar,
-    @required this.shadowLevel,
+    Key? key,
+    required this.listeningUpdate,
+    required this.checkAnswer,
+    required this.question,
+    required this.lastWords,
+    required this.scoreKeeper,
+    required this.trys,
+    required this.correct,
+    required this.stig,
+    required this.cardColor,
+    required this.stigColor,
+    required this.fontSize,
+    required this.bottomBar,
+    required this.shadowLevel,
   }) : super(key: key);
   final Function listeningUpdate;
   final Function checkAnswer;
@@ -378,8 +378,8 @@ class RecognitionResultsWidget extends StatelessWidget {
 // /// Display the current status of the listener
 class SpeechStatusWidget extends StatelessWidget {
   const SpeechStatusWidget({
-    Key key,
-    @required this.isListening,
+    Key? key,
+    required this.isListening,
   }) : super(key: key);
   final bool isListening;
 

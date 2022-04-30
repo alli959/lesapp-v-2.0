@@ -13,29 +13,29 @@ class QuizBrain {
   int _question2 = 0;
   int correct = 0;
   int trys = 0;
-  String sound1;
-  String sound2;
-  int whichSound;
+  String? sound1;
+  String? sound2;
+  int? whichSound;
   int stars = 0;
-  double finalscore;
+  double? finalscore;
 
   // H L J Ó Ð
   Future<AudioPlayer> playLocalAsset() async {
     if (whichSound == 1) {
-      player = await cache.play(sound1);
+      player = await cache.play(sound1!);
       return player;
     } else {
-      spilari = await cache.play(sound2);
+      spilari = await cache.play(sound2!);
       return spilari;
     }
   }
 
   Future<AudioPlayer> rePlay(int which) async {
     if (which == 1) {
-      player = await cache.play(sound1);
+      player = await cache.play(sound1!);
       return player;
     } else {
-      player = await cache.play(sound2);
+      player = await cache.play(sound2!);
       return player;
     }
   }

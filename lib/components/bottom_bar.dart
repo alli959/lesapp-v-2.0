@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
 
 class BottomBar extends StatelessWidget {
-  BottomBar({@required this.onTap, @required this.image});
+  BottomBar({required this.onTap, required this.image});
 
-  final Function onTap;
+  final VoidCallback onTap;
   final String image;
 
   @override
@@ -33,7 +33,7 @@ class BottomBar extends StatelessWidget {
                   onTap();
                   Navigator.pushNamed(context, Welcome.id);
                 },
-                size: null,
+                // size: null,
               ),
             ),
           ),
@@ -49,7 +49,7 @@ class BottomBar extends StatelessWidget {
                   onTap();
                   Navigator.pushNamed(context, ProfileView.id);
                 },
-                size: null,
+                // size: null,
               ),
             ),
           ),

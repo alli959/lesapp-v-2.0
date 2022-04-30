@@ -4,7 +4,7 @@ import 'package:Lesaforrit/models/usr.dart';
 
 // Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
 class DatabaseService {
-  final String uid;
+  final String? uid;
   DatabaseService({this.uid});
 
 // Tilvísun í collection í database

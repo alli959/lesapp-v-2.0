@@ -14,5 +14,8 @@ class FetchEvent extends ServerlessEvent {}
 class CheckAnswerEvent extends ServerlessEvent {
   final bool userAnswer;
   final bool correctAnswer;
-  CheckAnswerEvent({this.userAnswer, this.correctAnswer});
+  CheckAnswerEvent({
+    required this.userAnswer,
+    required this.correctAnswer,
+  });
 }

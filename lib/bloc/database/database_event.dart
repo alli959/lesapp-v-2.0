@@ -21,18 +21,18 @@ class UpdateUserData extends DatabaseEvent {
   final String lvlTwoMediumScore;
   final String lvlTwoVoiceScore;
   UpdateUserData(
-      {@required this.name,
-      @required this.age,
-      @required this.readingStage,
-      @required this.lvlOneCapsScore,
-      @required this.lvlOneScore,
-      @required this.lvlOneVoiceScore,
-      @required this.lvlThreeEasyScore,
-      @required this.lvlThreeMediumScore,
-      @required this.lvlThreeVoiceScore,
-      @required this.lvlTwoEasyScore,
-      @required this.lvlTwoMediumScore,
-      @required this.lvlTwoVoiceScore});
+      {required this.name,
+      required this.age,
+      required this.readingStage,
+      required this.lvlOneCapsScore,
+      required this.lvlOneScore,
+      required this.lvlOneVoiceScore,
+      required this.lvlThreeEasyScore,
+      required this.lvlThreeMediumScore,
+      required this.lvlThreeVoiceScore,
+      required this.lvlTwoEasyScore,
+      required this.lvlTwoMediumScore,
+      required this.lvlTwoVoiceScore});
 
   @override
   List<Object> get props => [
@@ -55,7 +55,7 @@ class UpdateUserScore extends DatabaseEvent {
   final String score;
   final String typeof;
 
-  UpdateUserScore({@required this.score, @required this.typeof});
+  UpdateUserScore({required this.score, required this.typeof});
 
   @override
   List<Object> get props => [score, typeof];

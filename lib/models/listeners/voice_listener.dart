@@ -1,7 +1,7 @@
-import 'dart:core';
+// import 'dart:core';
 
-import 'package:speech_to_text/speech_to_text.dart';
+// import 'package:speech_to_text/speech_to_text.dart';
 
-class VoiceListener {
-  Function statusListener;
-}
+// class VoiceListener {
+//   Function statusListener;
+// }

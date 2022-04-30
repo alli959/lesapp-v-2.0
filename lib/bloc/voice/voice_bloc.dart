@@ -91,12 +91,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     try {
       // initialize the speech
       var hasSpeech =
-          await _speech.speechInit(event.statusListener, event.errorListener);
+          await _speech.speechInit(event.statusListener!, event.errorListener!);
       if (hasSpeech) {
         yield VoiceHasInitialized();
       }
     } catch (e) {
-      yield VoiceFailure(error: e);
+      print("error is =>>>>>> $e");
+      // yield VoiceFailure(error: e);
     }
   }
 
@@ -107,11 +108,12 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     try {
-      _speech.speechListen(event.resultListener, event.soundLevelListener);
+      await _speech.speechListen(
+          event.resultListener, event.soundLevelListener!);
       yield IsListeningState();
     } catch (err) {
       print("error = $err");
-      yield VoiceFailure(error: err);
+      // yield VoiceFailure(error: err);
     }
     // yield NewQuestionState(question: _speech.question);
   }
@@ -122,10 +124,10 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
     yield UpdateState(
-        lastWords: event.lastWords,
-        alternates: event.alternates,
-        isListening: event.isListening,
-        question: event.question);
+        lastWords: event.lastWords!,
+        alternates: event.alternates!,
+        isListening: event.isListening!,
+        question: event.question!);
   }
 
   Stream<VoiceState> _mapSoundLevelEvent(SoundLevelEvent event) async* {
@@ -143,18 +145,18 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     await Future.delayed(Duration(milliseconds: 3000));
 
     yield NewQuestionState(
-        onePoint: event.onePoint,
-        twoPoints: event.twoPoints,
-        threePoints: event.threePoints,
-        fourPoints: event.fourPoints,
-        fivePoints: event.fivePoints);
+        onePoint: event.onePoint!,
+        twoPoints: event.twoPoints!,
+        threePoints: event.threePoints!,
+        fourPoints: event.fourPoints!,
+        fivePoints: event.fivePoints!);
   }
 
   Stream<VoiceState> _mapFindBestLastWordEvent(
       FindBestLastWordEvent event) async* {
-    String lastWords = event.lastWords;
-    List<SpeechRecognitionWords> alternates = event.alternates;
-    String question = event.question;
+    String lastWords = event.lastWords!;
+    List<SpeechRecognitionWords> alternates = event.alternates!;
+    String question = event.question!;
   }
 
   Stream<VoiceState> _mapResetEventToState(ResetEvent event) async* {

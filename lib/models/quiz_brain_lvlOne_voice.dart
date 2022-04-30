@@ -9,10 +9,10 @@ class QuizBrainLvlOneVoice {
   int _question = 0;
   int correct = 0;
   int trys = 0;
-  String question;
-  int whichSound;
+  String? question;
+  int? whichSound;
   int stars = 0;
-  double finalscore;
+  double? finalscore;
 
   List<String> _questionBank = [
     'Aa',
@@ -52,7 +52,7 @@ class QuizBrainLvlOneVoice {
   String getQuestionText() {
     _question = Random().nextInt(_questionBank.length - 1);
     question = _questionBank[_question];
-    return question;
+    return question!;
   }
 
   bool getCorrectAnswer() {

@@ -9,10 +9,10 @@ class QuizBrainLvlThreeVoice {
   int _question = 0;
   int correct = 0;
   int trys = 0;
-  String question;
-  int whichSound;
+  String? question;
+  int? whichSound;
   int stars = 0;
-  double finalscore;
+  double? finalscore;
 
   List<String> _questionBank = [
     'Óli fór út að hjóla',
@@ -115,7 +115,7 @@ class QuizBrainLvlThreeVoice {
   String getQuestionText() {
     _question = Random().nextInt(_questionBank.length - 1);
     question = _questionBank[_question];
-    return question;
+    return question!;
   }
 
   Map<String, Object> getCorrectAnswer(String userVoiceAnswer, String question,
@@ -139,7 +139,8 @@ class QuizBrainLvlThreeVoice {
     // Creating hashmap of questions
     for (var i = 0; i < questionArr.length; i++) {
       if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
-        mapQuestion[questionArr[i].toLowerCase()] += 1;
+        mapQuestion[questionArr[i].toLowerCase()] =
+            mapQuestion[questionArr[i].toLowerCase()]! + 1;
       } else {
         mapQuestion[questionArr[i].toLowerCase()] = 1;
       }
@@ -148,7 +149,8 @@ class QuizBrainLvlThreeVoice {
     // Creating hashmap of answers
     for (var i = 0; i < answerArr.length; i++) {
       if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
-        mapAnswer[answerArr[i].toLowerCase()] += 1;
+        mapAnswer[answerArr[i].toLowerCase()] =
+            mapQuestion[questionArr[i].toLowerCase()]! + 1;
       } else {
         mapAnswer[answerArr[i].toLowerCase()] = 1;
       }

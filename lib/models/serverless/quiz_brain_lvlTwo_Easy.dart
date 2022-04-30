@@ -29,29 +29,29 @@ class QuizBrainLvlTwoEasy {
   int _question2 = 0;
   int correct = 0;
   int trys = 0;
-  String sound1;
-  String sound2;
-  String sound1Secondary;
-  String sound2Secondary;
-  int whichSound;
+  String? sound1;
+  String? sound2;
+  String? sound1Secondary;
+  String? sound2Secondary;
+  int? whichSound;
   int stars = 0;
-  double finalscore;
+  double? finalscore;
   String typeofgame = "words";
   String typeofgamedifficulty = "easy";
-  GetData getdata;
+  GetData? getdata;
   bool hasInitialized = false;
   List<Question> _questionBank = [
     Question('Epli', true, 'soundLevelTwo/long/Epli.mp3'),
     Question('Gras', true, 'soundLevelTwo/long/Gras.mp3'),
   ];
-  Stream<FileResponse> fileStream;
+  Stream<FileResponse>? fileStream;
   List<QuestionCache> _questionCache = [];
 
   void addCache(List<Question> questions) async {
     for (var i = 0; i < questions.length; i++) {
       File file1 = await DefaultCacheManager().getSingleFile(questions[i].file);
       File file2 =
-          await DefaultCacheManager().getSingleFile(questions[i].file2);
+          await DefaultCacheManager().getSingleFile(questions[i].file2!);
       QuestionCache q = QuestionCache(
           questions[i].questionText, questions[i].questionAnswer, file1, file2);
       _questionCache.add(q);
@@ -63,7 +63,7 @@ class QuizBrainLvlTwoEasy {
     hasInitialized = true;
   }
 
-  Future<AudioPlayer> playCorrect() async {
+  Future playCorrect() async {
     try {
       correctPlayer = await cache.play(correctSound, volume: 0.7);
       await Future.delayed(Duration(milliseconds: 1000));
@@ -75,7 +75,7 @@ class QuizBrainLvlTwoEasy {
     return null;
   }
 
-  Future<AudioPlayer> playIncorrect() async {
+  Future playIncorrect() async {
     try {
       incorrectPlayer = await cache.play(incorrectSound, volume: 0.7);
       await Future.delayed(Duration(milliseconds: 1000));
@@ -107,7 +107,7 @@ class QuizBrainLvlTwoEasy {
   // Hljóð prufa
 
   // H L J Ó Ð
-  Future<AudioPlayer> playLocalAsset() async {
+  Future playLocalAsset() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound2 is $sound2");
@@ -116,7 +116,7 @@ class QuizBrainLvlTwoEasy {
           return null;
         }
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          File file1 = await DefaultCacheManager().getSingleFile(sound1!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -128,7 +128,7 @@ class QuizBrainLvlTwoEasy {
           return null;
         }
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound2);
+          File file1 = await DefaultCacheManager().getSingleFile(sound2!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -140,7 +140,7 @@ class QuizBrainLvlTwoEasy {
     return null;
   }
 
-  Future<AudioPlayer> playSecondaryAsset() async {
+  Future playSecondaryAsset() async {
     if (hasInitialized) {
       print("sound1 secondary is $sound1Secondary");
       print("sound2 secondary is $sound2Secondary");
@@ -150,7 +150,7 @@ class QuizBrainLvlTwoEasy {
         }
         try {
           File file1 =
-              await DefaultCacheManager().getSingleFile(sound1Secondary);
+              await DefaultCacheManager().getSingleFile(sound1Secondary!);
           Uint8List bytes = file1.readAsBytesSync();
           await player.playBytes(bytes);
         } catch (err) {
@@ -163,7 +163,7 @@ class QuizBrainLvlTwoEasy {
         }
         try {
           File file1 =
-              await DefaultCacheManager().getSingleFile(sound2Secondary);
+              await DefaultCacheManager().getSingleFile(sound2Secondary!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -175,7 +175,7 @@ class QuizBrainLvlTwoEasy {
     return null;
   }
 
-  Future<AudioPlayer> playKarl() async {
+  Future playKarl() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound1Secondary is $sound1Secondary");
@@ -185,10 +185,10 @@ class QuizBrainLvlTwoEasy {
         if (sound1 == null) {
           return null;
         }
-        var sound1FileEnding = sound1.split('_')[1];
+        var sound1FileEnding = sound1?.split('_')[1];
         if (sound1FileEnding == 'Karl.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -198,7 +198,7 @@ class QuizBrainLvlTwoEasy {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
+                await DefaultCacheManager().getSingleFile(sound1Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -207,10 +207,10 @@ class QuizBrainLvlTwoEasy {
           }
         }
       } else {
-        var sound2FileEnding = sound2.split('_')[1];
+        var sound2FileEnding = sound2?.split('_')[1];
         if (sound2FileEnding == 'Karl.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -220,7 +220,7 @@ class QuizBrainLvlTwoEasy {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
+                await DefaultCacheManager().getSingleFile(sound2Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -233,7 +233,7 @@ class QuizBrainLvlTwoEasy {
     return null;
   }
 
-  Future<AudioPlayer> playDora() async {
+  Future playDora() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound1Secondary is $sound1Secondary");
@@ -243,10 +243,10 @@ class QuizBrainLvlTwoEasy {
         if (sound1 == null) {
           return null;
         }
-        var sound1FileEnding = sound1.split('_')[1];
+        var sound1FileEnding = sound1?.split('_')[1];
         if (sound1FileEnding == 'Dora.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -256,7 +256,7 @@ class QuizBrainLvlTwoEasy {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
+                await DefaultCacheManager().getSingleFile(sound1Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -265,10 +265,10 @@ class QuizBrainLvlTwoEasy {
           }
         }
       } else {
-        var sound2FileEnding = sound2.split('_')[1];
+        var sound2FileEnding = sound2?.split('_')[1];
         if (sound2FileEnding == 'Dora.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -278,7 +278,7 @@ class QuizBrainLvlTwoEasy {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
+                await DefaultCacheManager().getSingleFile(sound2Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {

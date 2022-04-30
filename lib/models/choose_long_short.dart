@@ -18,22 +18,22 @@ class Choose extends StatelessWidget {
     this.appBarColor,
   });
 
-  Function buttonOne;
-  Function buttonTwo;
-  Function buttonThree;
-  String buttonTextOne;
-  String buttonTextTwo;
-  String buttonTextThree;
-  String appBarText;
-  String image;
-  Color appBarColor;
+  VoidCallback? buttonOne;
+  VoidCallback? buttonTwo;
+  VoidCallback? buttonThree;
+  String? buttonTextOne;
+  String? buttonTextTwo;
+  String? buttonTextThree;
+  String? appBarText;
+  String? image;
+  Color? appBarColor;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appBarColor,
-        title: Text(appBarText, style: TextStyle(fontSize: 24)),
+        title: Text(appBarText!, style: TextStyle(fontSize: 24)),
         iconTheme: IconThemeData(size: 40, color: Colors.white),
       ),
       endDrawer: SideMenu(),
@@ -45,7 +45,7 @@ class Choose extends StatelessWidget {
               padding: EdgeInsets.only(top: 30, bottom: 50),
               width: 200,
               alignment: Alignment.center,
-              child: Image.asset(image),
+              child: Image.asset(image!),
             ),
           ),
           Expanded(

@@ -1,3 +1,5 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
@@ -5,33 +7,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+
 import 'package:imagebutton/imagebutton.dart';
 
 class LevelTemplate extends StatelessWidget {
   static const String id = 'level_template';
-  double soundCircleSize;
-  double soundPad;
-  double soundPadBottom;
-  double soundIconSize;
-  bool enabled;
-  String upperLetterImage;
-  String lowerLetterImage;
-  String letterOne;
-  String letterTwo;
-  Function onPressed;
-  Function onPressed2;
-  Function onPress;
-  Function onPress2;
-  Function onPlay;
-  List<Icon> scoreKeeper;
-  String trys;
-  String correct;
-  String stig;
-  Color cardColor;
-  Color stigColor;
-  double fontSize;
-  Widget bottomBar;
-  int shadowLevel;
+  double? soundCircleSize;
+  double? soundPad;
+  double? soundPadBottom;
+  double? soundIconSize;
+  bool? enabled;
+  String? upperLetterImage;
+  String? lowerLetterImage;
+  String? letterOne;
+  String? letterTwo;
+  VoidCallback? onPressed;
+  VoidCallback? onPressed2;
+  VoidCallback? onPress;
+  VoidCallback? onPress2;
+  VoidCallback? onPlay;
+  List<Icon>? scoreKeeper;
+  String? trys;
+  String? correct;
+  String? stig;
+  Color? cardColor;
+  Color? stigColor;
+  double? fontSize;
+  Widget? bottomBar;
+  int? shadowLevel;
 
   LevelTemplate(
       {this.soundCircleSize,
@@ -83,20 +86,20 @@ class LevelTemplate extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                  padding:
-                      EdgeInsets.fromLTRB(0, soundPad + 25, 0, soundPadBottom),
-                  child: letterOne.length == 0
+                  padding: EdgeInsets.fromLTRB(
+                      0, soundPad! + 25, 0, soundPadBottom!),
+                  child: letterOne?.length == 0
                       ? RoundIconButton(
                           icon: Icons.play_arrow_rounded,
-                          iconSize: soundIconSize,
-                          circleSize: soundCircleSize,
-                          onPressed: onPlay,
+                          iconSize: soundIconSize!,
+                          circleSize: soundCircleSize!,
+                          onPressed: onPlay!,
                         )
                       : Container(
                           decoration: BoxDecoration(
                               color: stigColor,
                               border: Border.all(
-                                color: stigColor,
+                                color: stigColor!,
                                 width: 5,
                               ),
                               borderRadius:
@@ -145,12 +148,12 @@ class LevelTemplate extends StatelessWidget {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                  child: Image.asset(upperLetterImage, fit: BoxFit.contain),
+                  child: Image.asset(upperLetterImage!, fit: BoxFit.contain),
                 ),
                 Container(
                   child: QuestionCard(
                     cardChild: AutoSizeText(
-                      letterOne,
+                      letterOne!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
@@ -161,12 +164,12 @@ class LevelTemplate extends StatelessWidget {
                           Shadow(
                             offset: Offset(3.0, 3.0),
                             blurRadius: 20.0,
-                            color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                            color: Color.fromARGB(shadowLevel!, 0, 0, 0),
                           ),
                         ],
                       ),
                     ),
-                    onPress: onPress,
+                    onPress: onPress!,
                   ),
                 ),
               ],
@@ -179,12 +182,12 @@ class LevelTemplate extends StatelessWidget {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                  child: Image.asset(lowerLetterImage, fit: BoxFit.contain),
+                  child: Image.asset(lowerLetterImage!, fit: BoxFit.contain),
                 ),
                 Container(
                   child: QuestionCard(
                     cardChild: AutoSizeText(
-                      letterTwo,
+                      letterTwo!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
@@ -195,12 +198,12 @@ class LevelTemplate extends StatelessWidget {
                           Shadow(
                             offset: Offset(3.0, 3.0),
                             blurRadius: 20.0,
-                            color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                            color: Color.fromARGB(shadowLevel!, 0, 0, 0),
                           ),
                         ],
                       ),
                     ),
-                    onPress: onPress2,
+                    onPress: onPress2!,
                   ),
                 ),
               ],
@@ -218,9 +221,9 @@ class LevelTemplate extends StatelessWidget {
                           left: 25, right: 17, bottom: 15, top: 0),
                       child: ReusableCard(
                         height: 35,
-                        colour: stigColor, // - - - * * - - -//
+                        colour: stigColor!, // - - - * * - - -//
                         cardChild: Text(
-                          'RÉTT :  ' + correct + ' af ' + trys,
+                          'RÉTT :  ' + correct! + ' af ' + trys!,
                           style: correctTrys,
                         ),
                       ),
@@ -233,8 +236,8 @@ class LevelTemplate extends StatelessWidget {
                           left: 15, right: 25, bottom: 15, top: 0),
                       child: ReusableCard(
                         height: 35,
-                        colour: stigColor, // - - - * * - - -//
-                        cardChild: Text(stig, style: points),
+                        colour: stigColor!, // - - - * * - - -//
+                        cardChild: Text(stig!, style: points),
                       ),
                     ),
                   ),
@@ -258,7 +261,7 @@ class LevelTemplate extends StatelessWidget {
                                   colour: Colors.white,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: scoreKeeper,
+                                    children: scoreKeeper!,
                                   ),
                                 ),
                               ),

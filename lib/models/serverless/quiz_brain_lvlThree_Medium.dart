@@ -29,19 +29,19 @@ class QuizBrainLvlThreeMedium {
   int _question2 = 0;
   int correct = 0;
   int trys = 0;
-  String sound1;
-  String sound2;
-  String sound1Secondary;
-  String sound2Secondary;
-  int whichSound;
+  String? sound1;
+  String? sound2;
+  String? sound1Secondary;
+  String? sound2Secondary;
+  int? whichSound;
   int stars = 0;
-  double finalscore;
+  double? finalscore;
   String typeofgame = "sentences";
   String typeofgamedifficulty = "medium";
-  GetData getdata;
+  GetData? getdata;
   bool hasInitialized = false;
   List<Question> _questionBank = [];
-  Stream<FileResponse> fileStream;
+  Stream<FileResponse>? fileStream;
 
   List<QuestionCache> _questionCache = [];
 
@@ -49,7 +49,7 @@ class QuizBrainLvlThreeMedium {
     for (var i = 0; i < questions.length; i++) {
       File file1 = await DefaultCacheManager().getSingleFile(questions[i].file);
       File file2 =
-          await DefaultCacheManager().getSingleFile(questions[i].file2);
+          await DefaultCacheManager().getSingleFile(questions[i].file2!);
       QuestionCache q = QuestionCache(
           questions[i].questionText, questions[i].questionAnswer, file1, file2);
       _questionCache.add(q);
@@ -80,7 +80,7 @@ class QuizBrainLvlThreeMedium {
 
   // Hljóð prufa
 
-  Future<AudioPlayer> playCorrect() async {
+  Future playCorrect() async {
     try {
       correctPlayer = await cache.play(correctSound, volume: 0.7);
       await Future.delayed(Duration(milliseconds: 1000));
@@ -92,7 +92,7 @@ class QuizBrainLvlThreeMedium {
     return null;
   }
 
-  Future<AudioPlayer> playIncorrect() async {
+  Future playIncorrect() async {
     try {
       incorrectPlayer = await cache.play(incorrectSound, volume: 0.7);
       await Future.delayed(Duration(milliseconds: 1000));
@@ -105,7 +105,7 @@ class QuizBrainLvlThreeMedium {
   }
 
   // H L J Ó Ð
-  Future<AudioPlayer> playLocalAsset() async {
+  Future playLocalAsset() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound2 is $sound2");
@@ -114,7 +114,7 @@ class QuizBrainLvlThreeMedium {
           return null;
         }
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          File file1 = await DefaultCacheManager().getSingleFile(sound1!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -126,7 +126,7 @@ class QuizBrainLvlThreeMedium {
           return null;
         }
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound2);
+          File file1 = await DefaultCacheManager().getSingleFile(sound2!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -138,7 +138,7 @@ class QuizBrainLvlThreeMedium {
     return null;
   }
 
-  Future<AudioPlayer> playSecondaryAsset() async {
+  Future playSecondaryAsset() async {
     if (hasInitialized) {
       print("sound1 secondary is $sound1Secondary");
       print("sound2 secondary is $sound2Secondary");
@@ -148,7 +148,7 @@ class QuizBrainLvlThreeMedium {
         }
         try {
           File file1 =
-              await DefaultCacheManager().getSingleFile(sound1Secondary);
+              await DefaultCacheManager().getSingleFile(sound1Secondary!);
           Uint8List bytes = file1.readAsBytesSync();
           await player.playBytes(bytes);
         } catch (err) {
@@ -161,7 +161,7 @@ class QuizBrainLvlThreeMedium {
         }
         try {
           File file1 =
-              await DefaultCacheManager().getSingleFile(sound2Secondary);
+              await DefaultCacheManager().getSingleFile(sound2Secondary!);
           Uint8List bytes = file1.readAsBytesSync();
           await spilari.playBytes(bytes);
         } catch (err) {
@@ -173,7 +173,7 @@ class QuizBrainLvlThreeMedium {
     return null;
   }
 
-  Future<AudioPlayer> playKarl() async {
+  Future playKarl() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound1Secondary is $sound1Secondary");
@@ -183,10 +183,10 @@ class QuizBrainLvlThreeMedium {
         if (sound1 == null) {
           return null;
         }
-        var sound1FileEnding = sound1.split('_')[1];
+        var sound1FileEnding = sound1?.split('_')[1];
         if (sound1FileEnding == 'Karl.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -196,7 +196,7 @@ class QuizBrainLvlThreeMedium {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
+                await DefaultCacheManager().getSingleFile(sound1Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -205,10 +205,10 @@ class QuizBrainLvlThreeMedium {
           }
         }
       } else {
-        var sound2FileEnding = sound2.split('_')[1];
+        var sound2FileEnding = sound2?.split('_')[1];
         if (sound2FileEnding == 'Karl.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -218,7 +218,7 @@ class QuizBrainLvlThreeMedium {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
+                await DefaultCacheManager().getSingleFile(sound2Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -231,7 +231,7 @@ class QuizBrainLvlThreeMedium {
     return null;
   }
 
-  Future<AudioPlayer> playDora() async {
+  Future playDora() async {
     if (hasInitialized) {
       print("sound1 is $sound1");
       print("sound1Secondary is $sound1Secondary");
@@ -241,10 +241,10 @@ class QuizBrainLvlThreeMedium {
         if (sound1 == null) {
           return null;
         }
-        var sound1FileEnding = sound1.split('_')[1];
+        var sound1FileEnding = sound1?.split('_')[1];
         if (sound1FileEnding == 'Dora.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
+            File file1 = await DefaultCacheManager().getSingleFile(sound1!);
             Uint8List bytes = file1.readAsBytesSync();
             await player.playBytes(bytes);
           } catch (err) {
@@ -254,7 +254,7 @@ class QuizBrainLvlThreeMedium {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
+                await DefaultCacheManager().getSingleFile(sound1Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -263,10 +263,10 @@ class QuizBrainLvlThreeMedium {
           }
         }
       } else {
-        var sound2FileEnding = sound2.split('_')[1];
+        var sound2FileEnding = sound2?.split('_')[1];
         if (sound2FileEnding == 'Dora.mp3') {
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
+            File file1 = await DefaultCacheManager().getSingleFile(sound2!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {
@@ -276,7 +276,7 @@ class QuizBrainLvlThreeMedium {
         } else {
           try {
             File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
+                await DefaultCacheManager().getSingleFile(sound2Secondary!);
             Uint8List bytes = file1.readAsBytesSync();
             await spilari.playBytes(bytes);
           } catch (err) {

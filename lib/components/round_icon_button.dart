@@ -9,12 +9,12 @@ class RoundIconButton extends StatelessWidget {
       this.circleSize,
       this.iconSize});
 
-  final IconData icon;
-  final Function onPressed;
-  final IconData size;
-  final Color color;
-  final double circleSize;
-  final double iconSize;
+  final IconData? icon;
+  final VoidCallback? onPressed;
+  final IconData? size;
+  final Color? color;
+  final double? circleSize;
+  final double? iconSize;
 
   @override
   Widget build(BuildContext context) {

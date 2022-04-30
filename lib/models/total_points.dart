@@ -4,8 +4,8 @@ class TotalPoints {
   QuizBrain quizBrain = QuizBrain();
 
   //double score = 1;
-  double _points;
-  double finalPoints;
+  double? _points;
+  double? finalPoints;
 
   int correct = 0;
   int trys = 0;
@@ -25,6 +25,6 @@ class TotalPoints {
   double calculatePoints(int correct, int trys) {
     _points = correct / trys;
     finalPoints = _points;
-    return _points;
+    return _points!;
   }
 }

@@ -26,8 +26,8 @@ import 'package:Lesaforrit/models/usr.dart';
 import 'lvlTwo_choose.dart';
 
 class OneFinish extends StatelessWidget {
-  OneFinish({@required this.stig});
-  double stig;
+  OneFinish({this.stig});
+  double? stig;
   static const String id = 'OneFinish';
 
   @override
@@ -54,10 +54,10 @@ class LevelFin extends StatelessWidget {
     this.appBarText,
   });
 
-  double stig;
-  String image;
-  String undertext;
-  String appBarText;
+  double? stig;
+  String? image;
+  String? undertext;
+  String? appBarText;
 
   Widget button1(double stigamet, String uid) {
     return BlocProvider<DatabaseBloc>(
@@ -125,7 +125,7 @@ class LevelFin extends StatelessWidget {
     quizBrainLvlThreeEasy.reset();
     quizBrainLvlThreeMedium.reset();
     quizBrainLvlThreeVoice.reset();
-    return stig.toStringAsFixed(0);
+    return stig!.toStringAsFixed(0);
   }
 
   final formKey = GlobalKey<FormState>();
@@ -141,30 +141,30 @@ class LevelFin extends StatelessWidget {
       }
       if (state is UserUid) {
         print("UserScoreUpdate going on");
-        double stigamet = stig;
+        double stigamet = stig!;
         return finish.FinishMethod(
           highestScore,
           stigamet,
           context,
           formKey,
-          appBarText,
-          image,
-          stig,
+          appBarText!,
+          image!,
+          stig!,
           button1(stigamet, state.uid),
           button2(stigamet, state.uid),
           button3(stigamet, state.uid),
           cardColor,
         );
       }
-      double stigamet = stig;
+      double stigamet = stig!;
       return finish.FinishMethod(
         highestScore,
         stigamet,
         context,
         formKey,
-        appBarText,
-        image,
-        stig,
+        appBarText!,
+        image!,
+        stig!,
         button1(stigamet, ''),
         button2(stigamet, ''),
         button3(stigamet, ''),

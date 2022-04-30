@@ -31,7 +31,7 @@ import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
 class OneVoiceFinish extends StatelessWidget {
-  OneVoiceFinish({@required this.stig});
+  OneVoiceFinish({required this.stig});
   double stig;
   static const String id = 'OneVoiceFinish';
 
@@ -53,16 +53,16 @@ class OneVoiceFinish extends StatelessWidget {
 
 class LevelFin extends StatelessWidget {
   LevelFin({
-    @required this.stig,
+    required this.stig,
     this.image,
     this.undertext,
     this.appBarText,
   });
 
-  double stig;
-  String image;
-  String undertext;
-  String appBarText;
+  double? stig;
+  String? image;
+  String? undertext;
+  String? appBarText;
 
   Widget button1(double stigamet, String uid) {
     return BlocProvider<DatabaseBloc>(
@@ -132,7 +132,7 @@ class LevelFin extends StatelessWidget {
     quizBrainLvlThreeEasy.reset();
     quizBrainLvlThreeMedium.reset();
     quizBrainLvlThreeVoice.reset();
-    return stig.toStringAsFixed(0);
+    return stig!.toStringAsFixed(0);
   }
 
   @override
@@ -148,30 +148,30 @@ class LevelFin extends StatelessWidget {
       }
       if (state is UserUid) {
         print("UserScoreUpdate going on");
-        double stigamet = stig;
+        double stigamet = stig!;
         return finish.FinishMethod(
           highestScore,
           stigamet,
           context,
           formKey,
-          appBarText,
-          image,
-          stig,
+          appBarText!,
+          image!,
+          stig!,
           button1(stigamet, state.uid),
           button2(stigamet, state.uid),
           button3(stigamet, state.uid),
           cardColorLvlThree,
         );
       }
-      double stigamet = stig;
+      double stigamet = stig!;
       return finish.FinishMethod(
         highestScore,
         stigamet,
         context,
         formKey,
-        appBarText,
-        image,
-        stig,
+        appBarText!,
+        image!,
+        stig!,
         button1(stigamet, ''),
         button2(stigamet, ''),
         button3(stigamet, ''),

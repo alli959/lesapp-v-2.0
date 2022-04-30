@@ -8,8 +8,8 @@ abstract class VoiceEvent extends Equatable {
 }
 
 class VoiceInitializeEvent extends VoiceEvent {
-  final Function statusListener;
-  final Function errorListener;
+  final Function? statusListener;
+  final Function? errorListener;
 
   VoiceInitializeEvent({
     this.statusListener,
@@ -17,17 +17,17 @@ class VoiceInitializeEvent extends VoiceEvent {
   });
 
   @override
-  List<Object> get props => [statusListener, errorListener];
+  List<Object> get props => [statusListener!, errorListener!];
 }
 
 class VoiceStartedEvent extends VoiceEvent {
-  final Function resultListener;
-  final Function soundLevelListener;
+  final Function? resultListener;
+  final Function? soundLevelListener;
 
   VoiceStartedEvent({this.resultListener, this.soundLevelListener});
 
   @override
-  List<Object> get props => [resultListener, soundLevelListener];
+  List<Object> get props => [resultListener!, soundLevelListener!];
 }
 
 class VoiceStoppedEvent extends VoiceEvent {}
@@ -37,60 +37,60 @@ class DisplayTextEvent extends VoiceEvent {}
 class VoiceFailureEvent extends VoiceEvent {
   final String error;
 
-  VoiceFailureEvent({@required this.error});
+  VoiceFailureEvent({required this.error});
 
   @override
   List<Object> get props => [error];
 }
 
 class UpdateEvent extends VoiceEvent {
-  final String lastWords;
-  final List<SpeechRecognitionWords> alternates;
-  final bool isListening;
-  final String question;
+  final String? lastWords;
+  final List<SpeechRecognitionWords>? alternates;
+  final bool? isListening;
+  final String? question;
 
   UpdateEvent(
       {this.lastWords, this.alternates, this.isListening, this.question});
 
   @override
-  List<Object> get props => [lastWords, alternates, isListening, question];
+  List<Object> get props => [lastWords!, alternates!, isListening!, question!];
 }
 
 class FindBestLastWordEvent extends VoiceEvent {
-  final String lastWords;
-  final List<SpeechRecognitionWords> alternates;
-  final String question;
+  final String? lastWords;
+  final List<SpeechRecognitionWords>? alternates;
+  final String? question;
 
   FindBestLastWordEvent({this.lastWords, this.alternates, this.question});
 
   @override
-  List<Object> get props => [lastWords, alternates];
+  List<Object> get props => [lastWords!, alternates!];
 }
 
 class SoundLevelEvent extends VoiceEvent {
   final double level;
 
-  SoundLevelEvent({@required this.level});
+  SoundLevelEvent({required this.level});
 
   @override
   List<Object> get props => [level];
 }
 
 class NewQuestionEvent extends VoiceEvent {
-  final String question;
+  final String? question;
 
-  NewQuestionEvent({@required this.question});
+  NewQuestionEvent({required this.question});
 
   @override
-  List<Object> get props => [question];
+  List<Object> get props => [question!];
 }
 
 class ScoreKeeperEvent extends VoiceEvent {
-  final bool onePoint;
-  final bool twoPoints;
-  final bool threePoints;
-  final bool fourPoints;
-  final bool fivePoints;
+  final bool? onePoint;
+  final bool? twoPoints;
+  final bool? threePoints;
+  final bool? fourPoints;
+  final bool? fivePoints;
 
   ScoreKeeperEvent(
       {this.onePoint,
@@ -101,11 +101,11 @@ class ScoreKeeperEvent extends VoiceEvent {
 
   @override
   List<Object> get props => [
-        onePoint,
-        twoPoints,
-        threePoints,
-        fourPoints,
-        fivePoints,
+        onePoint!,
+        twoPoints!,
+        threePoints!,
+        fourPoints!,
+        fivePoints!,
       ];
 }
 

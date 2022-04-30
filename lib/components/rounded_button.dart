@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 class RoundedButton extends StatelessWidget {
   RoundedButton({this.title, this.colour, this.onPressed});
 
-  final Color colour;
-  final String title;
-  final Function onPressed;
+  final Color? colour;
+  final String? title;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class RoundedButton extends StatelessWidget {
           minWidth: 250.0,
           height: 20.0, // breyta hæð seinna
           child: Text(
-            title,
+            title!,
             style: TextStyle(
               fontFamily: 'Metropolis',
               fontSize: 18,

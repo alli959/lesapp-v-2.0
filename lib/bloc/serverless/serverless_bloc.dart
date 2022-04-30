@@ -41,7 +41,7 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
     _data.setData(_typeofgame, _typeofdifficulty);
     List<Data> data;
     try {
-      data = await _data.getData();
+      data = await _data.getData()!;
     } catch (err) {
       print("there was an error $err");
       throw err;

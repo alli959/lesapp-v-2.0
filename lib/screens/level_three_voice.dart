@@ -14,6 +14,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -45,7 +46,7 @@ class LevelThreeVoice extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key}) : super(key: key);
+  QuizPage({Key? key}) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -74,8 +75,8 @@ class _QuizPageState extends State<QuizPage> {
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
   Color letterColor = Colors.black;
-  Function listeningUpdate;
-  SpeechToTextProvider provider;
+  Function? listeningUpdate;
+  SpeechToTextProvider? provider;
   String lastWords = '';
   List<SpeechRecognitionWords> alternates = [];
   bool isListening = false;
@@ -84,38 +85,38 @@ class _QuizPageState extends State<QuizPage> {
   List<bool> answerMap = [];
   List<String> questionArr = [];
   List<String> answerArr = [];
-  double minSoundLevel;
-  double maxSoundLevel;
-  double level;
+  double? minSoundLevel;
+  double? maxSoundLevel;
+  double? level;
   bool isShowResult = false;
 
   void addScore(Map<String, bool> state) {
     quizBrain.stars++;
-    if (state["fivePoints"]) {
+    if (state["fivePoints"]!) {
       scoreKeeper.add(Icon(
         Icons.star,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["fourPoints"]) {
+    } else if (state["fourPoints"]!) {
       scoreKeeper.add(Icon(
         MyFlutterApp.fourpoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["threePoints"]) {
+    } else if (state["threePoints"]!) {
       scoreKeeper.add(Icon(
         MyFlutterApp.threepoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["twoPoints"]) {
+    } else if (state["twoPoints"]!) {
       scoreKeeper.add(Icon(
         MyFlutterApp.twopoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["onePoint"]) {
+    } else if (state["onePoint"]!) {
       scoreKeeper.add(Icon(
         MyFlutterApp.onepoint,
         color: Colors.purpleAccent,
@@ -167,7 +168,8 @@ class _QuizPageState extends State<QuizPage> {
     // Creating hashmap of questions
     for (var i = 0; i < questionArr.length; i++) {
       if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
-        mapQuestion[questionArr[i].toLowerCase()] += 1;
+        mapQuestion[questionArr[i].toLowerCase()] =
+            mapQuestion[questionArr[i].toLowerCase()]! + 1;
       } else {
         mapQuestion[questionArr[i].toLowerCase()] = 1;
       }
@@ -176,7 +178,8 @@ class _QuizPageState extends State<QuizPage> {
     // Creating hashmap of answers
     for (var i = 0; i < answerArr.length; i++) {
       if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
-        mapAnswer[answerArr[i].toLowerCase()] += 1;
+        mapAnswer[answerArr[i].toLowerCase()] =
+            mapQuestion[questionArr[i].toLowerCase()]! + 1;
       } else {
         mapAnswer[answerArr[i].toLowerCase()] = 1;
       }
@@ -337,68 +340,71 @@ class _QuizPageState extends State<QuizPage> {
 
     void soundLevelListener(double lvl) {
       print("at sound level listener");
-      minSoundLevel = math.min(minSoundLevel, level);
-      maxSoundLevel = math.max(maxSoundLevel, level);
+      minSoundLevel = math.min(minSoundLevel!, level!);
+      maxSoundLevel = math.max(maxSoundLevel!, level!);
       level = lvl;
     }
 
-    resultListener(SpeechRecognitionResult result) {
-      _logEvent(
-          'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-      lastWords = '${result.recognizedWords}';
-      alternates = result.alternates;
-      // _speech.finalResult = result.finalResult;
+    resultListener(StreamingRecognizeResponse data) {
+      final currentText =
+          data.results.map((e) => e.alternatives.first.transcript).join('\n');
+      print("currentText is =====> $currentText");
+      // _logEvent(
+      //     'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
+      // lastWords = '${result.recognizedWords}';
+      // alternates = result.alternates;
+      // // _speech.finalResult = result.finalResult;
 
-      if (result.finalResult) {
-        isListening = false;
-        lastWords = bestLastWord(lastWords, question, alternates);
+      // if (result.finalResult) {
+      //   isListening = false;
+      //   lastWords = bestLastWord(lastWords, question, alternates);
 
-        Map<String, Object> score = isCorrect(lastWords, question, "level_3");
-        double finalPoints = score['points'];
-        points = finalPoints;
+      //   Map<String, Object> score = isCorrect(lastWords, question, "level_3");
+      //   double finalPoints = score['points'];
+      //   points = finalPoints;
 
-        questionMap = score['questionMap'];
-        answerMap = score['answerMap'];
-        questionArr = score['questionArr'];
-        answerArr = score['answerArr'];
+      //   questionMap = score['questionMap'];
+      //   answerMap = score['answerMap'];
+      //   questionArr = score['questionArr'];
+      //   answerArr = score['answerArr'];
 
-        print("resultListener finalResult");
-        print("questionMap = ${questionMap}");
-        print("answerMAp = ${answerMap}");
-        print("questionArr = ${questionArr}");
-        print("answerArr = ${answerArr}");
+      //   print("resultListener finalResult");
+      //   print("questionMap = ${questionMap}");
+      //   print("answerMAp = ${answerMap}");
+      //   print("questionArr = ${questionArr}");
+      //   print("answerArr = ${answerArr}");
 
-        // the trys are each word
-        calc.trys += questionArr.length;
-        calc.correct += score['correct'];
+      //   // the trys are each word
+      //   calc.trys += questionArr.length;
+      //   calc.correct += score['correct'];
 
-        bool onePoint = (finalPoints <= 0.2);
-        bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
-        bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
-        bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
-        bool fivePoints = (finalPoints > 0.8);
+      //   bool onePoint = (finalPoints <= 0.2);
+      //   bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
+      //   bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
+      //   bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
+      //   bool fivePoints = (finalPoints > 0.8);
 
-        if (fivePoints) {
-          print("five Points");
-        }
-        if (fourPoints) {
-          print("four Points");
-        }
-        if (threePoints) {
-          print("three Points");
-        }
-        if (twoPoints) {
-          print("Two Points");
-        }
-        if (onePoint) {
-          print("one Points");
-        }
+      //   if (fivePoints) {
+      //     print("five Points");
+      //   }
+      //   if (fourPoints) {
+      //     print("four Points");
+      //   }
+      //   if (threePoints) {
+      //     print("three Points");
+      //   }
+      //   if (twoPoints) {
+      //     print("Two Points");
+      //   }
+      //   if (onePoint) {
+      //     print("one Points");
+      //   }
 
-        checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints);
-      } else {
-        isListening = true;
-        listeningUpdate(lastWords, alternates, isListening, question);
-      }
+      //   checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints);
+      // } else {
+      //   isListening = true;
+      //   listeningUpdate(lastWords, alternates, isListening, question);
+      // }
     }
 
     if (!started) {
@@ -428,8 +434,8 @@ class _QuizPageState extends State<QuizPage> {
             if (state is UpdateState) {
               print("state is updatestate");
               if (state.lastWords != lastWords) {
-                lastWords = state.lastWords;
-                alternates = state.alternates;
+                lastWords = state.lastWords!;
+                alternates = state.alternates!;
               }
             }
 
@@ -440,11 +446,11 @@ class _QuizPageState extends State<QuizPage> {
 
             if (state is NewQuestionState) {
               Map<String, bool> val = {
-                "onePoint": state.onePoint,
-                "twoPoints": state.twoPoints,
-                "threePoints": state.threePoints,
-                "fourPoints": state.fourPoints,
-                "fivePoints": state.fivePoints,
+                "onePoint": state.onePoint!,
+                "twoPoints": state.twoPoints!,
+                "threePoints": state.threePoints!,
+                "fourPoints": state.fourPoints!,
+                "fivePoints": state.fivePoints!,
               };
 
               addScore(val);
@@ -513,27 +519,27 @@ class _QuizPageState extends State<QuizPage> {
 /// Displays the most recently recognized words and the sound level.
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
-    Key key,
-    @required this.isShowResult,
-    @required this.questionArr,
-    @required this.answerArr,
-    @required this.questionMap,
-    @required this.answerMap,
-    @required this.onsoundLevelListener,
-    @required this.resultListener,
-    @required this.listeningUpdate,
-    @required this.checkAnswer,
-    @required this.question,
-    @required this.lastWords,
-    @required this.scoreKeeper,
-    @required this.trys,
-    @required this.correct,
-    @required this.stig,
-    @required this.cardColor,
-    @required this.stigColor,
-    @required this.fontSize,
-    @required this.bottomBar,
-    @required this.shadowLevel,
+    Key? key,
+    required this.isShowResult,
+    required this.questionArr,
+    required this.answerArr,
+    required this.questionMap,
+    required this.answerMap,
+    required this.onsoundLevelListener,
+    required this.resultListener,
+    required this.listeningUpdate,
+    required this.checkAnswer,
+    required this.question,
+    required this.lastWords,
+    required this.scoreKeeper,
+    required this.trys,
+    required this.correct,
+    required this.stig,
+    required this.cardColor,
+    required this.stigColor,
+    required this.fontSize,
+    required this.bottomBar,
+    required this.shadowLevel,
   }) : super(key: key);
   final bool isShowResult;
   final List<String> questionArr;
@@ -586,8 +592,8 @@ class RecognitionResultsWidget extends StatelessWidget {
 // /// Display the current status of the listener
 class SpeechStatusWidget extends StatelessWidget {
   const SpeechStatusWidget({
-    Key key,
-    @required this.isListening,
+    Key? key,
+    required this.isListening,
   }) : super(key: key);
   final bool isListening;
 

@@ -16,7 +16,7 @@ class PlayGameState extends ServerlessState {}
 class ServerlessFetch extends ServerlessState {
   final List<Question> questionBank;
 
-  ServerlessFetch({@required this.questionBank});
+  ServerlessFetch({required this.questionBank});
 
   @override
   List<Object> get props => [questionBank];
@@ -29,14 +29,14 @@ class CheckAnswerState extends ServerlessState {
   final bool upperImageIncorrect;
 
   CheckAnswerState(
-      {this.upperImageCorrect,
-      this.lowerImageCorrect,
-      this.lowerImageIncorrect,
-      this.upperImageIncorrect});
+      {required this.upperImageCorrect,
+      required this.lowerImageCorrect,
+      required this.lowerImageIncorrect,
+      required this.upperImageIncorrect});
 }
 
 class NewQuestionState extends ServerlessState {
   final bool wasCorrect;
 
-  NewQuestionState({this.wasCorrect});
+  NewQuestionState({required this.wasCorrect});
 }

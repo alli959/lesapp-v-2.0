@@ -7,13 +7,13 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create user object based on Firebase-user
-  Usr _userFromFirebaseUser(User user) {
+  Usr? _userFromFirebaseUser(User? user) {
     return user != null ? Usr(uid: user.uid) : null;
   }
 
   // Everytime a Usr signs in or signs out we get a signal from the stream.
   // A null value if the user signs out but a Usr object if the user signs in.
-  Stream<Usr> get user {
+  Stream<Usr?> get user {
     print("usr get stuff called");
     return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
@@ -24,15 +24,15 @@ class AuthService {
   }
 
   Future getCurrentUserID() async {
-    return _auth.currentUser.uid;
+    return _auth.currentUser!.uid;
   }
 
   // sign in with email and password
   Future signInAnon() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
-      User user = result.user;
-      return _userFromFirebaseUser(user);
+      User? user = result.user;
+      return _userFromFirebaseUser(user!);
     } catch (e) {
       print('Villan er: ' + e.toString());
       return null;
@@ -44,7 +44,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      User user = result.user;
+      User user = result.user!;
       return _userFromFirebaseUser(user);
     } catch (e) {
       print("what is going on...");
@@ -72,7 +72,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      User user = result.user;
+      User user = result.user!;
 
       // create a new document for the user with the uid
       await DatabaseService(uid: user.uid).updateUserData(

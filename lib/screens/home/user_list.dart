@@ -11,13 +11,13 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-    final users = Provider.of<List<Read>>(context) ?? [];
+    final users = Provider.of<List<Read>>(context);
     List<Read> listi = [];
 
     return ListView.builder(
       itemCount: users.length,
       itemBuilder: (BuildContext context, int index) {
-        users.sort((a, b) => b.totalpoints.compareTo(a.totalpoints));
+        users.sort((a, b) => b.totalpoints!.compareTo(a.totalpoints!));
 
         return ReadTile(read: users[index], rank: index + 1);
       },

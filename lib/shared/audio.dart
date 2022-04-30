@@ -4,9 +4,9 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 
 class Audio {
-  String sound1;
-  String sound2;
-  int whichSound;
+  String? sound1;
+  String? sound2;
+  int? whichSound;
 
   QuizBrain quizBrain = QuizBrain();
   AudioCache playerCache = AudioCache();
@@ -15,10 +15,10 @@ class Audio {
 
   Future<AudioPlayer> playAsset() async {
     if (whichSound == 1) {
-      audioPlayer1 = await playerCache.play(sound1);
+      audioPlayer1 = await playerCache.play(sound1!);
       return audioPlayer1;
     } else {
-      audioPlayer2 = await playerCache.play(sound2);
+      audioPlayer2 = await playerCache.play(sound2!);
       return audioPlayer2;
     }
   }

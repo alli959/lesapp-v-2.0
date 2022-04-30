@@ -22,17 +22,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class SetScore extends StatelessWidget {
-  String currentScore;
-  String currentScoreCaps;
-  String currentScoreVoice;
-  String currentScoreTwo;
-  String currentScoreTwoLong;
-  String currentScoreTwoVoice;
-  String currentScoreThree;
-  String currentScoreThreeLong;
-  String currentScoreThreeVoice;
-  String level;
-  String text;
+  String? currentScore;
+  String? currentScoreCaps;
+  String? currentScoreVoice;
+  String? currentScoreTwo;
+  String? currentScoreTwoLong;
+  String? currentScoreTwoVoice;
+  String? currentScoreThree;
+  String? currentScoreThreeLong;
+  String? currentScoreThreeVoice;
+  String? level;
+  String? text;
   SetScore(
       {this.currentScore,
       this.currentScoreCaps,
@@ -58,27 +58,27 @@ class SetScore extends StatelessWidget {
   QuizBrainLvlThreeMedium quizBrainLvlThreeMedium = QuizBrainLvlThreeMedium();
   QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
 
-  String _currentName;
-  String _currentAge;
-  String _currentReadingStage;
+  String? _currentName;
+  String? _currentAge;
+  String? _currentReadingStage;
 
   @override
   Widget build(BuildContext context) {
     final _databaseBloc = BlocProvider.of<DatabaseBloc>(context);
 
     updateUserData(
-      String name,
-      String age,
-      String readingStage,
-      String lvlOneScore,
-      String lvlOneCapsScore,
-      String lvlOneVoiceScore,
-      String lvlTwoEasyScore,
-      String lvlTwoMediumScore,
-      String lvlTwoVoiceScore,
-      String lvlThreeEasyScore,
-      String lvlThreeMediumScore,
-      String lvlThreeVoiceScore,
+      String? name,
+      String? age,
+      String? readingStage,
+      String? lvlOneScore,
+      String? lvlOneCapsScore,
+      String? lvlOneVoiceScore,
+      String? lvlTwoEasyScore,
+      String? lvlTwoMediumScore,
+      String? lvlTwoVoiceScore,
+      String? lvlThreeEasyScore,
+      String? lvlThreeMediumScore,
+      String? lvlThreeVoiceScore,
     ) {
       quizBrainLvlOneCaps.reset();
       quizBrainLvlOne.reset();
@@ -91,18 +91,18 @@ class SetScore extends StatelessWidget {
       quizBrainLvlThreeVoice.reset();
 
       _databaseBloc.add(UpdateUserData(
-          name: name,
-          age: age,
-          readingStage: readingStage,
-          lvlOneCapsScore: lvlOneCapsScore,
-          lvlOneScore: lvlOneScore,
-          lvlOneVoiceScore: lvlOneVoiceScore,
-          lvlThreeEasyScore: lvlThreeEasyScore,
-          lvlThreeMediumScore: lvlThreeMediumScore,
-          lvlThreeVoiceScore: lvlThreeVoiceScore,
-          lvlTwoEasyScore: lvlTwoEasyScore,
-          lvlTwoMediumScore: lvlTwoMediumScore,
-          lvlTwoVoiceScore: lvlTwoVoiceScore));
+          name: name!,
+          age: age!,
+          readingStage: readingStage!,
+          lvlOneCapsScore: lvlOneCapsScore!,
+          lvlOneScore: lvlOneScore!,
+          lvlOneVoiceScore: lvlOneVoiceScore!,
+          lvlThreeEasyScore: lvlThreeEasyScore!,
+          lvlThreeMediumScore: lvlThreeMediumScore!,
+          lvlThreeVoiceScore: lvlThreeVoiceScore!,
+          lvlTwoEasyScore: lvlTwoEasyScore!,
+          lvlTwoMediumScore: lvlTwoMediumScore!,
+          lvlTwoVoiceScore: lvlTwoVoiceScore!));
     }
 
     // Usr user = Provider.of<Usr>(context);
@@ -113,7 +113,7 @@ class SetScore extends StatelessWidget {
             stream: state.userData,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                UserData userData = snapshot.data;
+                UserData userData = snapshot.data!;
                 return (Form(
                     key: _formKey,
                     child: Column(
@@ -123,7 +123,7 @@ class SetScore extends StatelessWidget {
                               colour: buttonColorBlue,
                               title: text,
                               onPressed: () => {
-                                    if (_formKey.currentState.validate())
+                                    if (_formKey.currentState!.validate())
                                       {
                                         updateUserData(
                                             _currentName ?? userData.name,
@@ -149,7 +149,7 @@ class SetScore extends StatelessWidget {
                                             currentScoreThreeVoice ??
                                                 userData.lvlThreeVoiceScore),
                                         Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(level,
+                                            .pushNamedAndRemoveUntil(level!,
                                                 (Route<dynamic> route) => false)
                                       }
                                   }),

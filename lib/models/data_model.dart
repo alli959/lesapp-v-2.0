@@ -1,5 +1,5 @@
 class DataModel {
-  final Object model;
+  final Object? model;
 
   const DataModel({this.model});
 

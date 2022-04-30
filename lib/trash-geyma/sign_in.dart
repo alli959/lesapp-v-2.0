@@ -9,7 +9,7 @@ import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
-  final Function toggleView;
+  final Function? toggleView;
   SignIn({this.toggleView});
 
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class _SignInState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
-  String email;
-  String password;
+  String? email;
+  String? password;
   String error = '';
 
   @override
@@ -62,13 +62,13 @@ class _SignInState extends State<SignInForm> {
 //           }
 //         }
 //       },
-    _onLoginButtonPressed() async {
-      if (_formKey.currentState.validate()) {
+    void _onLoginButtonPressed() async {
+      if (_formKey.currentState!.validate()) {
         setState(() {
           loading = true;
         });
-        _loginBloc
-            .add(LoginWithEmailButtonPressed(email: email, password: password));
+        _loginBloc.add(
+            LoginWithEmailButtonPressed(email: email!, password: password!));
         print("email: $email");
         print("password: $password");
       }
@@ -121,7 +121,7 @@ class _SignInState extends State<SignInForm> {
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     validator: (value) =>
-                        value.isEmpty ? 'Sláðu inn netfang' : null,
+                        value!.isEmpty ? 'Sláðu inn netfang' : null,
                     onChanged: (value) {
                       setState(() {
                         email = value;
@@ -136,7 +136,7 @@ class _SignInState extends State<SignInForm> {
                   child: TextFormField(
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 6
+                    validator: (value) => value!.length < 6
                         ? 'Lykilorð þarf að vera a.m.k 6 stafir'
                         : null,
                     onChanged: (value) {
@@ -153,9 +153,7 @@ class _SignInState extends State<SignInForm> {
                   child: RoundedButton(
                     title: 'Skrá inn',
                     colour: Color(0xFF009df4),
-                    onPressed: state is LoginLoading
-                        ? Loading()
-                        : _onLoginButtonPressed,
+                    onPressed: _onLoginButtonPressed,
                   ),
                 ),
                 Center(

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:imagebutton/imagebutton.dart';
 
 class ImgButton extends StatelessWidget {
-  final double width;
-  final double height;
-  final double left;
-  final double top;
-  final double right;
-  final double bottom;
-  final String firstImage;
-  final String secondImage;
-  final Function onTap;
+  final double? width;
+  final double? height;
+  final double? left;
+  final double? top;
+  final double? right;
+  final double? bottom;
+  final String? firstImage;
+  final String? secondImage;
+  final Function? onTap;
 
   const ImgButton(
       {this.width,
@@ -26,13 +27,13 @@ class ImgButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(left, top, right, bottom),
+      padding: EdgeInsets.fromLTRB(left!, top!, right!, bottom!),
       child: ImageButton(
         children: <Widget>[],
         width: width,
         height: height,
-        pressedImage: Image.asset(firstImage),
-        unpressedImage: Image.asset(secondImage),
+        pressedImage: Image.asset(firstImage!),
+        unpressedImage: Image.asset(secondImage!),
         onTap: onTap,
       ),
     );

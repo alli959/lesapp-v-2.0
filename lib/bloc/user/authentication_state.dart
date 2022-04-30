@@ -9,7 +9,7 @@ abstract class AuthenticationState extends Equatable {
 class UsrState extends AuthenticationState {
   String uid;
 
-  UsrState({@required this.uid});
+  UsrState({required this.uid});
 
   @override
   List<Object> get props => [uid];
@@ -26,7 +26,7 @@ class AuthenticationUninitialized extends AuthenticationState {}
 class AuthenticationAuthenticated extends AuthenticationState {
   final Usr usr;
 
-  AuthenticationAuthenticated({@required this.usr});
+  AuthenticationAuthenticated({required this.usr});
 
   @override
   List<Object> get props => [usr];
@@ -39,7 +39,7 @@ class AuthenticationLoading extends AuthenticationState {}
 class AuthenticationFailure extends AuthenticationState {
   final String message;
 
-  AuthenticationFailure({@required this.message});
+  AuthenticationFailure({required this.message});
 
   @override
   List<Object> get props => [message];
@@ -48,7 +48,7 @@ class AuthenticationFailure extends AuthenticationState {
 class UserUid extends AuthenticationState {
   final String uid;
 
-  UserUid({@required this.uid});
+  UserUid({required this.uid});
 
   @override
   List<Object> get props => [uid];

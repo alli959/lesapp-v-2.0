@@ -41,7 +41,7 @@ class LevelOneCap extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key}) : super(key: key);
+  QuizPage({Key? key}) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();

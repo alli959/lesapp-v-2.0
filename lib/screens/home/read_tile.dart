@@ -5,40 +5,40 @@ import 'package:random_color/random_color.dart';
 
 class ReadTile extends StatelessWidget {
   final Read read;
-  int rank;
-  ReadTile({this.read, this.rank});
+  int? rank;
+  ReadTile({required this.read, this.rank});
 
-  String concat() {
-    String zero = read.lvlOneScore;
-    String one = read.lvlOneCapsScore;
-    String oneVoice = read.lvlOneVoiceScore;
-    String two = read.lvlTwoEasyScore;
-    String twoLong = read.lvlTwoMediumScore;
-    String twoVoice = read.lvlTwoVoiceScore;
-    String three = read.lvlThreeEasyScore;
-    String threeLong = read.lvlThreeMediumScore;
-    String threeVoice = read.lvlThreeVoiceScore;
-    double total = read.totalpoints;
-    String concat = 'HEILDARSTIG: ' +
-        total.toStringAsFixed(0) +
+  String? concat() {
+    String? zero = read.lvlOneScore;
+    String? one = read.lvlOneCapsScore;
+    String? oneVoice = read.lvlOneVoiceScore;
+    String? two = read.lvlTwoEasyScore;
+    String? twoLong = read.lvlTwoMediumScore;
+    String? twoVoice = read.lvlTwoVoiceScore;
+    String? three = read.lvlThreeEasyScore;
+    String? threeLong = read.lvlThreeMediumScore;
+    String? threeVoice = read.lvlThreeVoiceScore;
+    double? total = read.totalpoints;
+    String? concat = 'HEILDARSTIG: ' +
+        total!.toStringAsFixed(0) +
         '\n1)\n   Hástafir:    ' +
-        one +
+        one! +
         ',\n   Lágstafir:   ' +
-        zero +
+        zero! +
         ',\n   Lesin orð:  ' +
-        oneVoice +
+        oneVoice! +
         '\n2)\n   Stutt orð:   ' +
-        two +
+        two! +
         ',\n   Löng orð:   ' +
-        twoLong +
+        twoLong! +
         ',\n   Lesin orð:  ' +
-        twoVoice +
+        twoVoice! +
         '\n3)\n   Stuttar setningar:   ' +
-        three +
+        three! +
         ',\n   Langar setningar:   ' +
-        threeLong +
+        threeLong! +
         ',\n   Lesnar setningar:   ' +
-        threeVoice;
+        threeVoice!;
     return concat;
   }
 
@@ -54,8 +54,8 @@ class ReadTile extends StatelessWidget {
             backgroundColor: Colors.white,
             child: Image.asset('assets/images/stigataflaStjarna.png'),
           ),
-          title: Text(rank.toString() + ': ' + read.name),
-          subtitle: Text(concat()),
+          title: Text(rank.toString() + ': ' + read.name!),
+          subtitle: Text(concat()!),
         ),
       ),
     );

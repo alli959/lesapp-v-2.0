@@ -22,10 +22,10 @@ class _MyProfileState extends State<MyProfile> {
   final _formKey = GlobalKey<FormState>();
 
   // form values
-  String currentName;
-  String currentScore;
-  String currentAge;
-  String currentReadingStage;
+  String? currentName;
+  String? currentScore;
+  String? currentAge;
+  String? currentReadingStage;
   final AuthService _auth = AuthService();
 
   @override
@@ -51,7 +51,7 @@ class _MyProfileState extends State<MyProfile> {
                 stream: state.userdata,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    UserData userData = snapshot.data;
+                    UserData userData = snapshot.data!;
                     return Form(
                       key: _formKey,
                       child: Center(
@@ -84,7 +84,7 @@ class _MyProfileState extends State<MyProfile> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            userData.name,
+                                            userData.name!,
                                             style: myPagesName,
                                           ),
                                         ],
@@ -107,7 +107,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.age,
+                                            userData.age!,
                                             style: myPages,
                                           ),
                                         ],
@@ -121,7 +121,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.readingStage,
+                                            userData.readingStage!,
                                             style: myPages,
                                           ),
                                         ],
@@ -152,7 +152,7 @@ class _MyProfileState extends State<MyProfile> {
                                             textAlign: TextAlign.left,
                                           ),
                                           Text(
-                                            userData.lvlOneCapsScore,
+                                            userData.lvlOneCapsScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -167,7 +167,7 @@ class _MyProfileState extends State<MyProfile> {
                                             textAlign: TextAlign.left,
                                           ),
                                           Text(
-                                            userData.lvlOneScore,
+                                            userData.lvlOneScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -182,7 +182,7 @@ class _MyProfileState extends State<MyProfile> {
                                             textAlign: TextAlign.left,
                                           ),
                                           Text(
-                                            userData.lvlOneVoiceScore,
+                                            userData.lvlOneVoiceScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -196,7 +196,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlTwoEasyScore,
+                                            userData.lvlTwoEasyScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -210,7 +210,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlTwoMediumScore,
+                                            userData.lvlTwoMediumScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -224,7 +224,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlTwoVoiceScore,
+                                            userData.lvlTwoVoiceScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -238,7 +238,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlThreeEasyScore,
+                                            userData.lvlThreeEasyScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -252,7 +252,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlThreeMediumScore,
+                                            userData.lvlThreeMediumScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -266,7 +266,7 @@ class _MyProfileState extends State<MyProfile> {
                                             style: myPages,
                                           ),
                                           Text(
-                                            userData.lvlThreeVoiceScore,
+                                            userData.lvlThreeVoiceScore!,
                                             style: myPages,
                                           ),
                                         ],
@@ -305,15 +305,15 @@ class _MyProfileState extends State<MyProfile> {
 }
 
 class Div extends StatelessWidget {
-  final double bottom;
-  final double top;
+  final double? bottom;
+  final double? top;
 
   Div({this.bottom, this.top});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: bottom, top: top),
+      padding: EdgeInsets.only(bottom: bottom!, top: top!),
       child: Divider(
           color: cardColorLvlThree, indent: 53, endIndent: 60, thickness: 1.7),
     );

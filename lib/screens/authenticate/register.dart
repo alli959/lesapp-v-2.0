@@ -34,13 +34,13 @@ class _RegisterState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
-  String email;
-  String password;
-  String name;
-  String age;
-  String readingStage;
-  String selected;
-  String error = '';
+  String? email;
+  String? password;
+  String? name;
+  String? age;
+  String? readingStage;
+  String? selected;
+  String? error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +48,13 @@ class _RegisterState extends State<RegisterForm> {
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     _onRegisterButtonPressed() {
-      if (_formKey.currentState.validate()) {
+      if (_formKey.currentState!.validate()) {
         _registerBloc.add(RegisterWithEmailButtonPressed(
-            email: email,
-            password: password,
-            name: name,
-            age: age,
-            readingStage: readingStage));
+            email: email!,
+            password: password!,
+            name: name!,
+            age: age!,
+            readingStage: readingStage!));
       }
     }
 
@@ -112,7 +112,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.name,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn nafn barns' : null,
+                              value!.isEmpty ? 'Sláðu inn nafn barns' : null,
                           onChanged: (value) {
                             setState(() {
                               name = value;
@@ -128,7 +128,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Veldu aldur barns' : null,
+                              value!.isEmpty ? 'Veldu aldur barns' : null,
                           onChanged: (value) {
                             setState(() {
                               age = value;
@@ -140,8 +140,8 @@ class _RegisterState extends State<RegisterForm> {
                       ),
                       Container(
                         padding: EdgeInsets.all(6),
-                        child: DropdownButtonFormField<String>(
-                          validator: (value) => value.isEmpty
+                        child: DropdownButtonFormField<String?>(
+                          validator: (value) => value!.isEmpty
                               ? 'Veldu lestrarstig barnsins'
                               : null,
                           value: selected,
@@ -172,7 +172,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.emailAddress,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn netfang' : null,
+                              value!.isEmpty ? 'Sláðu inn netfang' : null,
                           onChanged: (value) {
                             setState(() {
                               email = value;
@@ -187,7 +187,7 @@ class _RegisterState extends State<RegisterForm> {
                         child: TextFormField(
                           obscureText: true, //stjörnur í stað texta
                           textAlign: TextAlign.center,
-                          validator: (value) => value.length < 6
+                          validator: (value) => value!.length < 6
                               ? 'Lykilorð þarf að vera a.m.k 6 stafir'
                               : null,
                           onChanged: (value) {
@@ -210,7 +210,7 @@ class _RegisterState extends State<RegisterForm> {
                       ),
                       Center(
                         child: Text(
-                          error,
+                          error!,
                           style: TextStyle(color: Colors.pink),
                         ),
                       ),

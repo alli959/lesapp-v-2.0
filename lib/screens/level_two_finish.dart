@@ -31,8 +31,8 @@ import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
 class TwoFinish extends StatelessWidget {
-  TwoFinish({@required this.stig});
-  double stig;
+  TwoFinish({this.stig});
+  double? stig;
   static const String id = 'TwoFinish';
 
   @override
@@ -43,7 +43,7 @@ class TwoFinish extends StatelessWidget {
           return AuthenticationBloc(_authService)..add(GetUid());
         },
         child: LevelFin(
-          stig: stig,
+          stig: stig!,
           image: 'assets/images/fish_skuggi-04.png',
           undertext: '\n stig fyrir þetta borð!',
           appBarText: 'Löng orð',
@@ -53,16 +53,16 @@ class TwoFinish extends StatelessWidget {
 
 class LevelFin extends StatelessWidget {
   LevelFin({
-    @required this.stig,
+    required this.stig,
     this.image,
     this.undertext,
     this.appBarText,
   });
 
   double stig;
-  String image;
-  String undertext;
-  String appBarText;
+  String? image;
+  String? undertext;
+  String? appBarText;
 
   Widget button1(double stigamet, String uid) {
     return BlocProvider<DatabaseBloc>(
@@ -152,8 +152,8 @@ class LevelFin extends StatelessWidget {
           stigamet,
           context,
           formKey,
-          appBarText,
-          image,
+          appBarText!,
+          image!,
           stig,
           button1(stigamet, state.uid),
           button2(stigamet, state.uid),
@@ -167,8 +167,8 @@ class LevelFin extends StatelessWidget {
         stigamet,
         context,
         formKey,
-        appBarText,
-        image,
+        appBarText!,
+        image!,
         stig,
         button1(stigamet, ''),
         button2(stigamet, ''),

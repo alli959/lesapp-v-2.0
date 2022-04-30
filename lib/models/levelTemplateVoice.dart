@@ -11,28 +11,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
-  Function listeningUpdate;
-  Function checkAnswer;
-  String question;
-  String lastWords;
-  List<Icon> scoreKeeper;
-  int trys;
-  String correct;
-  String stig;
-  Color cardColor;
-  Color stigColor;
-  double fontSize;
-  Widget bottomBar;
-  int shadowLevel;
-  bool isLetters = false;
+  Function? listeningUpdate;
+  Function? checkAnswer;
+  String? question;
+  String? lastWords;
+  List<Icon>? scoreKeeper;
+  int? trys;
+  String? correct;
+  String? stig;
+  Color? cardColor;
+  Color? stigColor;
+  double? fontSize;
+  Widget? bottomBar;
+  int? shadowLevel;
+  bool? isLetters = false;
 
-  Function onsoundLevelListener;
-  Function resultListener;
-  List<bool> questionMap = [];
-  List<bool> answerMap = [];
-  List<String> questionArr = [];
-  List<String> answerArr = [];
-  bool isShowResult;
+  Function? onsoundLevelListener;
+  Function? resultListener;
+  List<bool>? questionMap = [];
+  List<bool>? answerMap = [];
+  List<String>? questionArr = [];
+  List<String>? answerArr = [];
+  bool? isShowResult;
 
   LevelTemplateVoice(
       {this.questionMap,
@@ -107,10 +107,10 @@ class LevelTemplateVoice extends StatelessWidget {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                    child: !isShowResult
+                    child: !isShowResult!
                         ? QuestionCard(
                             cardChild: AutoSizeText(
-                              question,
+                              question!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,
@@ -121,7 +121,8 @@ class LevelTemplateVoice extends StatelessWidget {
                                   Shadow(
                                     offset: Offset(3.0, 3.0),
                                     blurRadius: 20.0,
-                                    color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                                    color:
+                                        Color.fromARGB(shadowLevel!, 0, 0, 0),
                                   ),
                                 ],
                               ),
@@ -141,12 +142,12 @@ class LevelTemplateVoice extends StatelessWidget {
                                         offset: Offset(3.0, 3.0),
                                         blurRadius: 20.0,
                                         color: Color.fromARGB(
-                                            shadowLevel, 0, 0, 0),
+                                            shadowLevel!, 0, 0, 0),
                                       ),
                                     ],
                                   ),
-                                  children:
-                                      getResultText(questionArr, questionMap)),
+                                  children: getResultText(
+                                      questionArr!, questionMap!)),
                             ),
                           )),
               ],
@@ -160,10 +161,10 @@ class LevelTemplateVoice extends StatelessWidget {
               alignment: Alignment.center,
               children: <Widget>[
                 Container(
-                    child: !isShowResult
+                    child: !isShowResult!
                         ? QuestionCard(
                             cardChild: AutoSizeText(
-                              lastWords,
+                              lastWords!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,
@@ -174,7 +175,8 @@ class LevelTemplateVoice extends StatelessWidget {
                                   Shadow(
                                     offset: Offset(3.0, 3.0),
                                     blurRadius: 20.0,
-                                    color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                                    color:
+                                        Color.fromARGB(shadowLevel!, 0, 0, 0),
                                   ),
                                 ],
                               ),
@@ -194,12 +196,12 @@ class LevelTemplateVoice extends StatelessWidget {
                                         offset: Offset(3.0, 3.0),
                                         blurRadius: 20.0,
                                         color: Color.fromARGB(
-                                            shadowLevel, 0, 0, 0),
+                                            shadowLevel!, 0, 0, 0),
                                       ),
                                     ],
                                   ),
                                   children:
-                                      getResultText(answerArr, answerMap)),
+                                      getResultText(answerArr!, answerMap!)),
                             ),
                           )),
               ],
@@ -238,14 +240,14 @@ class LevelTemplateVoice extends StatelessWidget {
                         cardChild: isLetters == true
                             ? Text(
                                 'Réttir Stafir:  ' +
-                                    correct +
+                                    correct! +
                                     ' af ' +
                                     trys.toString(),
                                 style: correctTrys,
                               )
                             : Text(
                                 'Rétt Orð:  ' +
-                                    correct +
+                                    correct! +
                                     ' af ' +
                                     trys.toString(),
                                 style: correctTrys,
@@ -261,7 +263,7 @@ class LevelTemplateVoice extends StatelessWidget {
                       child: ReusableCard(
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
-                        cardChild: Text(stig, style: points),
+                        cardChild: Text(stig!, style: points),
                       ),
                     ),
                   ),
@@ -285,7 +287,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                   colour: Colors.white,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: scoreKeeper,
+                                    children: scoreKeeper!,
                                   ),
                                 ),
                               ),
@@ -308,7 +310,7 @@ class LevelTemplateVoice extends StatelessWidget {
               circleSize: 55,
               onPressed: () => _onVoiceButtonPressed(),
             ),
-            bottomBar
+            bottomBar!
           ]),
         ],
       ),

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:Lesaforrit/models/read.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:imagebutton/imagebutton.dart';
 
 class Welcome extends StatelessWidget {

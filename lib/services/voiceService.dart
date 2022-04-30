@@ -9,11 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_speech/google_speech.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sound_stream/sound_stream.dart';
 
 class VoiceService {
-  final SpeechToText speech;
-  final BuildContext context;
+  SpeechToText speech;
+  BuildContext? context;
   List<SpeechRecognitionWords> alternates = [];
   bool hasSpeech = false;
   bool logEvents = false;
@@ -41,36 +47,57 @@ class VoiceService {
   QuizBrainLvlTwoVoice quizBrainLvlTwo = QuizBrainLvlTwoVoice();
   QuizBrainLvlOneVoice quizBrainLvlOne = QuizBrainLvlOneVoice();
 
-  Function onError;
+  final RecorderStream _recorder = RecorderStream();
+  bool recognizing = false;
+  bool recognizeFinished = false;
+  String text = '';
+  StreamSubscription<List<int>>? _audioStreamSubscription;
+  BehaviorSubject<List<int>>? _audioStream;
 
-  VoiceService({@required this.speech, this.context});
+  RecognitionConfig? config;
+
+  VoiceService({required this.speech, this.context});
 
   Future speechInit(Function statusListener, Function errorListener) async {
-    hasSpeech = await speech.initialize(
-      onError: errorListener,
-      onStatus: statusListener,
-      debugLogging: true,
-      finalTimeout: Duration(milliseconds: 2000),
-    );
-    this.onError = onError;
-    return hasSpeech;
+    config = _getConfig();
+
+    try {
+      _recorder.initialize();
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
-  void speechListen(Function resultListener, Function soundLevelListener) {
+  RecognitionConfig _getConfig() => RecognitionConfig(
+      encoding: AudioEncoding.LINEAR16,
+      model: RecognitionModel.basic,
+      enableAutomaticPunctuation: true,
+      sampleRateHertz: 16000,
+      languageCode: 'is-IS');
+
+  Future speechListen(resultListener, Function soundLevelListener) async {
+    _audioStreamSubscription = _recorder.audioStream.listen((event) {
+      _audioStream!.add(event);
+    });
+
+    final responseStream = speech.streamingRecognize(
+        StreamingRecognitionConfig(config: config!, interimResults: true),
+        _audioStream!);
+    await _recorder.start();
+    recognizing = true;
     try {
-      speech.listen(
-        onResult: resultListener,
-        listenFor: Duration(seconds: 30),
-        pauseFor: Duration(seconds: 10),
-        partialResults: true,
-        localeId: 'is_IS',
-        // onSoundLevelChange: soundLevelListener,
-        cancelOnError: false,
-        listenMode: ListenMode.confirmation,
-      );
+      responseStream.listen(resultListener, onError: resultListener);
     } catch (err) {
       print("THERE WAS AN ERROR ${err}");
     }
+  }
+
+  void stopRecording() async {
+    await _recorder.stop();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
+    recognizing = false;
   }
 
   void reset() {

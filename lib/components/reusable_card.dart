@@ -10,11 +10,11 @@ class ReusableCard extends StatelessWidget {
     this.width,
   });
 
-  final Color colour;
-  final Widget cardChild;
-  final Function onPress;
-  final double height;
-  final double width;
+  final Color? colour;
+  final Widget? cardChild;
+  final VoidCallback? onPress;
+  final double? height;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {

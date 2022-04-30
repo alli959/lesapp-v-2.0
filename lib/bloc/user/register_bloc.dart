@@ -56,7 +56,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     } on AuthenticationException catch (e) {
       yield RegisterFailure(error: e.message);
     } catch (err) {
-      yield RegisterFailure(error: err.message ?? 'An unknown error occured');
+      yield RegisterFailure(error: 'An unknown error occured');
     }
   }
 }

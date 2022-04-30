@@ -7,9 +7,9 @@ class Data {
   String Dora;
 
   Data({
-    @required this.Text,
-    @required this.Karl,
-    @required this.Dora,
+    required this.Text,
+    required this.Karl,
+    required this.Dora,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) {

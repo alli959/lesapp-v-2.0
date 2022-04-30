@@ -44,6 +44,7 @@ class ScoreChart extends StatelessWidget {
           if (state is UsersState) {
             print("state of users are ${state.users}");
             return (StreamProvider<List<Read>>.value(
+              initialData: [],
               value: state.users,
               child: Scaffold(
                 appBar: AppBar(

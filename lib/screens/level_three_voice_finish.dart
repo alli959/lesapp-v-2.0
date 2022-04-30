@@ -31,7 +31,7 @@ import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
 class ThreeVoiceFinish extends StatelessWidget {
-  ThreeVoiceFinish({@required this.stig});
+  ThreeVoiceFinish({required this.stig});
   double stig;
   static const String id = 'ThreeVoiceFinish';
 
@@ -53,16 +53,16 @@ class ThreeVoiceFinish extends StatelessWidget {
 
 class LevelFin extends StatelessWidget {
   LevelFin({
-    @required this.stig,
+    required this.stig,
     this.image,
     this.undertext,
     this.appBarText,
   });
 
   double stig;
-  String image;
-  String undertext;
-  String appBarText;
+  String? image;
+  String? undertext;
+  String? appBarText;
 
   Widget button1(double stigamet, String uid) {
     return BlocProvider<DatabaseBloc>(
@@ -154,8 +154,8 @@ class LevelFin extends StatelessWidget {
           stigamet,
           context,
           formKey,
-          appBarText,
-          image,
+          appBarText!,
+          image!,
           stig,
           button1(stigamet, state.uid),
           button2(stigamet, state.uid),
@@ -169,8 +169,8 @@ class LevelFin extends StatelessWidget {
         stigamet,
         context,
         formKey,
-        appBarText,
-        image,
+        appBarText!,
+        image!,
         stig,
         button1(stigamet, ''),
         button2(stigamet, ''),

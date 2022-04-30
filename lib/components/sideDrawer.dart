@@ -98,36 +98,36 @@ class SideDrawer extends StatelessWidget {
 }
 
 class Div extends StatelessWidget {
-  final double bottom;
-  final double top;
+  final double? bottom;
+  final double? top;
 
   Div({this.bottom, this.top});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(bottom: bottom, top: top),
+      padding: EdgeInsets.only(bottom: bottom!, top: top!),
       child: Divider(color: blai, indent: 53, endIndent: 60, thickness: 1.7),
     );
   }
 }
 
 class NavigationScreen extends StatelessWidget {
-  final Widget nav;
+  final Widget? nav;
 
   NavigationScreen({this.nav});
 
   @override
   Widget build(BuildContext context) {
-    return nav;
+    return nav!;
   }
 }
 
 class Tile extends StatelessWidget {
-  final String title;
-  final IconData icons;
-  final Widget navigation;
-  final String nav;
+  final String? title;
+  final IconData? icons;
+  final Widget? navigation;
+  final String? nav;
 
   Tile({this.title, this.icons, this.navigation, this.nav});
 
@@ -135,11 +135,11 @@ class Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.fromLTRB(35, 0, 0, 20),
-      title: Text(title, style: sideBarText),
+      title: Text(title!, style: sideBarText),
       onTap: () {
         //Navigator.of(context).pop();
         Navigator.of(context)
-            .pushNamedAndRemoveUntil(nav, (Route<dynamic> route) => false);
+            .pushNamedAndRemoveUntil(nav!, (Route<dynamic> route) => false);
       },
       /*
       Fyrri aðferð áður en ég reyndi að hreinsa Stack en það virkar ekki
@@ -175,11 +175,11 @@ class Tile extends StatelessWidget {
 }
 
 class ImgTile extends StatelessWidget {
-  final String title;
-  final Widget navigation;
-  final String imgOne;
-  final String imgTwo;
-  final Function onTap;
+  final String? title;
+  final Widget? navigation;
+  final String? imgOne;
+  final String? imgTwo;
+  final Function? onTap;
 
   ImgTile({
     this.title,
@@ -195,7 +195,7 @@ class ImgTile extends StatelessWidget {
       contentPadding: EdgeInsets.only(bottom: 20, left: 37),
       title: Padding(
         padding: const EdgeInsets.only(left: 17),
-        child: Text(title, style: sideBarText),
+        child: Text(title!, style: sideBarText),
       ),
       onTap: () {
         Navigator.of(context).pop();

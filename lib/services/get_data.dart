@@ -10,8 +10,8 @@ import '../models/data.dart';
 import 'dart:convert' show utf8;
 
 class GetData {
-  String typeofgame;
-  String typeofdifficulty;
+  String? typeofgame;
+  String? typeofdifficulty;
 
   GetData(String typeofgame, String typeofdifficulty) {
     this.typeofgame = typeofgame;
@@ -23,7 +23,7 @@ class GetData {
     this.typeofdifficulty = typeofdifficutly;
   }
 
-  Future<List<Data>> getData() async {
+  Future<List<Data>>? getData() async {
     var url = Uri.https(
         'si7jh53lg1.execute-api.eu-west-1.amazonaws.com', '/dev/get', {
       "typeofgame": this.typeofgame,
@@ -42,7 +42,8 @@ class GetData {
         if (statusCode == 200) {
           DefaultCacheManager().putFile(url.toString(), response.bodyBytes,
               key: '${this.typeofgame}_${this.typeofgame}');
-          Iterable l = json.fuse(utf8).decode(response.bodyBytes);
+          Iterable l =
+              json.fuse(utf8).decode(response.bodyBytes) as Iterable<dynamic>;
           List<Data> temp =
               List<Data>.from(l.map((model) => Data.fromJson(model)));
           print("temp after calling from web is $temp");
@@ -52,11 +53,11 @@ class GetData {
         if (statusCode < 200 || statusCode > 400 || json == null) {
           throw new Exception("Error while fetching data");
         }
-        return null;
+        return null!;
       });
     } else {
       Uint8List bodyBytes = await fileInfo.file.readAsBytes();
-      Iterable l = json.fuse(utf8).decode(bodyBytes);
+      Iterable l = json.fuse(utf8).decode(bodyBytes) as Iterable<dynamic>;
       List<Data> temp = List<Data>.from(l.map((model) => Data.fromJson(model)));
       print("temp after calling from cache is $temp");
 

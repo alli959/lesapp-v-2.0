@@ -22,11 +22,11 @@ class RegisterWithEmailButtonPressed extends RegisterEvent {
   final String lvlTwoVoiceScore = '0';
 
   RegisterWithEmailButtonPressed(
-      {@required this.email,
-      @required this.password,
-      @required this.name,
-      @required this.age,
-      @required this.readingStage});
+      {required this.email,
+      required this.password,
+      required this.name,
+      required this.age,
+      required this.readingStage});
 
   @override
   List<Object> get props => [

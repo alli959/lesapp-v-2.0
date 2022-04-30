@@ -29,8 +29,8 @@ class SignInForm extends StatefulWidget {
 class _SignInState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String email;
-  String password;
+  String? email;
+  String? password;
   String error = '';
 
   @override
@@ -38,9 +38,9 @@ class _SignInState extends State<SignInForm> {
     final _loginBloc = BlocProvider.of<LoginBloc>(context);
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
     _onLoginButtonPressed() {
-      if (_formKey.currentState.validate()) {
-        _loginBloc
-            .add(LoginWithEmailButtonPressed(email: email, password: password));
+      if (_formKey.currentState!.validate()) {
+        _loginBloc.add(
+            LoginWithEmailButtonPressed(email: email!, password: password!));
       }
     }
 
@@ -94,7 +94,7 @@ class _SignInState extends State<SignInForm> {
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     validator: (value) =>
-                        value.isEmpty ? 'Sláðu inn netfang' : null,
+                        value!.isEmpty ? 'Sláðu inn netfang' : null,
                     onChanged: (value) {
                       setState(() {
                         email = value;
@@ -109,7 +109,7 @@ class _SignInState extends State<SignInForm> {
                   child: TextFormField(
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 6
+                    validator: (value) => value!.length < 6
                         ? 'Lykilorð þarf að vera a.m.k 6 stafir'
                         : null,
                     onChanged: (value) {
