@@ -74,14 +74,7 @@ class VoiceStart extends VoiceState {
   List<Object> get props => [isListening];
 }
 
-class VoiceStop extends VoiceState {
-  final String lastWords;
-
-  VoiceStop({this.lastWords});
-
-  @override
-  List<Object> get props => [lastWords];
-}
+class VoiceStop extends VoiceState {}
 
 class UpdateState extends VoiceState {
   final String lastWords;

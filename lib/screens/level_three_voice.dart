@@ -14,6 +14,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -342,63 +343,67 @@ class _QuizPageState extends State<QuizPage> {
       level = lvl;
     }
 
-    resultListener(SpeechRecognitionResult result) {
-      _logEvent(
-          'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-      lastWords = '${result.recognizedWords}';
-      alternates = result.alternates;
-      // _speech.finalResult = result.finalResult;
+    resultListener(StreamingRecognizeResponse result) {
+      final currentText =
+          result.results.map((e) => e.alternatives.first.transcript).join('\n');
 
-      if (result.finalResult) {
-        isListening = false;
-        lastWords = bestLastWord(lastWords, question, alternates);
+      print("currentText is $currentText");
+      // _logEvent(
+      //     'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
+      // lastWords = '${result.recognizedWords}';
+      // alternates = result.alternates;
+      // // _speech.finalResult = result.finalResult;
 
-        Map<String, Object> score = isCorrect(lastWords, question, "level_3");
-        double finalPoints = score['points'];
-        points = finalPoints;
+      // if (result.finalResult) {
+      //   isListening = false;
+      //   lastWords = bestLastWord(lastWords, question, alternates);
 
-        questionMap = score['questionMap'];
-        answerMap = score['answerMap'];
-        questionArr = score['questionArr'];
-        answerArr = score['answerArr'];
+      //   Map<String, Object> score = isCorrect(lastWords, question, "level_3");
+      //   double finalPoints = score['points'];
+      //   points = finalPoints;
 
-        print("resultListener finalResult");
-        print("questionMap = ${questionMap}");
-        print("answerMAp = ${answerMap}");
-        print("questionArr = ${questionArr}");
-        print("answerArr = ${answerArr}");
+      //   questionMap = score['questionMap'];
+      //   answerMap = score['answerMap'];
+      //   questionArr = score['questionArr'];
+      //   answerArr = score['answerArr'];
 
-        // the trys are each word
-        calc.trys += questionArr.length;
-        calc.correct += score['correct'];
+      //   print("resultListener finalResult");
+      //   print("questionMap = ${questionMap}");
+      //   print("answerMAp = ${answerMap}");
+      //   print("questionArr = ${questionArr}");
+      //   print("answerArr = ${answerArr}");
 
-        bool onePoint = (finalPoints <= 0.2);
-        bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
-        bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
-        bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
-        bool fivePoints = (finalPoints > 0.8);
+      //   // the trys are each word
+      //   calc.trys += questionArr.length;
+      //   calc.correct += score['correct'];
 
-        if (fivePoints) {
-          print("five Points");
-        }
-        if (fourPoints) {
-          print("four Points");
-        }
-        if (threePoints) {
-          print("three Points");
-        }
-        if (twoPoints) {
-          print("Two Points");
-        }
-        if (onePoint) {
-          print("one Points");
-        }
+      //   bool onePoint = (finalPoints <= 0.2);
+      //   bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
+      //   bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
+      //   bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
+      //   bool fivePoints = (finalPoints > 0.8);
 
-        checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints);
-      } else {
-        isListening = true;
-        listeningUpdate(lastWords, alternates, isListening, question);
-      }
+      //   if (fivePoints) {
+      //     print("five Points");
+      //   }
+      //   if (fourPoints) {
+      //     print("four Points");
+      //   }
+      //   if (threePoints) {
+      //     print("three Points");
+      //   }
+      //   if (twoPoints) {
+      //     print("Two Points");
+      //   }
+      //   if (onePoint) {
+      //     print("one Points");
+      //   }
+
+      //   checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints);
+      // } else {
+      //   isListening = true;
+      //   listeningUpdate(lastWords, alternates, isListening, question);
+      // }
     }
 
     if (!started) {
@@ -457,12 +462,16 @@ class _QuizPageState extends State<QuizPage> {
             if (state is IsNotListeningState) {
               isListening = false;
             }
+            if (state is VoiceStop) {
+              isListening = false;
+            }
 
             return Column(
               children: [
                 Expanded(
                   flex: 4,
                   child: RecognitionResultsWidget(
+                      isListening: isListening,
                       isShowResult: isShowResult,
                       questionArr: questionArr,
                       answerArr: answerArr,
@@ -514,6 +523,7 @@ class _QuizPageState extends State<QuizPage> {
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
     Key key,
+    @required this.isListening,
     @required this.isShowResult,
     @required this.questionArr,
     @required this.answerArr,
@@ -535,6 +545,7 @@ class RecognitionResultsWidget extends StatelessWidget {
     @required this.bottomBar,
     @required this.shadowLevel,
   }) : super(key: key);
+  final bool isListening;
   final bool isShowResult;
   final List<String> questionArr;
   final List<String> answerArr;
@@ -559,6 +570,7 @@ class RecognitionResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LevelTemplateVoice(
+      isListening: isListening,
       isShowResult: isShowResult,
       questionArr: questionArr,
       answerArr: answerArr,

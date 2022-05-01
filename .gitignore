@@ -72,3 +72,6 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+#SECRETS
+assets/graphite-flare-324114-285b1cf5c32b.json

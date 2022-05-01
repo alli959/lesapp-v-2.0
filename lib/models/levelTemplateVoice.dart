@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
+  bool isListening = false;
   Function listeningUpdate;
   Function checkAnswer;
   String question;
@@ -35,7 +36,8 @@ class LevelTemplateVoice extends StatelessWidget {
   bool isShowResult;
 
   LevelTemplateVoice(
-      {this.questionMap,
+      {this.isListening,
+      this.questionMap,
       this.answerMap,
       this.questionArr,
       this.answerArr,
@@ -79,6 +81,10 @@ class LevelTemplateVoice extends StatelessWidget {
       _voiceBloc.add(VoiceStartedEvent(
           soundLevelListener: onsoundLevelListener,
           resultListener: resultListener));
+    }
+
+    _onStopButtonPressed() {
+      _voiceBloc.add(VoiceStoppedEvent());
     }
 
     return Container(
@@ -301,13 +307,21 @@ class LevelTemplateVoice extends StatelessWidget {
           ),
 
           Column(children: <Widget>[
-            RoundIconButton(
-              color: Colors.transparent,
-              icon: Icons.mic,
-              iconSize: 35,
-              circleSize: 55,
-              onPressed: () => _onVoiceButtonPressed(),
-            ),
+            isListening
+                ? RoundIconButton(
+                    color: Colors.transparent,
+                    icon: Icons.stop,
+                    iconSize: 35,
+                    circleSize: 55,
+                    onPressed: () => _onStopButtonPressed(),
+                  )
+                : RoundIconButton(
+                    color: Colors.transparent,
+                    icon: Icons.mic,
+                    iconSize: 35,
+                    circleSize: 55,
+                    onPressed: () => _onVoiceButtonPressed(),
+                  ),
             bottomBar
           ]),
         ],

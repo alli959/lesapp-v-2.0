@@ -93,9 +93,11 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       var hasSpeech =
           await _speech.speechInit(event.statusListener, event.errorListener);
       if (hasSpeech) {
+        print("it has speech");
         yield VoiceHasInitialized();
       }
     } catch (e) {
+      print("error initializing speech");
       yield VoiceFailure(error: e);
     }
   }
@@ -107,10 +109,12 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     try {
-      _speech.speechListen(event.resultListener, event.soundLevelListener);
+      await _speech.speechListen(
+          event.resultListener, event.soundLevelListener);
       yield IsListeningState();
     } catch (err) {
       print("error = $err");
+      await _speech.stopRecording();
       yield VoiceFailure(error: err);
     }
     // yield NewQuestionState(question: _speech.question);
@@ -133,6 +137,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapVoiceStopEvent(VoiceStoppedEvent event) async* {
+    await _speech.stopRecording();
     yield VoiceStop();
   }
 

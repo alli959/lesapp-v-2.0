@@ -5,6 +5,7 @@ import 'package:Lesaforrit/screens/level_three_voice.dart';
 import 'package:Lesaforrit/screens/level_two_voice.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
@@ -32,11 +33,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_speech/google_speech.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'models/levelTemplate.dart';
 import 'models/usr.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
@@ -56,9 +57,11 @@ import 'package:flutter/foundation.dart';
 // }
 
 void main() async {
-  final SpeechToText speech = SpeechToText();
-
   WidgetsFlutterBinding.ensureInitialized();
+  final serviceAccount = ServiceAccount.fromString((await rootBundle
+      .loadString('assets/graphite-flare-324114-285b1cf5c32b.json')));
+  SpeechToText speech = SpeechToText.viaServiceAccount(serviceAccount);
+
   await Firebase.initializeApp();
   runApp(MultiRepositoryProvider(
       providers: [
