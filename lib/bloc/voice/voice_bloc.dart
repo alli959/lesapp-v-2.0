@@ -1,15 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:meta/meta.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
 part 'voice_event.dart';
 part 'voice_state.dart';
@@ -18,10 +24,12 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   // final SpeechToText _speech;
   final VoiceService _speech;
   final String level;
+  final SaveAudio audioSaver;
 
-  VoiceBloc(VoiceService speech, String level)
+  VoiceBloc(VoiceService speech, String level, SaveAudio audioSaver)
       : _speech = speech,
         level = level,
+        audioSaver = audioSaver,
         super(VoiceInitial(
           hasSpeech: false,
           logEvents: false,
@@ -144,6 +152,23 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
     // Getting the results ready
     yield IsNotListeningState();
+
+    if (event.answer != null) {
+      if (event.fivePoints) {
+        audioSaver.setData(
+            'testName', 'Correct', event.question, event.answer, event.audio);
+      } else {
+        audioSaver.setData(
+            'testName', 'Incorrect', event.question, event.answer, event.audio);
+      }
+
+      try {
+        await audioSaver.saveData();
+      } catch (err) {
+        print("there was an error saving data from bloc => $err");
+      }
+    }
+
     yield ShowResultState();
     await Future.delayed(Duration(milliseconds: 3000));
 

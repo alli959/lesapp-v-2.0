@@ -23,8 +23,12 @@ class AuthService {
     return _auth.currentUser;
   }
 
-  Future getCurrentUserID() async {
+  Future<String> getCurrentUserID() async {
     return _auth.currentUser.uid;
+  }
+
+  Future<String> getCurrentUserToken() async {
+    return await _auth.currentUser.getIdToken();
   }
 
   // sign in with email and password

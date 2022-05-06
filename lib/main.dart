@@ -4,6 +4,7 @@ import 'package:Lesaforrit/screens/level_one_voice.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
 import 'package:Lesaforrit/screens/level_two_voice.dart';
 import 'package:Lesaforrit/services/get_data.dart';
+import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
@@ -76,6 +77,9 @@ void main() async {
         }),
         RepositoryProvider<GetData>(create: (context) {
           return GetData("sentences", "easy");
+        }),
+        RepositoryProvider<SaveAudio>(create: (context) {
+          return SaveAudio("username", "Correct", "question", "answer", null);
         }),
       ],
       child: BlocProvider<AuthenticationBloc>(

@@ -45,7 +45,7 @@ class VoiceFailureEvent extends VoiceEvent {
 
 class UpdateEvent extends VoiceEvent {
   final String lastWords;
-  final List<SpeechRecognitionWords> alternates;
+  final List<SpeechRecognitionAlternative> alternates;
   final bool isListening;
   final String question;
 
@@ -92,12 +92,25 @@ class ScoreKeeperEvent extends VoiceEvent {
   final bool fourPoints;
   final bool fivePoints;
 
+  String username;
+
+  /// Correct, Incorrect, Manual_Correct, Manual_Incorrect
+  String typeoffile;
+  String question;
+  String answer;
+  File audio;
+
   ScoreKeeperEvent(
       {this.onePoint,
       this.twoPoints,
       this.threePoints,
       this.fourPoints,
-      this.fivePoints});
+      this.fivePoints,
+      this.username,
+      this.typeoffile,
+      this.question,
+      this.answer,
+      this.audio});
 
   @override
   List<Object> get props => [
@@ -106,6 +119,11 @@ class ScoreKeeperEvent extends VoiceEvent {
         threePoints,
         fourPoints,
         fivePoints,
+        [username],
+        [typeoffile],
+        [question],
+        [answer],
+        [audio],
       ];
 }
 
@@ -114,3 +132,5 @@ class ResetEvent extends VoiceEvent {}
 class IsListeningEvent extends VoiceEvent {}
 
 class IsNotListeningEvent extends VoiceEvent {}
+
+class SaveFileEvent extends VoiceEvent {}

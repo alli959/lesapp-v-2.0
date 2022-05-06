@@ -141,7 +141,11 @@ class QuizBrainLvlOne {
         }
         try {
           File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          print("file is $file1");
           Uint8List bytes = file1.readAsBytesSync();
+          print("length if bytes is ${bytes.length}");
+          print("bytes is $bytes");
+
           await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");

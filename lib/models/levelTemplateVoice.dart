@@ -9,6 +9,8 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../shared/timer.dart';
+
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
   bool isListening = false;
@@ -305,25 +307,62 @@ class LevelTemplateVoice extends StatelessWidget {
               ),
             ],
           ),
-
-          Column(children: <Widget>[
-            isListening
-                ? RoundIconButton(
-                    color: Colors.transparent,
-                    icon: Icons.stop,
-                    iconSize: 35,
-                    circleSize: 55,
-                    onPressed: () => _onStopButtonPressed(),
-                  )
-                : RoundIconButton(
+          isListening
+              ? Column(children: <Widget>[
+                  Row(children: [
+                    Flexible(
+                      flex: 5,
+                      fit: FlexFit.tight,
+                      child: Container(
+                        child: RoundIconButton(
+                          color: Colors.transparent,
+                          icon: Icons.arrow_back,
+                          iconSize: 35,
+                          circleSize: 55,
+                          onPressed: () => _onStopButtonPressed(),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                        flex: 2,
+                        child: SizedBox(
+                            height: 70,
+                            width: 70,
+                            child: TimerWidget(
+                                time: 10, backgroundcolor: cardColor))),
+                    Flexible(
+                      flex: 5,
+                      fit: FlexFit.tight,
+                      child: Container(
+                        child: RoundIconButton(
+                          color: Colors.transparent,
+                          icon: Icons.stop,
+                          iconSize: 35,
+                          circleSize: 55,
+                          onPressed: () => _onStopButtonPressed(),
+                        ),
+                      ),
+                    )
+                  ]),
+                  Container(
+                      child: Stack(children: [
+                    SizedBox(
+                        height: 95.0,
+                        width: double.infinity,
+                        child: Image.asset('assets/images/bottomBar_bl.png',
+                            fit: BoxFit.cover)),
+                  ]))
+                ])
+              : Column(children: [
+                  RoundIconButton(
                     color: Colors.transparent,
                     icon: Icons.mic,
                     iconSize: 35,
                     circleSize: 55,
                     onPressed: () => _onVoiceButtonPressed(),
                   ),
-            bottomBar
-          ]),
+                  bottomBar,
+                ]),
         ],
       ),
     );

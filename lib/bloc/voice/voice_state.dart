@@ -78,7 +78,7 @@ class VoiceStop extends VoiceState {}
 
 class UpdateState extends VoiceState {
   final String lastWords;
-  final List<SpeechRecognitionWords> alternates;
+  final List<SpeechRecognitionAlternative> alternates;
   final String question;
   final bool isListening;
 

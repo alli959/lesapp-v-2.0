@@ -25,7 +25,7 @@ class GetData {
 
   Future<List<Data>> getData() async {
     var url = Uri.https(
-        'si7jh53lg1.execute-api.eu-west-1.amazonaws.com', '/dev/get', {
+        '8iu5izdtgc.execute-api.eu-west-1.amazonaws.com', '/dev/get', {
       "typeofgame": this.typeofgame,
       "typeofdifficulty": this.typeofdifficulty
     });

@@ -15,20 +15,24 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:async';
 import 'dart:math';
 
+import '../services/save_audio.dart';
+
 class LevelOneVoice extends StatelessWidget {
   static const String id = 'level_One_voice';
   @override
   Widget build(BuildContext context) {
     final _speech = RepositoryProvider.of<VoiceService>(context);
+    final _audioSave = RepositoryProvider.of<SaveAudio>(context);
 
     return BlocProvider<VoiceBloc>(
-      create: (context) => VoiceBloc(_speech, 'level_1'),
+      create: (context) => VoiceBloc(_speech, 'level_1', _audioSave),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: appBar,
@@ -143,8 +147,11 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-    listeningUpdate(String lastWords, List<SpeechRecognitionWords> alternates,
-        bool isListening, String question) {
+    listeningUpdate(
+        String lastWords,
+        List<SpeechRecognitionAlternative> alternates,
+        bool isListening,
+        String question) {
       // if (!isListening) {
       //   _voiceBloc.add(NewQuestionEvent(question: question));
       // }

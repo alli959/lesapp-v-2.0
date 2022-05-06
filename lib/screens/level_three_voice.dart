@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/my_flutter_app_icons.dart';
@@ -9,9 +12,11 @@ import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
 import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
+import 'package:Lesaforrit/shared/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
@@ -28,8 +33,9 @@ class LevelThreeVoice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _speech = RepositoryProvider.of<VoiceService>(context);
+    final _audioSave = RepositoryProvider.of<SaveAudio>(context);
     return BlocProvider<VoiceBloc>(
-      create: (context) => VoiceBloc(_speech, 'level_3'),
+      create: (context) => VoiceBloc(_speech, 'level_3', _audioSave),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: appBar,
@@ -54,6 +60,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   QuizBrainLvlThreeVoice quizBrain = QuizBrainLvlThreeVoice();
+  TimerWidget timer;
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -78,7 +85,7 @@ class _QuizPageState extends State<QuizPage> {
   Function listeningUpdate;
   SpeechToTextProvider provider;
   String lastWords = '';
-  List<SpeechRecognitionWords> alternates = [];
+  List<SpeechRecognitionAlternative> alternates = [];
   bool isListening = false;
   double points = 0;
   List<bool> questionMap = [];
@@ -89,6 +96,7 @@ class _QuizPageState extends State<QuizPage> {
   double maxSoundLevel;
   double level;
   bool isShowResult = false;
+  File audioFile;
 
   void addScore(Map<String, bool> state) {
     quizBrain.stars++;
@@ -241,25 +249,26 @@ class _QuizPageState extends State<QuizPage> {
     isShowResult = false;
   }
 
-  dynamic bestLastWord(String lastWords, String question,
-      List<SpeechRecognitionWords> alternates) {
+  dynamic bestLastWord(
+      String lWords, String quest, List<SpeechRecognitionAlternative> alt) {
     print("inBestLastWordsFunction !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    print("$alternates");
-    print(lastWords);
-    print(question);
-    int closestVal = lastWords.toLowerCase().compareTo(
-        question.toLowerCase()); //compare correct answer to voice input
+    print("$alt");
+    print(lWords);
+    print(quest);
+    int closestVal = lWords
+        .toLowerCase()
+        .compareTo(quest.toLowerCase()); //compare correct answer to voice input
 
     int closestIndex =
         -1; //index of closest value, if -1 then result.recongizedwords
     //check if alternates are closer to correct answer
-    for (int i = 0; i < alternates.length; i++) {
-      String tempString = alternates[i].recognizedWords;
-      int temp = tempString.toLowerCase().compareTo(question.toLowerCase());
+    for (int i = 0; i < alt.length; i++) {
+      String tempString = alt[i].transcript.trim();
+      int temp = tempString.toLowerCase().compareTo(quest.toLowerCase());
       if (temp.abs() < closestVal.abs()) {
         print("temp < closestVal");
         print("tempString: $tempString");
-        print("lastWords: $lastWords");
+        print("lastWords: $lWords");
         print("tempInt: $temp");
         print("closestValInt: $closestVal");
 
@@ -269,40 +278,54 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     if (closestIndex == -1) {
-      return lastWords;
+      return lWords;
     } else {
       print("there was another");
-      print(alternates[closestIndex].recognizedWords);
+      print(alt[closestIndex].transcript);
 
-      lastWords = alternates[closestIndex].recognizedWords;
+      lWords = alt[closestIndex].transcript;
 
-      return alternates[closestIndex].recognizedWords;
+      return lWords;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-    listeningUpdate(String lastWords, List<SpeechRecognitionWords> alternates,
-        bool isListening, String question) {
+    listeningUpdate(String lWords, List<SpeechRecognitionAlternative> alter,
+        bool isList, String quest) {
+      print("alternatives =============>>>>>> $alternates");
       // if (!isListening) {
       //   _voiceBloc.add(NewQuestionEvent(question: question));
       // }
+      var newLWords = bestLastWord(lWords, quest, alter);
       _voiceBloc.add(UpdateEvent(
-          lastWords: lastWords,
-          alternates: alternates,
-          isListening: isListening,
-          question: question));
+          lastWords: newLWords,
+          alternates: alter,
+          isListening: isList,
+          question: quest));
     }
 
     checkAnswer(bool onePoint, bool twoPoints, bool threePoints,
-        bool fourPoints, bool fivePoints) {
+        bool fourPoints, bool fivePoints,
+        {String username,
+
+        /// Correct, Incorrect, Manual_Correct, Manual_Incorrect
+        String typeoffile,
+        String question,
+        String answer,
+        File audio}) {
       _voiceBloc.add(ScoreKeeperEvent(
           onePoint: onePoint,
           twoPoints: twoPoints,
           threePoints: threePoints,
           fourPoints: fourPoints,
-          fivePoints: fivePoints));
+          fivePoints: fivePoints,
+          username: 'testUserName',
+          answer: lastWords,
+          audio: audio,
+          question: question,
+          typeoffile: null));
     }
 
     isListeningFunc() {
@@ -336,74 +359,80 @@ class _QuizPageState extends State<QuizPage> {
       // }
     }
 
-    void soundLevelListener(double lvl) {
-      print("at sound level listener");
-      minSoundLevel = math.min(minSoundLevel, level);
-      maxSoundLevel = math.max(maxSoundLevel, level);
-      level = lvl;
+    void soundLevelListener([File file]) {
+      print("call is done and below are the values");
+
+      print("lastWords is =============> $lastWords");
+      print("alternates are =============> $alternates");
+      // bool isFinal = result.results.map((e) => e.isFinal) as bool;
+
+      // alternates =
+      //     a.map((e) => e.isFinal ? e.alternatives.first : e.alternatives);
+      // _speech.finalResult = result.finalResult;
+
+      isListening = false;
+      lastWords = bestLastWord(lastWords, question, alternates);
+
+      Map<String, Object> score = isCorrect(lastWords, question, "level_3");
+      double finalPoints = score['points'];
+      points = finalPoints;
+
+      questionMap = score['questionMap'];
+      answerMap = score['answerMap'];
+      questionArr = score['questionArr'];
+      answerArr = score['answerArr'];
+
+      print("resultListener finalResult");
+      print("questionMap = ${questionMap}");
+      print("answerMAp = ${answerMap}");
+      print("questionArr = ${questionArr}");
+      print("answerArr = ${answerArr}");
+
+      // the trys are each word
+      calc.trys += questionArr.length;
+      calc.correct += score['correct'];
+
+      bool onePoint = (finalPoints <= 0.2);
+      bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
+      bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
+      bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
+      bool fivePoints = (finalPoints > 0.8);
+
+      if (fivePoints) {
+        print("five Points");
+      }
+      if (fourPoints) {
+        print("four Points");
+      }
+      if (threePoints) {
+        print("three Points");
+      }
+      if (twoPoints) {
+        print("Two Points");
+      }
+      if (onePoint) {
+        print("one Points");
+      }
+      checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints,
+          username: 'testUserName',
+          answer: lastWords,
+          audio: file,
+          question: question,
+          typeoffile: null);
     }
 
     resultListener(StreamingRecognizeResponse result) {
       final currentText =
-          result.results.map((e) => e.alternatives.first.transcript).join('\n');
-
-      print("currentText is $currentText");
-      // _logEvent(
-      //     'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-      // lastWords = '${result.recognizedWords}';
-      // alternates = result.alternates;
-      // // _speech.finalResult = result.finalResult;
-
-      // if (result.finalResult) {
-      //   isListening = false;
-      //   lastWords = bestLastWord(lastWords, question, alternates);
-
-      //   Map<String, Object> score = isCorrect(lastWords, question, "level_3");
-      //   double finalPoints = score['points'];
-      //   points = finalPoints;
-
-      //   questionMap = score['questionMap'];
-      //   answerMap = score['answerMap'];
-      //   questionArr = score['questionArr'];
-      //   answerArr = score['answerArr'];
-
-      //   print("resultListener finalResult");
-      //   print("questionMap = ${questionMap}");
-      //   print("answerMAp = ${answerMap}");
-      //   print("questionArr = ${questionArr}");
-      //   print("answerArr = ${answerArr}");
-
-      //   // the trys are each word
-      //   calc.trys += questionArr.length;
-      //   calc.correct += score['correct'];
-
-      //   bool onePoint = (finalPoints <= 0.2);
-      //   bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
-      //   bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
-      //   bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
-      //   bool fivePoints = (finalPoints > 0.8);
-
-      //   if (fivePoints) {
-      //     print("five Points");
-      //   }
-      //   if (fourPoints) {
-      //     print("four Points");
-      //   }
-      //   if (threePoints) {
-      //     print("three Points");
-      //   }
-      //   if (twoPoints) {
-      //     print("Two Points");
-      //   }
-      //   if (onePoint) {
-      //     print("one Points");
-      //   }
-
-      //   checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints);
-      // } else {
-      //   isListening = true;
-      //   listeningUpdate(lastWords, alternates, isListening, question);
-      // }
+          result.results.map((e) => e.alternatives.first.transcript).join(' ');
+      lastWords = currentText.trim();
+      var alt = result.results.map((e) => e.alternatives);
+      var iterator = alt.iterator;
+      while (iterator.moveNext()) {
+        alternates = iterator.current;
+        print("alternates is $alternates");
+      }
+      listeningUpdate(lastWords, alternates, isListening, question);
+      isListening = true;
     }
 
     if (!started) {
@@ -435,6 +464,10 @@ class _QuizPageState extends State<QuizPage> {
               if (state.lastWords != lastWords) {
                 lastWords = state.lastWords;
                 alternates = state.alternates;
+              }
+              if (lastWords.toLowerCase().trim() ==
+                  question.toLowerCase().trim()) {
+                _voiceBloc.add(VoiceStoppedEvent());
               }
             }
 
