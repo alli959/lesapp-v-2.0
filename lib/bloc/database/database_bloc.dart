@@ -1,10 +1,11 @@
-import 'package:Lesaforrit/models/usr.dart';
+import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:meta/meta.dart';
 
+import '../../models/UserData.dart';
 import '../../models/read.dart';
 
 part 'database_event.dart';

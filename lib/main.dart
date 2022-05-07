@@ -6,6 +6,9 @@ import 'package:Lesaforrit/screens/level_two_voice.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
@@ -39,12 +42,14 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'models/ModelProvider.dart';
 import 'models/levelTemplate.dart';
 import 'models/usr.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
 import 'package:Lesaforrit/screens/level_one_finish.dart';
 import 'package:Lesaforrit/screens/level_two.dart';
 import 'package:flutter/foundation.dart';
+import 'amplifyconfiguration.dart';
 
 // void main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +69,22 @@ void main() async {
   SpeechToText speech = SpeechToText.viaServiceAccount(serviceAccount);
 
   await Firebase.initializeApp();
+
+  try {
+    // Add the following line to add Auth plugin to your app.
+    await Amplify.addPlugin(AmplifyAuthCognito());
+    AmplifyDataStore datastorePlugin =
+        AmplifyDataStore(modelProvider: ModelProvider.instance);
+    await Amplify.addPlugins([
+      AmplifyAuthCognito(),
+      datastorePlugin,
+    ]);
+
+    // call Amplify.configure to use the initialized categories in your app
+    await Amplify.configure(amplifyconfig);
+  } on Exception catch (e) {
+    print('An error occurred configuring Amplify: $e');
+  }
   runApp(MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthService>(create: (context) {

@@ -3,7 +3,14 @@ enum PrefVoice {
   KARL
 }
 
-type UserData @model @auth(rules: [{allow: public}]) {
+type UserData
+  @model
+  @auth(
+    rules: [
+     {allow: owner, operations: [create, delete, update, read] },
+     {allow: private, operations: [read]}
+    ]
+  ) {
   id: ID!
   name: String!
   age: String

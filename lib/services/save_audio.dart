@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
-import 'package:simple_s3/simple_s3.dart';
+// import 'package:simple_s3/simple_s3.dart';
 
 import '../S3_keys.dart';
 import '../models/data.dart';
@@ -45,48 +45,48 @@ class SaveAudio {
     this.audio = audio;
   }
 
-  SimpleS3 _simpleS3 = SimpleS3();
+  // SimpleS3 _simpleS3 = SimpleS3();
 
-  Future<String> saveData() async {
-    var prefix = "users/$username/$typeoffile";
-    var text = "question: $question\nanswer: $answer";
-    List<int> list = text.codeUnits;
-    Uint8List bytes = Uint8List.fromList(list);
-    io.File textFile = new io.File.fromRawPath(bytes);
-    var audioKey = "${prefix}";
-    var textKey = "$prefix";
-    var audioFilename = "test.wav";
-    var textFilename = "test.txt";
-    String result;
-    String result2;
+  // Future<String> saveData() async {
+  //   var prefix = "users/$username/$typeoffile";
+  //   var text = "question: $question\nanswer: $answer";
+  //   List<int> list = text.codeUnits;
+  //   Uint8List bytes = Uint8List.fromList(list);
+  //   io.File textFile = new io.File.fromRawPath(bytes);
+  //   var audioKey = "${prefix}";
+  //   var textKey = "$prefix";
+  //   var audioFilename = "test.wav";
+  //   var textFilename = "test.txt";
+  //   String result;
+  //   String result2;
 
-    if (result == null) {
-      try {
-        result = await _simpleS3.uploadFile(audio, Credentials.s3_bucketName,
-            Credentials.s3_poolD, AWSRegions.euWest1,
-            debugLog: true,
-            s3FolderPath: audioKey,
-            accessControl: S3AccessControl.publicRead,
-            fileName: audioFilename);
-      } catch (e) {
-        print("error uploading audio file to s3 $e");
-      }
-    }
-    if (result2 == null) {
-      try {
-        result2 = await _simpleS3.uploadFile(textFile,
-            Credentials.s3_bucketName, Credentials.s3_poolD, AWSRegions.euWest1,
-            debugLog: true,
-            s3FolderPath: textKey,
-            accessControl: S3AccessControl.bucketOwnerFullControl,
-            fileName: textFilename);
-      } catch (e) {
-        print("error uploading audio file to s3 $e");
-      }
-    }
-    print("result 1 is $result");
-    print("result 2 is $result2");
-    return "$result => $result2";
+  //   if (result == null) {
+  //     try {
+  //       result = await _simpleS3.uploadFile(audio, Credentials.s3_bucketName,
+  //           Credentials.s3_poolD, AWSRegions.euWest1,
+  //           debugLog: true,
+  //           s3FolderPath: audioKey,
+  //           accessControl: S3AccessControl.publicRead,
+  //           fileName: audioFilename);
+  //     } catch (e) {
+  //       print("error uploading audio file to s3 $e");
+  //     }
+  //   }
+  //   if (result2 == null) {
+  //     try {
+  //       result2 = await _simpleS3.uploadFile(textFile,
+  //           Credentials.s3_bucketName, Credentials.s3_poolD, AWSRegions.euWest1,
+  //           debugLog: true,
+  //           s3FolderPath: textKey,
+  //           accessControl: S3AccessControl.bucketOwnerFullControl,
+  //           fileName: textFilename);
+  //     } catch (e) {
+  //       print("error uploading audio file to s3 $e");
+  //     }
+  //   }
+  //   print("result 1 is $result");
+  //   print("result 2 is $result2");
+  //   return "$result => $result2";
   }
 
   // Future saveData() async {

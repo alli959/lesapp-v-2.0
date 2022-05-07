@@ -36,9 +36,9 @@ def keystorePropertiesFile = rootProject.file('key.properties')
 android {
     compileSdkVersion 31
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
+    // lintOptions {
+    //     disable 'InvalidPackage'
+    // }
 
     defaultConfig {
         applicationId "thuri.Lesaforrit"
@@ -57,7 +57,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-       signingConfigs {
+    signingConfigs {
        release {
            keyAlias keystoreProperties['keyAlias']
            keyPassword keystoreProperties['keyPassword']

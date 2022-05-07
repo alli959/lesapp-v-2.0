@@ -1,5 +1,6 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
+import 'package:Lesaforrit/models/UserData.dart';
 import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
@@ -13,7 +14,7 @@ import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Easy.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
-import 'package:Lesaforrit/models/usr.dart';
+import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';

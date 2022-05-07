@@ -1,60 +1,74 @@
+import 'dart:async';
+
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 
 class AuthService {
   // All of the authentication goes inside this class
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _auth = Amplify.Auth;
 
   // create user object based on Firebase-user
-  Usr _userFromFirebaseUser(User user) {
-    return user != null ? Usr(uid: user.uid) : null;
+  Usr _userFromCognitoUser(AuthUser user) {
+    return user != null ? Usr(uid: user.userId) : null;
+  }
+
+  Future<bool> _IsLoggedIn() async {
+    var authSession = await Amplify.Auth.fetchAuthSession();
+    return authSession.isSignedIn;
   }
 
   // Everytime a Usr signs in or signs out we get a signal from the stream.
   // A null value if the user signs out but a Usr object if the user signs in.
   Stream<Usr> get user {
     print("usr get stuff called");
-    return _auth.authStateChanges().map(_userFromFirebaseUser);
+    return _auth.getCurrentUser().asStream().map(_userFromCognitoUser);
   }
 
   // GET CURRENT USER
-  Future getCurrentUser() async {
-    return _auth.currentUser;
+  Future<AuthUser> getCurrentUser() async {
+    return await _auth.getCurrentUser();
   }
 
   Future<String> getCurrentUserID() async {
-    return _auth.currentUser.uid;
+    final user = await _auth.getCurrentUser();
+    return user.userId;
   }
 
-  Future<String> getCurrentUserToken() async {
-    return await _auth.currentUser.getIdToken();
-  }
+  // Future<String> getCurrentUserToken() async {
+  //   return await _auth.currentUser.getIdToken();
+  // }
 
-  // sign in with email and password
-  Future signInAnon() async {
-    try {
-      UserCredential result = await _auth.signInAnonymously();
-      User user = result.user;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print('Villan er: ' + e.toString());
-      return null;
-    }
-  }
+  // // sign in with email and password
+  // Future signInAnon() async {
+  //   try {
+  //     UserCredential result = await _auth.signInAnonymously();
+  //     User user = result.user;
+  //     return _userFromFirebaseUser(user);
+  //   } catch (e) {
+  //     print('Villan er: ' + e.toString());
+  //     return null;
+  //   }
+  // }
 
   // SIGN IN w. email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      User user = result.user;
-      return _userFromFirebaseUser(user);
+      SignInResult res =
+          await _auth.signIn(username: email, password: password);
+      if (res.isSignedIn) {
+        return _userFromCognitoUser(await getCurrentUser());
+      }
     } catch (e) {
       print("what is going on...");
       print(e.toString());
       return null;
     }
+
+    print("we should not be here");
+    return null;
   }
 
   // REGISTER w. email and password
@@ -74,31 +88,35 @@ class AuthService {
       String lvlTwoMediumScore,
       String lvlTwoVoiceScore) async {
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      User user = result.user;
+      SignUpResult result =
+          await _auth.signUp(username: email, password: password);
+      if (result.isSignUpComplete) {
+        AuthUser user = await getCurrentUser();
 
-      // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData(
-        name,
-        age,
-        readingStage,
-        lvlOneCapsScore,
-        lvlOneScore,
-        lvlOneVoiceScore,
-        lvlThreeEasyScore,
-        lvlThreeMediumScore,
-        lvlThreeVoiceScore,
-        lvlTwoEasyScore,
-        lvlTwoMediumScore,
-        lvlTwoVoiceScore,
-      );
+        // create a new document for the user with the uid
+        await DatabaseService(uid: user.userId).updateUserData(
+          name,
+          age,
+          readingStage,
+          lvlOneCapsScore,
+          lvlOneScore,
+          lvlOneVoiceScore,
+          lvlThreeEasyScore,
+          lvlThreeMediumScore,
+          lvlThreeVoiceScore,
+          lvlTwoEasyScore,
+          lvlTwoMediumScore,
+          lvlTwoVoiceScore,
+        );
 
-      return _userFromFirebaseUser(user);
+        return _userFromCognitoUser(user);
+      }
     } catch (e) {
       print(e.toString());
       return null;
     }
+    print("we should not be here");
+    return null;
   }
 
   // signout
