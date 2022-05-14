@@ -152,6 +152,8 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
     // Getting the results ready
     yield IsNotListeningState();
+    yield ShowResultState();
+    await Future.delayed(Duration(milliseconds: 3000));
 
     if (event.answer != null) {
       if (event.fivePoints) {
@@ -168,9 +170,6 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         print("there was an error saving data from bloc => $err");
       }
     }
-
-    yield ShowResultState();
-    await Future.delayed(Duration(milliseconds: 3000));
 
     yield NewQuestionState(
         onePoint: event.onePoint,

@@ -109,8 +109,8 @@ class _SignInState extends State<SignInForm> {
                   child: TextFormField(
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 6
-                        ? 'Lykilorð þarf að vera a.m.k 6 stafir'
+                    validator: (value) => value.length < 8
+                        ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                         : null,
                     onChanged: (value) {
                       setState(() {

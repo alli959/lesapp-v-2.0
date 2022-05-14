@@ -1,4 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
 import 'package:Lesaforrit/models/read.dart';
 import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
@@ -17,7 +19,12 @@ class DatabaseService {
 //       FirebaseFirestore.instance.collection('Notendur');
 
   final lesaCollection = Amplify.DataStore;
-  //document er í auth // Þetta fall skrifar gildi í Firebase. Gildi í gæsalöppum verða að stemma
+
+  StreamSubscription hubSubscription =
+      Amplify.Hub.listen([HubChannel.DataStore], (hubEvent) async {
+    print("EVENT NAME IS ===============> ${hubEvent.eventName}");
+    print("EVENT PAYLOAD IS ===============> ${hubEvent.payload}");
+  });
 
   Future updateUserData(
       String name,
@@ -32,27 +39,56 @@ class DatabaseService {
       String lvlTwoEasyScore,
       String lvlTwoMediumScore,
       String lvlTwoVoiceScore) async {
-    UserData oldUserData = (await lesaCollection.query(UserData.classType,
-        where: UserData.ID.eq(uid)))[0];
+    print("we are at updateUserData");
 
-    UserData userData = oldUserData.copyWith(
-        id: uid,
-        name: name,
-        age: age,
-        readingStage: readingStage,
-        lvlOneCapsScore: lvlOneCapsScore,
-        lvlOneScore: lvlOneScore,
-        lvlOneVoiceScore: lvlOneVoiceScore,
-        lvlThreeMediumScore: lvlThreeMediumScore,
-        lvlThreeVoiceScore: lvlThreeVoiceScore,
-        lvlTwoEasyScore: lvlTwoEasyScore,
-        lvlTwoMediumScore: lvlTwoMediumScore,
-        lvlThreeEasyScore: lvlThreeEasyScore,
-        lvlTwoVoiceScore: lvlTwoVoiceScore,
-        prefVoice: PrefVoice.DORA,
-        saveRecord: true,
-        manualFix: false);
-    return await lesaCollection.save(userData);
+    try {
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(uid)));
+
+      print("oldUserData is $oldUserData");
+
+      if (oldUserData.length == 0) {
+        UserData userData = UserData(
+            id: uid,
+            name: name,
+            age: age,
+            readingStage: readingStage,
+            lvlOneCapsScore: lvlOneCapsScore,
+            lvlOneScore: lvlOneScore,
+            lvlOneVoiceScore: lvlOneVoiceScore,
+            lvlThreeMediumScore: lvlThreeMediumScore,
+            lvlThreeVoiceScore: lvlThreeVoiceScore,
+            lvlTwoEasyScore: lvlTwoEasyScore,
+            lvlTwoMediumScore: lvlTwoMediumScore,
+            lvlThreeEasyScore: lvlThreeEasyScore,
+            lvlTwoVoiceScore: lvlTwoVoiceScore,
+            prefVoice: PrefVoice.DORA,
+            saveRecord: true,
+            manualFix: false);
+        return await lesaCollection.save(userData);
+      }
+
+      UserData userData = oldUserData[0].copyWith(
+          id: uid,
+          name: name,
+          age: age,
+          readingStage: readingStage,
+          lvlOneCapsScore: lvlOneCapsScore,
+          lvlOneScore: lvlOneScore,
+          lvlOneVoiceScore: lvlOneVoiceScore,
+          lvlThreeMediumScore: lvlThreeMediumScore,
+          lvlThreeVoiceScore: lvlThreeVoiceScore,
+          lvlTwoEasyScore: lvlTwoEasyScore,
+          lvlTwoMediumScore: lvlTwoMediumScore,
+          lvlThreeEasyScore: lvlThreeEasyScore,
+          lvlTwoVoiceScore: lvlTwoVoiceScore,
+          prefVoice: PrefVoice.DORA,
+          saveRecord: true,
+          manualFix: false);
+      return await lesaCollection.save(userData);
+    } catch (err) {
+      print("there was an error updating user data ====> $err");
+    }
   }
 
   //document er í auth

@@ -98,7 +98,7 @@ class ScoreKeeperEvent extends VoiceEvent {
   String typeoffile;
   String question;
   String answer;
-  File audio;
+  Uint8List audio;
 
   ScoreKeeperEvent(
       {this.onePoint,

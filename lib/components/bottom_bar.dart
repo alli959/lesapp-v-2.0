@@ -1,5 +1,6 @@
 import 'package:Lesaforrit/screens/home/welcome.dart';
 import 'package:Lesaforrit/screens/profile_view.dart';
+import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
 
@@ -31,7 +32,7 @@ class BottomBar extends StatelessWidget {
                 circleSize: 55,
                 onPressed: () {
                   onTap();
-                  Navigator.pushNamed(context, Welcome.id);
+                  Navigator.pushNamed(context, Wrapper.id);
                 },
                 size: null,
               ),

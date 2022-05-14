@@ -84,9 +84,10 @@ class VoiceService {
     return filePath;
   }
 
-  File saveFile(List<Uint8List> contents, sampleRate) {
+  Uint8List saveFile(List<Uint8List> contents, sampleRate) {
     // File recordedFile = File(await getFilePath());
 
+    // first stop recording
     List<int> data = [];
     for (var i = 0; i < contents.length; i++) {
       try {
@@ -146,10 +147,10 @@ class VoiceService {
     ]);
 
     File deployFile = new File.fromRawPath(header);
-
+    audioList = [];
     // await recordedFile.writeAsBytes(header, flush: true);
 
-    return deployFile;
+    return header;
   }
 
   // Future saveFile(List<Uint8List> contents) async {
@@ -205,6 +206,7 @@ class VoiceService {
 
   Future stopRecording() async {
     // await saveFile(audioList, 16000);
+    print("recording stopped");
     await _recorder.stop();
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();

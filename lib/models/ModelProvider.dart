@@ -44,4 +44,7 @@ class ModelProvider implements ModelProviderInterface {
                 modelName);
     }
   }
+
+  @override
+  List<ModelSchema> customTypeSchemas = [];
 }

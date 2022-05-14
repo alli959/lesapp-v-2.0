@@ -314,7 +314,7 @@ class _QuizPageState extends State<QuizPage> {
         String typeoffile,
         String question,
         String answer,
-        File audio}) {
+        Uint8List audio}) {
       _voiceBloc.add(ScoreKeeperEvent(
           onePoint: onePoint,
           twoPoints: twoPoints,
@@ -359,7 +359,7 @@ class _QuizPageState extends State<QuizPage> {
       // }
     }
 
-    void soundLevelListener([File file]) {
+    void soundLevelListener([Uint8List file]) {
       print("call is done and below are the values");
 
       print("lastWords is =============> $lastWords");

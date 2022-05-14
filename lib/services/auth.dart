@@ -1,12 +1,33 @@
 import 'dart:async';
 
+import 'package:Lesaforrit/amplifyconfiguration.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+
+import '../models/ModelProvider.dart';
 
 class AuthService {
+  Future init() async {
+    try {
+      // Add the following line to add Auth plugin to your app.
+      AmplifyDataStore datastorePlugin =
+          AmplifyDataStore(modelProvider: ModelProvider.instance);
+      await Amplify.addPlugin(AmplifyAuthCognito());
+      await Amplify.addPlugin(AmplifyStorageS3());
+      await Amplify.addPlugin(datastorePlugin);
+      await Amplify.addPlugin(AmplifyAPI());
+      await Amplify.configure(amplifyconfig);
+      // call Amplify.configure to use the initialized categories in your app
+    } on Exception catch (e) {
+      print('An error occurred configuring Amplify: $e');
+    }
+  }
+
   // All of the authentication goes inside this class
   final _auth = Amplify.Auth;
 
@@ -15,8 +36,32 @@ class AuthService {
     return user != null ? Usr(uid: user.userId) : null;
   }
 
-  Future<bool> _IsLoggedIn() async {
-    var authSession = await Amplify.Auth.fetchAuthSession();
+  StreamSubscription hubSubscription =
+      Amplify.Hub.listen([HubChannel.Auth], (hubEvent) async {
+    switch (hubEvent.eventName) {
+      case 'SIGNED_IN':
+        print('USER IS SIGNED IN');
+        break;
+      case 'SIGNED_OUT':
+        print('USER IS SIGNED OUT');
+        try {
+          await Amplify.DataStore.clear();
+          print('DataStore is cleared.');
+        } on DataStoreException catch (e) {
+          print('Failed to clear DataStore: $e');
+        }
+        break;
+      case 'SESSION_EXPIRED':
+        print('SESSION HAS EXPIRED');
+        break;
+      case 'USER_DELETED':
+        print('USER HAS BEEN DELETED');
+        break;
+    }
+  });
+
+  Future<bool> isLoggedIn() async {
+    var authSession = await _auth.fetchAuthSession();
     return authSession.isSignedIn;
   }
 
@@ -24,16 +69,29 @@ class AuthService {
   // A null value if the user signs out but a Usr object if the user signs in.
   Stream<Usr> get user {
     print("usr get stuff called");
-    return _auth.getCurrentUser().asStream().map(_userFromCognitoUser);
+    var authUser = getCurrentUser();
+    if (authUser == null) {
+      return null;
+    }
+    return authUser.asStream().map(_userFromCognitoUser);
   }
 
   // GET CURRENT USER
   Future<AuthUser> getCurrentUser() async {
-    return await _auth.getCurrentUser();
+    try {
+      var currentUser = await _auth.getCurrentUser();
+      return currentUser;
+    } catch (err) {
+      print("user is logged out");
+      return null;
+    }
   }
 
   Future<String> getCurrentUserID() async {
-    final user = await _auth.getCurrentUser();
+    final user = await getCurrentUser();
+    if (user == null) {
+      return null;
+    }
     return user.userId;
   }
 
@@ -91,6 +149,11 @@ class AuthService {
       SignUpResult result =
           await _auth.signUp(username: email, password: password);
       if (result.isSignUpComplete) {
+        print("Sign up is complete");
+        print(
+            " code delivery details => ${result.nextStep.codeDeliveryDetails}");
+        await _auth.signIn(username: email, password: password);
+
         AuthUser user = await getCurrentUser();
 
         // create a new document for the user with the uid
@@ -120,12 +183,11 @@ class AuthService {
   }
 
   // signout
-  Future logOut() async {
+  Future<void> logOut() async {
     try {
-      return await _auth.signOut();
-    } catch (e) {
-      print('Villa í logout' + e.toString());
-      return null;
+      return await _auth.signOut(options: SignOutOptions(globalSignOut: true));
+    } on AmplifyException catch (e) {
+      print("exception loggin out => ${e.message}");
     }
   }
 }

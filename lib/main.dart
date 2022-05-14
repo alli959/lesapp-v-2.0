@@ -1,4 +1,3 @@
-import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/screens/level_one_voice.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
@@ -6,11 +5,13 @@ import 'package:Lesaforrit/screens/level_two_voice.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_api/amplify_api.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
 import 'package:Lesaforrit/screens/authenticate/sign_in.dart';
@@ -32,23 +33,14 @@ import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/google_speech.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'models/ModelProvider.dart';
 import 'models/levelTemplate.dart';
-import 'models/usr.dart';
 import 'package:Lesaforrit/screens/level_one.dart';
 import 'package:Lesaforrit/screens/level_one_finish.dart';
 import 'package:Lesaforrit/screens/level_two.dart';
-import 'package:flutter/foundation.dart';
 import 'amplifyconfiguration.dart';
 
 // void main() async {
@@ -68,23 +60,6 @@ void main() async {
       .loadString('assets/graphite-flare-324114-285b1cf5c32b.json')));
   SpeechToText speech = SpeechToText.viaServiceAccount(serviceAccount);
 
-  await Firebase.initializeApp();
-
-  try {
-    // Add the following line to add Auth plugin to your app.
-    await Amplify.addPlugin(AmplifyAuthCognito());
-    AmplifyDataStore datastorePlugin =
-        AmplifyDataStore(modelProvider: ModelProvider.instance);
-    await Amplify.addPlugins([
-      AmplifyAuthCognito(),
-      datastorePlugin,
-    ]);
-
-    // call Amplify.configure to use the initialized categories in your app
-    await Amplify.configure(amplifyconfig);
-  } on Exception catch (e) {
-    print('An error occurred configuring Amplify: $e');
-  }
   runApp(MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthService>(create: (context) {

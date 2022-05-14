@@ -1,7 +1,7 @@
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/auth.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
@@ -54,8 +54,12 @@ class AuthenticationBloc
     yield AuthenticationLoading();
     try {
       await Future.delayed(Duration(milliseconds: 500));
-      final currentUser = await _authService.getCurrentUser();
-      if (currentUser != null) {
+      if (!Amplify.isConfigured) {
+        await _authService.init();
+      }
+      bool isLoggedIn = await _authService.isLoggedIn();
+      print("isLoggedIn = $isLoggedIn");
+      if (isLoggedIn) {
         final uid = await _authService.getCurrentUserID();
         Usr usr = Usr(uid: uid);
         yield AuthenticationAuthenticated(usr: usr);
@@ -64,7 +68,7 @@ class AuthenticationBloc
         yield AuthenticationUnauthenticated();
         yield LoginScreen();
       }
-    } on FirebaseAuthException catch (e) {
+    } on AmplifyException catch (e) {
       yield AuthenticationFailure(
           message: e.message ?? 'An unknown error occurred');
     }
@@ -78,6 +82,8 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapUserLoggedOutToState(
       UserLoggedOut event) async* {
     await _authService.logOut();
+    yield AuthenticationLoading();
+    await Future.delayed(Duration(milliseconds: 3000));
     yield AuthenticationUnauthenticated();
   }
 
@@ -100,12 +106,13 @@ class AuthenticationBloc
     yield AuthenticationLoading();
     try {
       await Future.delayed(Duration(milliseconds: 500));
-      final currentUser = await _authService.getCurrentUser();
-      if (currentUser != null) {
+      final isLoggedIn = await _authService.isLoggedIn();
+      if (isLoggedIn) {
         final uid = await _authService.getCurrentUserID();
+        print("UID IS => $uid");
         yield UserUid(uid: uid);
       }
-    } on FirebaseAuthException catch (e) {
+    } on AmplifyException catch (e) {
       yield AuthenticationFailure(
           message: e.message ?? 'An unknown error occurred');
     }

@@ -16,14 +16,10 @@ class Wrapper extends StatelessWidget {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       if (state is AuthenticationAuthenticated) {
-        return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-          if (state is AuthenticationUnauthenticated) {
-            print("unauthenticated");
-            return Authenticate();
-          }
-          return Welcome();
-        });
+        return Welcome();
+      }
+      if (state is AuthenticationUnauthenticated) {
+        return Authenticate();
       }
       return Authenticate();
     });

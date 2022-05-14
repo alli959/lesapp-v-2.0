@@ -5,7 +5,6 @@ import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/loading.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -187,8 +186,8 @@ class _RegisterState extends State<RegisterForm> {
                         child: TextFormField(
                           obscureText: true, //stjörnur í stað texta
                           textAlign: TextAlign.center,
-                          validator: (value) => value.length < 6
-                              ? 'Lykilorð þarf að vera a.m.k 6 stafir'
+                          validator: (value) => value.length < 8
+                              ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                               : null,
                           onChanged: (value) {
                             setState(() {
