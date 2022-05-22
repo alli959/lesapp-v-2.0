@@ -76,6 +76,8 @@ class VoiceStart extends VoiceState {
 
 class VoiceStop extends VoiceState {}
 
+class VoiceCancel extends VoiceState {}
+
 class UpdateState extends VoiceState {
   final String lastWords;
   final List<SpeechRecognitionAlternative> alternates;
@@ -123,17 +125,21 @@ class NewQuestionState extends VoiceState {
   final bool threePoints;
   final bool fourPoints;
   final bool fivePoints;
+  final int trys;
+  final int correct;
 
   NewQuestionState(
       {this.onePoint,
       this.twoPoints,
       this.threePoints,
       this.fourPoints,
-      this.fivePoints});
+      this.fivePoints,
+      this.trys,
+      this.correct});
 
   @override
   List<Object> get props =>
-      [onePoint, twoPoints, threePoints, fourPoints, fivePoints];
+      [onePoint, twoPoints, threePoints, fourPoints, fivePoints, trys, correct];
 }
 
 class ShowResultState extends VoiceState {

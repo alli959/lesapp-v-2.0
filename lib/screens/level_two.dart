@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
+
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import 'package:Lesaforrit/screens/level_two_finish.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
@@ -26,7 +26,10 @@ class LevelTwo extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'words', 'medium')..add(FetchEvent());
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'words', 'medium')
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -50,7 +53,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlTwoMedium quizBrain = QuizBrainLvlTwoMedium();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
@@ -121,13 +123,14 @@ class _QuizPageState extends State<QuizPage> {
       qEnabled = true;
     } else {
       Timer(Duration(seconds: 1), () {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => TwoFinish(
               stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
             ),
           ),
+          (Route<dynamic> route) => false,
         );
       });
     }

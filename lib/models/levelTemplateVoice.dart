@@ -13,6 +13,7 @@ import '../shared/timer.dart';
 
 class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
+
   bool isListening = false;
   Function listeningUpdate;
   Function checkAnswer;
@@ -29,13 +30,14 @@ class LevelTemplateVoice extends StatelessWidget {
   int shadowLevel;
   bool isLetters = false;
 
-  Function onsoundLevelListener;
+  Function ondoneListener;
   Function resultListener;
   List<bool> questionMap = [];
   List<bool> answerMap = [];
   List<String> questionArr = [];
   List<String> answerArr = [];
   bool isShowResult;
+  int questionTime = 10;
 
   LevelTemplateVoice(
       {this.isListening,
@@ -58,17 +60,22 @@ class LevelTemplateVoice extends StatelessWidget {
       this.shadowLevel,
       this.isLetters,
       this.resultListener,
-      this.onsoundLevelListener,
-      this.isShowResult});
+      this.ondoneListener,
+      this.isShowResult,
+      this.questionTime});
 
   List<TextSpan> getResultText(List<String> arr, List<bool> map) {
     List<TextSpan> resultTextMap = [];
     print("arr is $arr");
     print("map is $map");
+
+    // capitalize first letter
+    arr[0] = arr[0].substring(0, 1).toUpperCase() + arr[0].substring(1);
+
     for (var i = 0; i < arr.length; i++) {
       map[i]
           ? resultTextMap.add(TextSpan(
-              text: "${arr[i]} ", style: TextStyle(color: Colors.greenAccent)))
+              text: "${arr[i]} ", style: TextStyle(color: Colors.green[900])))
           : resultTextMap.add(TextSpan(
               text: "${arr[i]} ", style: TextStyle(color: Colors.red)));
     }
@@ -81,12 +88,16 @@ class LevelTemplateVoice extends StatelessWidget {
 
     _onVoiceButtonPressed() {
       _voiceBloc.add(VoiceStartedEvent(
-          soundLevelListener: onsoundLevelListener,
-          resultListener: resultListener));
+          doneListener: ondoneListener, resultListener: resultListener));
     }
 
     _onStopButtonPressed() {
       _voiceBloc.add(VoiceStoppedEvent());
+    }
+
+    _onCancelButtonPressed() {
+      print("cancelbutton pressed");
+      _voiceBloc.add(VoiceCancelEvent());
     }
 
     return Container(
@@ -141,6 +152,7 @@ class LevelTemplateVoice extends StatelessWidget {
                               text: TextSpan(
                                   style: TextStyle(
                                     color: Colors.black,
+                                    backgroundColor: stigColor,
                                     fontFamily: 'Metropolis-Regular.otf',
                                     fontWeight: FontWeight.w800,
                                     fontSize: fontSize,
@@ -153,8 +165,11 @@ class LevelTemplateVoice extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  children:
-                                      getResultText(questionArr, questionMap)),
+                                  children: (questionArr.length == 0 ||
+                                          questionMap.length == 0
+                                      ? _onCancelButtonPressed()
+                                      : getResultText(
+                                          questionArr, questionMap))),
                             ),
                           )),
               ],
@@ -194,6 +209,7 @@ class LevelTemplateVoice extends StatelessWidget {
                               text: TextSpan(
                                   style: TextStyle(
                                     color: Colors.black,
+                                    backgroundColor: stigColor,
                                     fontFamily: 'Metropolis-Regular.otf',
                                     fontWeight: FontWeight.w800,
                                     fontSize: fontSize,
@@ -206,8 +222,10 @@ class LevelTemplateVoice extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  children:
-                                      getResultText(answerArr, answerMap)),
+                                  children: (answerArr.length == 0 ||
+                                          answerMap.length == null
+                                      ? _onCancelButtonPressed()
+                                      : getResultText(answerArr, answerMap))),
                             ),
                           )),
               ],
@@ -319,7 +337,8 @@ class LevelTemplateVoice extends StatelessWidget {
                           icon: Icons.arrow_back,
                           iconSize: 35,
                           circleSize: 55,
-                          onPressed: () => _onStopButtonPressed(),
+                          onPressed: () =>
+                              !isShowResult ? _onCancelButtonPressed() : {},
                         ),
                       ),
                     ),
@@ -329,7 +348,11 @@ class LevelTemplateVoice extends StatelessWidget {
                             height: 70,
                             width: 70,
                             child: TimerWidget(
-                                time: 10, backgroundcolor: cardColor))),
+                              time: questionTime,
+                              backgroundcolor: cardColor,
+                              onTimeStop: _onStopButtonPressed,
+                              onTimeCancel: _onCancelButtonPressed,
+                            ))),
                     Flexible(
                       flex: 5,
                       fit: FlexFit.tight,
@@ -339,7 +362,8 @@ class LevelTemplateVoice extends StatelessWidget {
                           icon: Icons.stop,
                           iconSize: 35,
                           circleSize: 55,
-                          onPressed: () => _onStopButtonPressed(),
+                          onPressed: () =>
+                              !isShowResult ? _onStopButtonPressed() : {},
                         ),
                       ),
                     )
@@ -359,7 +383,8 @@ class LevelTemplateVoice extends StatelessWidget {
                     icon: Icons.mic,
                     iconSize: 35,
                     circleSize: 55,
-                    onPressed: () => _onVoiceButtonPressed(),
+                    onPressed: () =>
+                        !isShowResult ? _onVoiceButtonPressed() : {},
                   ),
                   bottomBar,
                 ]),

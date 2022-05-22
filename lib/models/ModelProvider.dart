@@ -19,18 +19,22 @@
 
 // ignore_for_file: public_member_api_docs, file_names, unnecessary_new, prefer_if_null_operators, prefer_const_constructors, slash_for_doc_comments, annotate_overrides, non_constant_identifier_names, unnecessary_string_interpolations, prefer_adjacent_string_concatenation, unnecessary_const, dead_code
 
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'UserData.dart';
+import 'UserScore.dart';
 
 export 'PrefVoice.dart';
 export 'UserData.dart';
+export 'UserScore.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "471fc03601dea3d2ac90adfd202b8260";
+  String version = "7e76f1f6cffbeef2e5b8c544153317d0";
   @override
-  List<ModelSchema> modelSchemas = [UserData.schema];
+  List<ModelSchema> modelSchemas = [UserData.schema, UserScore.schema];
   static final ModelProvider _instance = ModelProvider();
+  @override
+  List<ModelSchema> customTypeSchemas = [];
 
   static ModelProvider get instance => _instance;
 
@@ -38,13 +42,12 @@ class ModelProvider implements ModelProviderInterface {
     switch (modelName) {
       case "UserData":
         return UserData.classType;
+      case "UserScore":
+        return UserScore.classType;
       default:
         throw Exception(
             "Failed to find model in model provider for model name: " +
                 modelName);
     }
   }
-
-  @override
-  List<ModelSchema> customTypeSchemas = [];
 }

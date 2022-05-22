@@ -33,11 +33,12 @@ class DatabaseFailure extends DatabaseState {}
 
 class UserDataState extends DatabaseState {
   final Stream<UserData> userdata;
+  final Stream<UserScore> userscore;
 
-  UserDataState({@required this.userdata});
+  UserDataState({@required this.userdata, this.userscore});
 
   @override
-  List<Object> get props => [userdata];
+  List<Object> get props => [userdata, userscore];
 }
 
 class UsersState extends DatabaseState {
@@ -47,4 +48,35 @@ class UsersState extends DatabaseState {
 
   @override
   List<Object> get props => [users];
+}
+
+class SpecialDataState extends DatabaseState {
+  final PrefVoice prefVoice;
+  final bool saveRecord;
+  final bool manualFix;
+  SpecialDataState(
+      {@required this.prefVoice,
+      @required this.saveRecord,
+      @required this.manualFix});
+
+  @override
+  List<Object> get props => [prefVoice, saveRecord, manualFix];
+}
+
+class ActionPerformedState extends DatabaseState {
+  final PrefVoice prefVoice;
+  final bool saveRecord;
+  final bool manualFix;
+  ActionPerformedState({this.prefVoice, this.saveRecord, this.manualFix});
+
+  @override
+  List<Object> get props => [prefVoice, saveRecord, manualFix];
+}
+
+class IsNewRecord extends DatabaseState {
+  final bool newRecord;
+  IsNewRecord({@required this.newRecord});
+
+  @override
+  List<Object> get props => [newRecord];
 }

@@ -136,15 +136,15 @@ class AuthService {
       String name,
       String age,
       String readingStage,
-      String lvlOneCapsScore,
-      String lvlOneScore,
-      String lvlOneVoiceScore,
-      String lvlThreeEasyScore,
-      String lvlThreeMediumScore,
-      String lvlThreeVoiceScore,
-      String lvlTwoEasyScore,
-      String lvlTwoMediumScore,
-      String lvlTwoVoiceScore) async {
+      double lvlOneCapsScore,
+      double lvlOneScore,
+      double lvlOneVoiceScore,
+      double lvlThreeEasyScore,
+      double lvlThreeMediumScore,
+      double lvlThreeVoiceScore,
+      double lvlTwoEasyScore,
+      double lvlTwoMediumScore,
+      double lvlTwoVoiceScore) async {
     try {
       SignUpResult result =
           await _auth.signUp(username: email, password: password);

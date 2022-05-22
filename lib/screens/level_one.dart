@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/serverless/serverless_bloc.dart';
-import '../models/quiz_brain.dart';
+
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_one_finish.dart';
@@ -27,7 +27,10 @@ class LevelOne extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'letters', 'low')..add(FetchEvent());
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'letters', 'low')
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -51,7 +54,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlOne quizBrain = QuizBrainLvlOne(false);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
@@ -118,13 +120,14 @@ class _QuizPageState extends State<QuizPage> {
       qEnabled = true;
     } else {
       Timer(Duration(seconds: 1), () {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (context) => OneFinish(
               stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
             ),
           ),
+          (Route<dynamic> route) => false,
         );
         //Navigator.of(context).pop(); // ????? sleppa?
       });
@@ -161,6 +164,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final _serverlessBloc = BlocProvider.of<ServerlessBloc>(context);
+    final _databaseRepository = RepositoryProvider.of<DatabaseService>(context);
 
     return BlocBuilder<ServerlessBloc, ServerlessState>(
         builder: (context, state) {

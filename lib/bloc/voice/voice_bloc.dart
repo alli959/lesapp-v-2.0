@@ -25,11 +25,16 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   final VoiceService _speech;
   final String level;
   final SaveAudio audioSaver;
+  final DatabaseService databaseService;
+  final dialog;
 
-  VoiceBloc(VoiceService speech, String level, SaveAudio audioSaver)
+  VoiceBloc(VoiceService speech, String level, SaveAudio audioSaver,
+      DatabaseService databaseService, dialog)
       : _speech = speech,
         level = level,
         audioSaver = audioSaver,
+        databaseService = databaseService,
+        dialog = dialog,
         super(VoiceInitial(
           hasSpeech: false,
           logEvents: false,
@@ -72,6 +77,9 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
     if (event is VoiceStoppedEvent) {
       yield* _mapVoiceStopEvent(event);
+    }
+    if (event is VoiceCancelEvent) {
+      yield* _mapVoiceCancelEvent(event);
     }
     if (event is FindBestLastWordEvent) {
       yield* _mapFindBestLastWordEvent(event);
@@ -117,8 +125,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
     try {
-      await _speech.speechListen(
-          event.resultListener, event.soundLevelListener);
+      await _speech.speechListen(event.resultListener, event.doneListener);
       yield IsListeningState();
     } catch (err) {
       print("error = $err");
@@ -149,19 +156,76 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield VoiceStop();
   }
 
+  Stream<VoiceState> _mapVoiceCancelEvent(VoiceCancelEvent event) async* {
+    await _speech.stopRecording(isCancel: true);
+    yield VoiceStop();
+  }
+
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
+    bool fivePoints = event.fivePoints;
+    bool fourPoints = event.fourPoints;
+    bool threePoints = event.threePoints;
+    bool twoPoints = event.twoPoints;
+    bool onePoint = event.onePoint;
+    String typeOfFile = event.typeoffile;
+    int trys = event.trys;
+    int correct = event.correct;
     // Getting the results ready
     yield IsNotListeningState();
     yield ShowResultState();
+
+    var isSaveVoice = await databaseService.getIsSaveVoice();
+    var isManualFix = await databaseService.getIsManualFix();
     await Future.delayed(Duration(milliseconds: 3000));
 
-    if (event.answer != null) {
-      if (event.fivePoints) {
-        audioSaver.setData(
-            'testName', 'Correct', event.question, event.answer, event.audio);
+    if (event.answer != null && event.audio != null) {
+      print("We are adding score");
+
+      bool manualAnswer;
+
+      void callBackFunc(setAnswer) {
+        manualAnswer = setAnswer;
+        if (setAnswer) {
+          if (typeOfFile == "Incorrect") {
+            correct = trys;
+            typeOfFile = "Manual_Correct";
+            fivePoints = true;
+            fourPoints = false;
+            threePoints = false;
+            twoPoints = false;
+            onePoint = false;
+          }
+        }
+        if (!setAnswer) {
+          if (typeOfFile == "Correct") {
+            typeOfFile = "Manual_Incorrect";
+            correct = 0;
+            fivePoints = false;
+            fourPoints = false;
+            threePoints = false;
+            twoPoints = false;
+            onePoint = true;
+          }
+        }
+      }
+
+      if (isManualFix) {
+        await dialog(callBackFunc);
+      }
+      print("manualAnswer is $manualAnswer");
+
+      if (fivePoints) {
+        // check if user has disabled save feature
+        if (isSaveVoice) {
+          audioSaver.setData('testName', "$level/$typeOfFile", event.question,
+              event.answer, event.audio);
+        }
       } else {
-        audioSaver.setData(
-            'testName', 'Incorrect', event.question, event.answer, event.audio);
+        // check if user has disabled save feature
+        if (isSaveVoice) {
+          audioSaver.setData('testName', '$level/$typeOfFile', event.question,
+              event.answer, event.audio);
+        }
       }
 
       try {
@@ -171,12 +235,16 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       }
     }
 
+    print("Now new Question State should be yielded");
+
     yield NewQuestionState(
-        onePoint: event.onePoint,
-        twoPoints: event.twoPoints,
-        threePoints: event.threePoints,
-        fourPoints: event.fourPoints,
-        fivePoints: event.fivePoints);
+        onePoint: onePoint,
+        twoPoints: twoPoints,
+        threePoints: threePoints,
+        fourPoints: fourPoints,
+        fivePoints: fivePoints,
+        trys: trys,
+        correct: correct);
   }
 
   Stream<VoiceState> _mapFindBestLastWordEvent(

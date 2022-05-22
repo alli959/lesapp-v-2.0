@@ -1,9 +1,6 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_cap.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo_voice.dart';
+
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
@@ -17,12 +14,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
 import '../models/set_score.dart';
+import '../models/voices/quiz_brain_lvlOne_voice.dart';
+import '../models/voices/quiz_brain_lvlThree_voice.dart';
+import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 import 'home/welcome.dart';
 import 'level_three.dart';
 import 'level_three_short.dart';
-import 'package:Lesaforrit/models/quiz_brain.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
+
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import 'package:Lesaforrit/models/usr.dart';
@@ -70,7 +68,7 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
+                score: stig, typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
           currentScoreVoice: stigamet.toStringAsFixed(0),
@@ -85,7 +83,7 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
+                score: stig, typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
           currentScoreVoice: stigamet.toStringAsFixed(0),
@@ -100,7 +98,7 @@ class LevelFin extends StatelessWidget {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
             ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlOneVoiceScore'));
+                score: stig, typeof: 'lvlOneVoiceScore'));
         },
         child: SetScore(
           currentScoreVoice: stigamet.toStringAsFixed(0),

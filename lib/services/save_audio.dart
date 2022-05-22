@@ -135,6 +135,7 @@ class SaveAudio {
     final textFile = io.File(tempDir.path + '/$uuid.txt')
       ..createSync()
       ..writeAsStringSync(text, encoding: utf8);
+
     final audioFile = io.File(tempDir.path + '/$uuid.wav')
       ..createSync()
       ..writeAsBytesSync(audio);
@@ -147,7 +148,8 @@ class SaveAudio {
     final option1 = S3UploadFileOptions(
         accessLevel: StorageAccessLevel.protected, contentType: 'audio/wav');
     final option2 = S3UploadFileOptions(
-        accessLevel: StorageAccessLevel.protected, contentType: 'text/plain');
+        accessLevel: StorageAccessLevel.protected,
+        contentType: 'text/plain; charset=utf8');
     try {
       final UploadFileResult result = await Amplify.Storage.uploadFile(
           local: audioFile,

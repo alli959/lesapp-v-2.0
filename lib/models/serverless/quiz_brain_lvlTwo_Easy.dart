@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_cache_manager/file.dart';
 
+import '../PrefVoice.dart';
 import '../question.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
@@ -353,8 +354,14 @@ class QuizBrainLvlTwoEasy {
   String getQuestionText1() {
     _question1 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
-    sound1 = _questionBank[_question1].file;
-    sound1Secondary = _questionBank[_question1].file2;
+    Question questionOne = _questionBank[_question1];
+    if (questionOne.prefVoice == PrefVoice.DORA) {
+      sound1 = questionOne.file;
+      sound1Secondary = questionOne.file2;
+    } else {
+      sound1 = questionOne.file2;
+      sound1Secondary = questionOne.file;
+    }
     return _questionBank[_question1].questionText;
   }
 
@@ -362,16 +369,20 @@ class QuizBrainLvlTwoEasy {
     // þessi kóði passar bara að við fáum ekki sömu stafi. Annars er hann eins og getQuestionText1()
     _question2 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
+
     if (_question1 == _question2) {
       _question2++;
-      sound2 = _questionBank[_question2].file;
-      sound2Secondary = _questionBank[_question2].file2;
-      return _questionBank[_question2].questionText;
-    } else {
-      sound2 = _questionBank[_question2].file;
-      sound2Secondary = _questionBank[_question2].file2;
     }
-    return _questionBank[_question2].questionText;
+    Question questionTwo = _questionBank[_question2];
+    if (questionTwo.prefVoice == PrefVoice.DORA) {
+      sound2 = questionTwo.file;
+      sound2Secondary = questionTwo.file2;
+    } else {
+      sound2 = questionTwo.file2;
+      sound2Secondary = questionTwo.file;
+    }
+
+    return questionTwo.questionText;
   }
 
   bool getCorrectAnswer() {

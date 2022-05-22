@@ -3,7 +3,7 @@
   "serviceConfiguration": {
     "apiName": "lesappform",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "D:\\lesapp\\Lesapp\\amplify\\backend\\api\\lesappform\\schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-3962aede-9757-4a57-9d88-6c8368866276/amplify/backend/api/lesappform/schema.graphql",
     "defaultAuthType": {
       "mode": "AMAZON_COGNITO_USER_POOLS",
       "cognitoUserPoolId": "authlesappforma257feeb"

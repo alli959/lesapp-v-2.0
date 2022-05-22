@@ -1,7 +1,9 @@
+import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/screens/level_one_voice.dart';
 import 'package:Lesaforrit/screens/level_three_voice.dart';
 import 'package:Lesaforrit/screens/level_two_voice.dart';
+import 'package:Lesaforrit/screens/settings.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -78,14 +80,21 @@ void main() async {
           return SaveAudio("username", "Correct", "question", "answer", null);
         }),
       ],
-      child: BlocProvider<AuthenticationBloc>(
+      child: MultiBlocProvider(providers: [
+        BlocProvider<AuthenticationBloc>(
           create: (context) {
             final authService = RepositoryProvider.of<AuthService>(context);
             return AuthenticationBloc(authService)..add(AppStarted());
           },
-          child: lesApp(
-            appRouter: AppRouter(),
-          ))));
+        ),
+        BlocProvider<DatabaseBloc>(
+          create: (context) {
+            final databaseService =
+                RepositoryProvider.of<DatabaseService>(context);
+            return DatabaseBloc(databaseService);
+          },
+        ),
+      ], child: lesApp(appRouter: AppRouter()))));
 }
 
 class lesApp extends StatelessWidget {
@@ -97,79 +106,54 @@ class lesApp extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primaryColor: Color(0xFFE0FF62), // Litur á appbari uppi
-        scaffoldBackgroundColor: Color(0xFFE0FF62), // litur á scaffold niðri
-      ),
-      debugShowCheckedModeBanner: false,
-      onGenerateRoute: appRouter.onGenerateRoute,
-      initialRoute: Wrapper.id,
-      routes: {
-        Welcome.id: (context) => Welcome(),
-        ScoreChart.id: (context) => ScoreChart(),
-        LvlOneChoose.id: (context) => LvlOneChoose(),
-        LvlTwoChoose.id: (context) => LvlTwoChoose(),
-        LvlThreeChoose.id: (context) => LvlThreeChoose(),
-        LevelTemplate.id: (context) => LevelTemplate(),
-        LevelOne.id: (context) => LevelOne(),
-        LevelOneCap.id: (context) => LevelOneCap(),
-        LevelOneVoice.id: (context) => LevelOneVoice(),
-        LevelTwo.id: (context) => LevelTwo(),
-        LevelTwoShort.id: (context) => LevelTwoShort(),
-        LevelTwoVoice.id: (contraxt) => LevelTwoVoice(),
-        LevelThree.id: (context) => LevelThree(),
-        LevelThreeShort.id: (context) => LevelThreeShort(),
-        LevelThreeVoice.id: (context) => LevelThreeVoice(),
-        OneFinish.id: (context) => OneFinish(),
-        OneCapsFinish.id: (context) => OneCapsFinish(),
-        TwoFinish.id: (context) => TwoFinish(),
-        ThreeFinish.id: (context) => ThreeFinish(),
-        SignIn.id: (context) => SignIn(),
-        Register.id: (context) => Register(),
-        Wrapper.id: (context) => Wrapper(),
-        ProfileView.id: (context) => ProfileView(),
-        MyProfile.id: (context) => MyProfile(),
-        SetScore.id: (context) => SetScore(),
-      },
-    );
-    // return StreamProvider<Usr>.value(
-    //   value: AuthService().user,
-    //   child: MaterialApp(
-    //     theme: ThemeData(
-    //       primaryColor: Color(0xFFE0FF62), // Litur á appbari uppi
-    //       scaffoldBackgroundColor: Color(0xFFE0FF62), // litur á scaffold niðri
-    //     ),
-    //     onGenerateRoute: appRouter.onGenerateRoute,
-    //     debugShowCheckedModeBanner: false,
-    //     initialRoute: Wrapper.id,
-    //     routes: {
-    //       Welcome.id: (context) => Welcome(),
-    //       ScoreChart.id: (context) => ScoreChart(),
-    //       LvlOneChoose.id: (context) => LvlOneChoose(),
-    //       LvlTwoChoose.id: (context) => LvlTwoChoose(),
-    //       LvlThreeChoose.id: (context) => LvlThreeChoose(),
-    //       LevelTemplate.id: (context) => LevelTemplate(),
-    //       LevelOne.id: (context) => LevelOne(),
-    //       LevelOneCap.id: (context) => LevelOneCap(),
-    //       LevelTwo.id: (context) => LevelTwo(),
-    //       LevelTwoShort.id: (context) => LevelTwoShort(),
-    //       LevelFinish.id: (context) => LevelFinish(),
-    //       LevelThree.id: (context) => LevelThree(),
-    //       LevelThreeShort.id: (context) => LevelThreeShort(),
-    //       OneFinish.id: (context) => OneFinish(),
-    //       OneCapsFinish.id: (context) => OneCapsFinish(),
-    //       TwoFinish.id: (context) => TwoFinish(),
-    //       ThreeFinish.id: (context) => ThreeFinish(),
-    //       SignIn.id: (context) => SignIn(),
-    //       Register.id: (context) => Register(),
-    //       Wrapper.id: (context) => Wrapper(),
-    //       ProfileView.id: (context) => ProfileView(),
-    //       MyProfile.id: (context) => MyProfile(),
-    //       SetScore.id: (context) => SetScore(),
-    //     },
-    //   ),
-    // );
+    final _databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+    final databaseRepo = RepositoryProvider.of<DatabaseService>(context);
+    // _databaseBloc.add(SetUserID(Uid: state.usr.uid));
+
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+      if (state is UserUid) {
+        print("state is userUID !!!!!!! => ${state.uid}");
+        databaseRepo.setUid(state.uid);
+      }
+      return MaterialApp(
+        theme: ThemeData(
+          primaryColor: Color(0xFFE0FF62), // Litur á appbari uppi
+          scaffoldBackgroundColor: Color(0xFFE0FF62), // litur á scaffold niðri
+        ),
+        debugShowCheckedModeBanner: false,
+        onGenerateRoute: appRouter.onGenerateRoute,
+        initialRoute: Wrapper.id,
+        routes: {
+          Welcome.id: (context) => Welcome(),
+          ScoreChart.id: (context) => ScoreChart(),
+          LvlOneChoose.id: (context) => LvlOneChoose(),
+          LvlTwoChoose.id: (context) => LvlTwoChoose(),
+          LvlThreeChoose.id: (context) => LvlThreeChoose(),
+          LevelTemplate.id: (context) => LevelTemplate(),
+          LevelOne.id: (context) => LevelOne(),
+          LevelOneCap.id: (context) => LevelOneCap(),
+          LevelOneVoice.id: (context) => LevelOneVoice(),
+          LevelTwo.id: (context) => LevelTwo(),
+          LevelTwoShort.id: (context) => LevelTwoShort(),
+          LevelTwoVoice.id: (contraxt) => LevelTwoVoice(),
+          LevelThree.id: (context) => LevelThree(),
+          LevelThreeShort.id: (context) => LevelThreeShort(),
+          LevelThreeVoice.id: (context) => LevelThreeVoice(),
+          OneFinish.id: (context) => OneFinish(),
+          OneCapsFinish.id: (context) => OneCapsFinish(),
+          TwoFinish.id: (context) => TwoFinish(),
+          ThreeFinish.id: (context) => ThreeFinish(),
+          SignIn.id: (context) => SignIn(),
+          Register.id: (context) => Register(),
+          Wrapper.id: (context) => Wrapper(),
+          ProfileView.id: (context) => ProfileView(),
+          MyProfile.id: (context) => MyProfile(),
+          SetScore.id: (context) => SetScore(),
+          Settings.id: (context) => Settings(),
+        },
+      );
+    });
   }
 }
 

@@ -24,6 +24,7 @@ class GetData {
   }
 
   Future<List<Data>> getData() async {
+    DefaultCacheManager().emptyCache();
     var url = Uri.https(
         '8iu5izdtgc.execute-api.eu-west-1.amazonaws.com', '/dev/get', {
       "typeofgame": this.typeofgame,

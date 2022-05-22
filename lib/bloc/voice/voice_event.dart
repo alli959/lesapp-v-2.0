@@ -22,15 +22,17 @@ class VoiceInitializeEvent extends VoiceEvent {
 
 class VoiceStartedEvent extends VoiceEvent {
   final Function resultListener;
-  final Function soundLevelListener;
+  final Function doneListener;
 
-  VoiceStartedEvent({this.resultListener, this.soundLevelListener});
+  VoiceStartedEvent({this.resultListener, this.doneListener});
 
   @override
-  List<Object> get props => [resultListener, soundLevelListener];
+  List<Object> get props => [resultListener, doneListener];
 }
 
 class VoiceStoppedEvent extends VoiceEvent {}
+
+class VoiceCancelEvent extends VoiceEvent {}
 
 class DisplayTextEvent extends VoiceEvent {}
 
@@ -99,6 +101,8 @@ class ScoreKeeperEvent extends VoiceEvent {
   String question;
   String answer;
   Uint8List audio;
+  int trys;
+  int correct;
 
   ScoreKeeperEvent(
       {this.onePoint,
@@ -110,7 +114,9 @@ class ScoreKeeperEvent extends VoiceEvent {
       this.typeoffile,
       this.question,
       this.answer,
-      this.audio});
+      this.audio,
+      this.trys,
+      this.correct});
 
   @override
   List<Object> get props => [
@@ -124,6 +130,8 @@ class ScoreKeeperEvent extends VoiceEvent {
         [question],
         [answer],
         [audio],
+        [trys],
+        [correct],
       ];
 }
 

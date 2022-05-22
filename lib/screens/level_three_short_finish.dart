@@ -1,5 +1,5 @@
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_cap.dart';
+
 import 'package:Lesaforrit/screens/level_three.dart';
 import 'package:Lesaforrit/screens/level_three_short.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -8,22 +8,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
-import '../models/quiz_brain_lvlOne_voice.dart';
-import '../models/quiz_brain_lvlThree_voice.dart';
-import '../models/quiz_brain_lvlTwo_voice.dart';
+
 import '../models/serverless/quiz_brain_lvlOne.dart';
 import '../models/serverless/quiz_brain_lvlThree_Easy.dart';
 import '../models/serverless/quiz_brain_lvlThree_Medium.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import '../models/set_score.dart';
-import 'package:Lesaforrit/models/quiz_brain.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
+
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import 'package:Lesaforrit/models/usr.dart';
 
+import '../models/voices/quiz_brain_lvlOne_voice.dart';
+import '../models/voices/quiz_brain_lvlThree_voice.dart';
+import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 import '../services/auth.dart';
 import 'home/welcome.dart';
 import 'lvlThree_choose.dart';
@@ -68,8 +67,7 @@ class LevelFin extends StatelessWidget {
         create: (context) {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlThreeEasyScore'));
+            ..add(UpdateUserScore(score: stig, typeof: 'lvlThreeEasyScore'));
         },
         child: SetScore(
           currentScoreThree: stigamet.toStringAsFixed(0),
@@ -83,8 +81,7 @@ class LevelFin extends StatelessWidget {
         create: (context) {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlThreeEasyScore'));
+            ..add(UpdateUserScore(score: stig, typeof: 'lvlThreeEasyScore'));
         },
         child: SetScore(
           currentScoreThree: stigamet.toStringAsFixed(0),
@@ -98,8 +95,7 @@ class LevelFin extends StatelessWidget {
         create: (context) {
           final _databaseService = DatabaseService(uid: uid);
           return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(
-                score: stig.toString(), typeof: 'lvlThreeEasyScore'));
+            ..add(UpdateUserScore(score: stig, typeof: 'lvlThreeEasyScore'));
         },
         child: SetScore(
           currentScoreThree: stigamet.toStringAsFixed(0),

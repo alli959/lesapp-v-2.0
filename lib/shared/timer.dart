@@ -7,10 +7,20 @@ class TimerWidget extends StatelessWidget {
   ///In Seconds
   final int time;
   final Color backgroundcolor;
+  final Function onTimeStop;
+  final Function onTimeCancel;
 
-  TimerWidget({@required this.time, @required this.backgroundcolor});
+  TimerWidget(
+      {@required this.time,
+      @required this.backgroundcolor,
+      this.onTimeStop,
+      this.onTimeCancel});
   Widget build(BuildContext context) {
-    return CountDownTimer(time: time, backgroundcolor: backgroundcolor);
+    return CountDownTimer(
+        time: time,
+        backgroundcolor: backgroundcolor,
+        onTimeStop: onTimeStop,
+        onTimeCancel: onTimeCancel);
   }
 }
 
@@ -18,11 +28,21 @@ class CountDownTimer extends StatefulWidget {
   // This widget accepts a title
   final int time;
   final Color backgroundcolor;
-  CountDownTimer({@required this.time, @required this.backgroundcolor});
+  final Function onTimeStop;
+  final Function onTimeCancel;
+
+  CountDownTimer(
+      {@required this.time,
+      @required this.backgroundcolor,
+      this.onTimeStop,
+      this.onTimeCancel});
 
   @override
-  _CountDownTimerState createState() =>
-      _CountDownTimerState(time: time, backgroundcolor: backgroundcolor);
+  _CountDownTimerState createState() => _CountDownTimerState(
+      time: time,
+      backgroundcolor: backgroundcolor,
+      onTimeStop: onTimeStop,
+      onTimeCancel: onTimeCancel);
 }
 
 class _CountDownTimerState extends State<CountDownTimer>
@@ -30,7 +50,13 @@ class _CountDownTimerState extends State<CountDownTimer>
   AnimationController controller;
   final int time;
   final Color backgroundcolor;
-  _CountDownTimerState({@required this.time, @required this.backgroundcolor});
+  final Function onTimeStop;
+  final Function onTimeCancel;
+  _CountDownTimerState(
+      {@required this.time,
+      @required this.backgroundcolor,
+      this.onTimeStop,
+      this.onTimeCancel});
   String get timerString {
     Duration duration = controller.duration * controller.value;
     return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
@@ -43,7 +69,11 @@ class _CountDownTimerState extends State<CountDownTimer>
       vsync: this,
       duration: Duration(seconds: time),
     );
-    controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
+    controller
+        .reverse(from: controller.value == 0.0 ? 1.0 : controller.value)
+        .whenComplete(() {
+      onTimeStop();
+    });
   }
 
   @override
@@ -54,7 +84,7 @@ class _CountDownTimerState extends State<CountDownTimer>
 
   @override
   Widget build(BuildContext context) {
-    print(widget.time);
+    print("context is ${context}");
     ThemeData themeData = Theme.of(context);
     return Stack(fit: StackFit.passthrough, children: [
       AnimatedBuilder(

@@ -11,15 +11,15 @@ class UpdateUserData extends DatabaseEvent {
   final String name;
   final String age;
   final String readingStage;
-  final String lvlOneCapsScore;
-  final String lvlOneScore;
-  final String lvlOneVoiceScore;
-  final String lvlThreeEasyScore;
-  final String lvlThreeMediumScore;
-  final String lvlThreeVoiceScore;
-  final String lvlTwoEasyScore;
-  final String lvlTwoMediumScore;
-  final String lvlTwoVoiceScore;
+  final double lvlOneCapsScore;
+  final double lvlOneScore;
+  final double lvlOneVoiceScore;
+  final double lvlThreeEasyScore;
+  final double lvlThreeMediumScore;
+  final double lvlThreeVoiceScore;
+  final double lvlTwoEasyScore;
+  final double lvlTwoMediumScore;
+  final double lvlTwoVoiceScore;
   UpdateUserData(
       {@required this.name,
       @required this.age,
@@ -51,8 +51,19 @@ class UpdateUserData extends DatabaseEvent {
       ];
 }
 
+class SetUserID extends DatabaseEvent {
+  final String Uid;
+
+  SetUserID({
+    @required this.Uid,
+  });
+
+  @override
+  List<Object> get props => [Uid];
+}
+
 class UpdateUserScore extends DatabaseEvent {
-  final String score;
+  final double score;
   final String typeof;
 
   UpdateUserScore({@required this.score, @required this.typeof});
@@ -64,3 +75,25 @@ class UpdateUserScore extends DatabaseEvent {
 class GetUserData extends DatabaseEvent {}
 
 class GetUsers extends DatabaseEvent {}
+
+class GetSpecialData extends DatabaseEvent {}
+
+class SaveSpecialData extends DatabaseEvent {
+  final PrefVoice prefVoice;
+  final bool saveRecord;
+  final bool manualFix;
+  SaveSpecialData({this.prefVoice, this.saveRecord, this.manualFix});
+
+  @override
+  List<Object> get props => [prefVoice, saveRecord, manualFix];
+}
+
+class ActionPerformedEvent extends DatabaseEvent {
+  final PrefVoice prefVoice;
+  final bool saveRecord;
+  final bool manualFix;
+  ActionPerformedEvent({this.prefVoice, this.saveRecord, this.manualFix});
+
+  @override
+  List<Object> get props => [prefVoice, saveRecord, manualFix];
+}

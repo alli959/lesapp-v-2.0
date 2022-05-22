@@ -3,9 +3,6 @@ import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +14,10 @@ import 'package:google_speech/google_speech.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
+
+import '../models/voices/quiz_brain_lvlOne_voice.dart';
+import '../models/voices/quiz_brain_lvlThree_voice.dart';
+import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 
 class VoiceService {
   SpeechToText speech;
@@ -58,14 +59,17 @@ class VoiceService {
   String text = '';
   StreamSubscription<List<int>> _audioStreamSubscription;
   BehaviorSubject<List<int>> _audioStream;
-
   RecognitionConfig config;
+
+  bool isSave = true;
+  bool isCancel = false;
 
   VoiceService({@required this.speech, this.context});
 
-  Future speechInit(Function statusListener, Function errorListener) async {
+  Future speechInit(Function statusListener, Function errorListener,
+      [bool isSave = false]) async {
     config = _getConfig();
-
+    this.isSave = isSave;
     try {
       _recorder.initialize();
       _player.initialize();
@@ -86,7 +90,7 @@ class VoiceService {
 
   Uint8List saveFile(List<Uint8List> contents, sampleRate) {
     // File recordedFile = File(await getFilePath());
-
+    print("at savefile place");
     // first stop recording
     List<int> data = [];
     for (var i = 0; i < contents.length; i++) {
@@ -173,11 +177,11 @@ class VoiceService {
       encoding: AudioEncoding.LINEAR16,
       model: RecognitionModel.basic,
       maxAlternatives: 30,
-      enableAutomaticPunctuation: true,
+      enableAutomaticPunctuation: false,
       sampleRateHertz: 16000,
       languageCode: 'is-IS');
 
-  Future speechListen(resultListener, Function soundLevelListener) async {
+  Future speechListen(resultListener, Function doneListener) async {
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((event) {
       if (!_audioStream.isClosed) {
@@ -197,15 +201,22 @@ class VoiceService {
     try {
       if (!_audioStream.isClosed) {
         responseStream.listen(resultListener,
-            onDone: () => soundLevelListener(saveFile(audioList, 16000)));
+            onDone: () => doneListener(
+                file: saveFile(audioList, 16000), isCancel: isCancel));
       }
     } catch (err) {
       print("THERE WAS AN ERROR ${err}");
     }
+    this.isCancel = false;
   }
 
-  Future stopRecording() async {
+  Future stopRecording({bool isCancel = false}) async {
+    print("isCancel in stopeed Recording is ==> $isCancel");
     // await saveFile(audioList, 16000);
+    this.isCancel = isCancel;
+    if (isCancel) {
+      audioList = [];
+    }
     print("recording stopped");
     await _recorder.stop();
     await _audioStreamSubscription?.cancel();

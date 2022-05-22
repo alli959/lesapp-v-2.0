@@ -6,12 +6,13 @@ import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/ModelProvider.dart';
 
 // Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
 class DatabaseService {
-  final String uid;
+  String uid;
   DatabaseService({this.uid});
 
 // // Tilvísun í collection í database
@@ -30,73 +31,87 @@ class DatabaseService {
       String name,
       String age,
       String readingStage,
-      String lvlOneCapsScore,
-      String lvlOneScore,
-      String lvlOneVoiceScore,
-      String lvlThreeEasyScore,
-      String lvlThreeMediumScore,
-      String lvlThreeVoiceScore,
-      String lvlTwoEasyScore,
-      String lvlTwoMediumScore,
-      String lvlTwoVoiceScore) async {
+      double lvlOneCapsScore,
+      double lvlOneScore,
+      double lvlOneVoiceScore,
+      double lvlThreeEasyScore,
+      double lvlThreeMediumScore,
+      double lvlThreeVoiceScore,
+      double lvlTwoEasyScore,
+      double lvlTwoMediumScore,
+      double lvlTwoVoiceScore) async {
     print("we are at updateUserData");
 
     try {
-      List<UserData> oldUserData = (await lesaCollection
-          .query(UserData.classType, where: UserData.ID.eq(uid)));
-
-      print("oldUserData is $oldUserData");
-
-      if (oldUserData.length == 0) {
-        UserData userData = UserData(
-            id: uid,
-            name: name,
-            age: age,
-            readingStage: readingStage,
-            lvlOneCapsScore: lvlOneCapsScore,
-            lvlOneScore: lvlOneScore,
-            lvlOneVoiceScore: lvlOneVoiceScore,
-            lvlThreeMediumScore: lvlThreeMediumScore,
-            lvlThreeVoiceScore: lvlThreeVoiceScore,
-            lvlTwoEasyScore: lvlTwoEasyScore,
-            lvlTwoMediumScore: lvlTwoMediumScore,
-            lvlThreeEasyScore: lvlThreeEasyScore,
-            lvlTwoVoiceScore: lvlTwoVoiceScore,
-            prefVoice: PrefVoice.DORA,
-            saveRecord: true,
-            manualFix: false);
-        return await lesaCollection.save(userData);
-      }
-
-      UserData userData = oldUserData[0].copyWith(
-          id: uid,
+      // List<UserData> oldUserData = (await lesaCollection
+      //     .query(UserData.classType, where: UserData.UID.eq(this.uid)));
+      // print("oldUserData is $oldUserData");
+      var uuid = Uuid().v1();
+      // if (oldUserData.length == 0) {
+      UserData userData = UserData(
+          id: this.uid,
           name: name,
           age: age,
           readingStage: readingStage,
-          lvlOneCapsScore: lvlOneCapsScore,
-          lvlOneScore: lvlOneScore,
-          lvlOneVoiceScore: lvlOneVoiceScore,
-          lvlThreeMediumScore: lvlThreeMediumScore,
-          lvlThreeVoiceScore: lvlThreeVoiceScore,
-          lvlTwoEasyScore: lvlTwoEasyScore,
-          lvlTwoMediumScore: lvlTwoMediumScore,
-          lvlThreeEasyScore: lvlThreeEasyScore,
-          lvlTwoVoiceScore: lvlTwoVoiceScore,
           prefVoice: PrefVoice.DORA,
           saveRecord: true,
           manualFix: false);
-      return await lesaCollection.save(userData);
+
+      UserScore userScore = UserScore(
+        id: uuid,
+        userdataID: uid,
+        lvlOneCapsScore: lvlOneCapsScore,
+        lvlOneScore: lvlOneScore,
+        lvlOneVoiceScore: lvlOneVoiceScore,
+        lvlThreeMediumScore: lvlThreeMediumScore,
+        lvlThreeVoiceScore: lvlThreeVoiceScore,
+        lvlTwoEasyScore: lvlTwoEasyScore,
+        lvlTwoMediumScore: lvlTwoMediumScore,
+        lvlThreeEasyScore: lvlThreeEasyScore,
+        lvlTwoVoiceScore: lvlTwoVoiceScore,
+      );
+      await lesaCollection.save(userData);
+      return await lesaCollection.save(userScore);
+      // }
+
+      // UserData userData = oldUserData[0].copyWith(
+      //     Uid: uid,
+      //     name: name,
+      //     age: age,
+      //     readingStage: readingStage,
+      //     lvlOneCapsScore: lvlOneCapsScore,
+      //     lvlOneScore: lvlOneScore,
+      //     lvlOneVoiceScore: lvlOneVoiceScore,
+      //     lvlThreeMediumScore: lvlThreeMediumScore,
+      //     lvlThreeVoiceScore: lvlThreeVoiceScore,
+      //     lvlTwoEasyScore: lvlTwoEasyScore,
+      //     lvlTwoMediumScore: lvlTwoMediumScore,
+      //     lvlThreeEasyScore: lvlThreeEasyScore,
+      //     lvlTwoVoiceScore: lvlTwoVoiceScore);
+      // return await lesaCollection.save(userData);
     } catch (err) {
       print("there was an error updating user data ====> $err");
     }
   }
 
-  //document er í auth
-  Future updateUserScore(String score, String typeof) async {
-    UserData oldUserData = (await lesaCollection.query(UserData.classType,
-        where: UserData.ID.eq(uid)))[0];
+  void setUid(String uid) {
+    print("setUID going on ====> $uid");
+    this.uid = uid;
+  }
 
-    UserData userData = oldUserData.copyWith(
+  //document er í auth
+  Future updateUserScore(double score, String typeof) async {
+    print("IN update user score position");
+
+    List<UserScore> oldUserDataTemp = (await lesaCollection
+        .query(UserScore.classType, where: UserScore.USERDATAID.eq(uid)));
+
+    print("length of old user data temp = ${oldUserDataTemp.length}");
+
+    UserScore oldUserData = oldUserDataTemp[0];
+    var uuid = Uuid().v1();
+    UserScore userScore = oldUserData.copyWith(
+        id: uuid,
         lvlOneCapsScore: typeof == "lvlOneCapsScore" ? score : null,
         lvlOneScore: typeof == "lvlOneScore" ? score : null,
         lvlOneVoiceScore: typeof == "lvlOneVoiceScore" ? score : null,
@@ -106,11 +121,13 @@ class DatabaseService {
         lvlTwoEasyScore: typeof == "lvlTwoEasyScore" ? score : null,
         lvlTwoMediumScore: typeof == "lvlTwoMediumScore" ? score : null,
         lvlTwoVoiceScore: typeof == "lvlTwoVoiceScore" ? score : null);
-    return await lesaCollection.save(userData);
+    return await lesaCollection.save(userScore);
   }
 
   // read list from snapshot
   List<Read> _readListFromSnapshot(QuerySnapshot<UserData> snapshot) {
+    print("IN _readListFromSnapshot user score position");
+
     return snapshot.items.map((document) {
       double totalpoints = double.parse(document.toJson()['lvlOneCapsScore']) +
           double.parse(document.toJson()['lvlOneScore']) +
@@ -153,7 +170,16 @@ class DatabaseService {
         id: uid,
         name: snapshot.item.toJson()['name'],
         age: snapshot.item.toJson()['age'],
-        readingStage: snapshot.item.toJson()['readingStage'],
+        readingStage: snapshot.item.toJson()['readingStage']);
+  }
+
+  UserScore _userScoreFromSnapshot(SubscriptionEvent snapshot) {
+    var uuid = Uuid().v1();
+
+    print("IN _userScoreFromSnapshot");
+    return UserScore(
+        id: uuid,
+        userdataID: uid,
         lvlOneCapsScore: snapshot.item.toJson()['lvlOneCapsScore'],
         lvlOneScore: snapshot.item.toJson()['lvlOneScore'],
         lvlOneVoiceScore: snapshot.item.toJson()['lvlOneVoiceScore'],
@@ -166,9 +192,112 @@ class DatabaseService {
   }
 
   // Get user document
-  Stream<UserData> get userData {
-    Stream<SubscriptionEvent<UserData>> stream =
-        lesaCollection.observe(UserData.classType);
+  Future<Stream<UserData>> get userData async {
+    var user = await Amplify.Auth.getCurrentUser();
+    Stream<SubscriptionEvent<UserData>> stream = lesaCollection
+        .observe(UserData.classType, where: UserData.ID.eq(user.userId));
     return stream.map(_userDataFromSnapshot);
+  }
+
+  Future<Stream<UserScore>> get userScore async {
+    var user = await Amplify.Auth.getCurrentUser();
+
+    Stream<SubscriptionEvent<UserScore>> stream = lesaCollection
+        .observe(UserScore.classType, where: UserScore.ID.eq(user.userId));
+    return stream.map(_userScoreFromSnapshot);
+  }
+
+  Future<Map<String, dynamic>> GetSpecialData() async {
+    print("we are at GetSpecialData");
+
+    try {
+      var user = await Amplify.Auth.getCurrentUser();
+      print("userID IS ${user.userId}");
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(user.userId)));
+      Map<String, dynamic> returner = {
+        "prefVoice": oldUserData[0].prefVoice,
+        "saveRecord": oldUserData[0].saveRecord,
+        "manualFix": oldUserData[0].manualFix
+      };
+      return returner;
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+    }
+  }
+
+  Future<PrefVoice> getPreferedVoice() async {
+    try {
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(this.uid)));
+      var prefVoice = oldUserData[0].prefVoice;
+      print("prefVoice is $prefVoice");
+      return prefVoice;
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+    }
+  }
+
+  Future<bool> getIsSaveVoice() async {
+    try {
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(this.uid)));
+      var isSaveVoice = oldUserData[0].saveRecord;
+      print("prefVoice is $isSaveVoice");
+      return isSaveVoice;
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+    }
+  }
+
+  Future<bool> getIsManualFix() async {
+    try {
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(this.uid)));
+      var isManualFix = oldUserData[0].manualFix;
+      print("manualFix is $isManualFix");
+      return isManualFix;
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+    }
+  }
+
+  Future<void> saveSpecialData(
+      PrefVoice prefVoice, bool saveRecord, bool manualFix) async {
+    print("we are at updateUserData");
+
+    try {
+      print("userID IS ${this.uid}");
+      List<UserData> oldUserData = (await lesaCollection
+          .query(UserData.classType, where: UserData.ID.eq(this.uid)));
+      UserData userData = oldUserData[0].copyWith(
+          id: this.uid,
+          prefVoice: prefVoice,
+          saveRecord: saveRecord,
+          manualFix: manualFix);
+
+      return await lesaCollection.save(userData);
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+    }
+  }
+
+  Future<double> getMaxSpecificValue(String label) async {
+    try {
+      List<UserScore> oldUserScore = (await lesaCollection.query(
+          UserScore.classType,
+          where: UserScore.USERDATAID.eq(this.uid),
+          sortBy: [
+            QuerySortBy(field: label, order: QuerySortOrder.descending)
+          ]));
+
+      double highScore = oldUserScore[0].toJson()[label];
+
+      print("we are at the specific value place with highscore = $highScore");
+
+      return highScore;
+    } catch (err) {
+      print("there was an error getting max value $err");
+    }
   }
 }

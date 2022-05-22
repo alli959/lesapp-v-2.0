@@ -6,7 +6,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
 import 'package:Lesaforrit/shared/audio.dart';
 
-class QuizBrainLvlThreeVoice {
+class QuizBrainLvlTwoVoice {
   // Audio audio = Audio();
   int _question = 0;
   int correct = 0;
@@ -25,6 +25,7 @@ class QuizBrainLvlThreeVoice {
     try {
       correctPlayer = await cache.play(correctSound, volume: 0.7);
       await Future.delayed(Duration(milliseconds: 1000));
+
       correctPlayer.stop();
     } catch (err) {
       print("there was an error playing correct sound $err");
@@ -46,101 +47,158 @@ class QuizBrainLvlThreeVoice {
   }
 
   List<String> _questionBank = [
-    'Óli fór út að hjóla',
-    'Eva hoppar í polla',
-    'Gult og grænt blóm',
-    'Mamma fór í búðina',
-    'Gunni hjólaði heim',
-    'Siggi er í símanum',
-    'Krakkarnir eru að leika',
-    'Kisan vill fá að drekka',
-    'Hundurinn gelti á kisuna',
-    'Strákarnir fóru í sund',
-    'Ég fékk hjól í afmælisgjöf',
-    'Arna borðaði bananann',
-    'Benni kann að lesa',
-    'Alda er í fimleikum',
-    'Villi ætlar að fara í sund',
-    'Amma segir Berglindi sögu',
-    'Afi og Egill fóru á hestbak',
-    'Þorgeir er úti í fótbolta',
-    'Ara langar í tölvu',
-    'Gummi horfir á sjónvarpið',
-    'Afi og Óli fóru í göngutúr',
-    'Villi horfir á barnatímann',
-    'Lalli fór út að hlaupa',
-    'Gummi fór út að leika',
-    'Elín og Alda fóru í sund',
-    'Mamma og pabbi löbbuðu í búðina',
-    'Kisan kom ekki heim í gær',
-    'Lúlli er alltaf að veiða fiska',
-    'Villi kann alla stafina',
-    'Tunglið er alveg fullt',
-    'Elín fékk fullt af pökkum',
-    'Toggi er alltaf úti að leika',
-    'Þessi bíll er mjög gamall',
-    'Bóndinn á traktor og gröfu',
-    'Harpa vill alltaf vera í marki',
-    'Egill er duglegur að púsla',
-    'Eva spilar á píanó',
-    'Jóna er í ballett',
-    'Afi fór í sund',
-    'Mamma gaf Óla ís',
-    'Anna veiddi lax',
-    'Öndin borðar brauð',
-    'Ari fær líka ís',
-    'Gunni fór út á róló',
-    'Pabbi kann að baka',
-    'Voffi gelti á kisu',
-    'Ég var ekki heima',
-    'Lítil græn eðla',
-    'Ási hjólar hratt',
-    'Arna hljóp heim',
-    'Núna er rigning',
-    'Mikki drekkur kók',
-    'Klukkan er ellefu',
-    'Magga klappar kisu',
-    'Pabbi þvær þvottinn',
-    'Hundar gelta',
-    'Fuglar syngja',
-    'Kisur mjálma',
-    'Fiskurinn syndir',
-    'Bleikt blóm',
-    'Stór fluga',
-    'Hátt fjall',
-    'Amma syngur',
-    'Palli hjólar',
-    'Pabbi skrifar',
-    'Stórir stafir',
-    'Lítið ljón',
-    'Mikki mús',
-    'Stórt tré',
-    'Harpa les',
-    'Alda hlær',
-    'Hestar hneggja',
-    'Hann hljóp út',
-    'Henni er kalt',
-    'Hann er uppi',
-    'Hún átti hjól',
-    'Lambið borðar gras',
-    'Siggi fékk kex',
-    'Ávextir eru hollir',
-    'Fiðrildið er fallegt',
-    'Eva borðar pulsur',
-    'Ég á síma',
-    'Mamma les bók',
-    'Óli spilar á flautu',
-    'Traktorinn er horfinn',
-    'Rútan er komin',
-    'Nú er dimmt',
-    'Ása les heima',
-    'Máni fór út',
-    'Hún fór upp',
-    'Blómið er gult',
-    'Magga sá mús',
-    'Gæsin borðar gras',
-    'Músin var inni',
-    'Eva og Ási spila',
+    'Að',
+    'Api',
+    'Ás',
+    'Bæ',
+    'Bú',
+    'Bý',
+    'Ég',
+    'Ef',
+    'Er',
+    'Eru',
+    'Fá',
+    'Föt',
+    'Gos',
+    'Hér',
+    'Kex',
+    'Kú',
+    'Mér',
+    'Mig',
+    'Nál',
+    'Nú',
+    'Ný',
+    'Og',
+    'Ör',
+    'Rúm',
+    'Sé',
+    'Sem',
+    'Sér',
+    'Sig',
+    'Sól',
+    'Tá',
+    'Tár',
+    'Tær',
+    'Þær',
+    'Þau',
+    'Þér',
+    'Þú',
+    'Því',
+    'Til',
+    'Tók',
+    'Tré',
+    'Upp',
+    'Úr',
+    'Út',
+    'Var',
+    'Vél',
+    'Hús',
+    'Rúm',
+    'Hæ',
+    'Ás',
+    'Bál',
+    'Dag',
+    'Egg',
+    'Eru',
+    'Gær',
+    'Gæs',
+    'Ís',
+    'Jól',
+    'Kíví',
+    'Kom',
+    'Kýr',
+    'Lax',
+    'Má',
+    'Mál',
+    'Mús',
+    'Róló',
+    'Rót',
+    'Sá',
+    'Sem',
+    'Sísí',
+    'Te',
+    'Þar',
+    'Var',
+    'Epli',
+    'Gras',
+    'Lamb',
+    'Hús',
+    'Ljós',
+    'Kisa',
+    'Bolli',
+    'Kerti',
+    'Stelpa',
+    'Hjól',
+    'Eðla',
+    'Fluga',
+    'Bíll',
+    'Tölva',
+    'Blár',
+    'Djús',
+    'Nammi',
+    'Grís',
+    'Glas',
+    'Kaffi',
+    'Fjall',
+    'Snjór',
+    'Húfa',
+    'Augu',
+    'Blóm',
+    'Dreki',
+    'Ungi',
+    'Aftur',
+    'Aldrei',
+    'Allt',
+    'Alltaf',
+    'Baka',
+    'Heim',
+    'Hennar',
+    'Henni',
+    'Kjóll',
+    'Ljón',
+    'Meira',
+    'Mikið',
+    'Ostur',
+    'Safi',
+    'Saman',
+    'Sími',
+    'Hennar',
+    'Sínum',
+    'Skór',
+    'Hvað',
+    'Hana',
+    'Varð',
+    'Líka',
+    'Bara',
+    'Bátur',
+    'Baun',
+    'Fara',
+    'Gæti',
+    'Geit',
+    'Gera',
+    'Geta',
+    'Grafa',
+    'Gulur',
+    'Hafi',
+    'Hani',
+    'Hans',
+    'Hola',
+    'Land',
+    'Lauf',
+    'Líka',
+    'Lita',
+    'Rófa',
+    'Sama',
+    'Síða',
+    'Sjór',
+    'Skip',
+    'Skora',
+    'Sófi',
+    'Ugla',
+    'Úlfur',
+    'Vika',
+    'Vinur',
+    'Voffi',
   ];
 
   String getQuestionText() {
@@ -149,16 +207,57 @@ class QuizBrainLvlThreeVoice {
     return question;
   }
 
+  dynamic bestLastWord(
+      String lWords, String quest, List<SpeechRecognitionAlternative> alt) {
+    int closestVal = lWords
+        .toLowerCase()
+        .compareTo(quest.toLowerCase()); //compare correct answer to voice input
+
+    int closestIndex =
+        -1; //index of closest value, if -1 then result.recongizedwords
+    //check if alternates are closer to correct answer
+    for (int i = 0; i < alt.length; i++) {
+      String tempString = alt[i].transcript.trim();
+      int temp = tempString.toLowerCase().compareTo(quest.toLowerCase());
+      if (temp.abs() < closestVal.abs()) {
+        print("temp < closestVal");
+        print("tempString: $tempString");
+        print("lastWords: $lWords");
+        print("tempInt: $temp");
+        print("closestValInt: $closestVal");
+
+        closestIndex = i;
+        closestVal = temp;
+      }
+    }
+
+    if (closestIndex == -1) {
+      return lWords;
+    } else {
+      print("there was another");
+      print(alt[closestIndex].transcript);
+
+      lWords = alt[closestIndex].transcript;
+
+      return lWords;
+    }
+  }
+
   Map<String, Object> isCorrect(
       String userVoiceAnswer, String question, String lvl) {
     // if (quizBrain.isFinished() == true) {
     //   quizBrain.reset();
     // } else {
-
-    print("question = $question");
-    print("answer = $userVoiceAnswer");
     if (lvl == "level_1") {
-      if (question[0].toLowerCase() == userVoiceAnswer[0].toLowerCase()) {
+      question = question.trim();
+      userVoiceAnswer = userVoiceAnswer.trim();
+      var questionLetter = question.substring(0, 1).toLowerCase();
+      var answerLetter = userVoiceAnswer.substring(0, 1).toLowerCase();
+      print("questionLetter = $questionLetter");
+      print("answerLetter = $answerLetter");
+
+      if (question.substring(0, 1).toLowerCase() ==
+          userVoiceAnswer.substring(0, 1).toLowerCase()) {
         userVoiceAnswer = question;
       }
     }
@@ -228,42 +327,6 @@ class QuizBrainLvlThreeVoice {
     //   // }
     // }
     // return false;
-  }
-
-  dynamic bestLastWord(
-      String lWords, String quest, List<SpeechRecognitionAlternative> alt) {
-    int closestVal = lWords
-        .toLowerCase()
-        .compareTo(quest.toLowerCase()); //compare correct answer to voice input
-
-    int closestIndex =
-        -1; //index of closest value, if -1 then result.recongizedwords
-    //check if alternates are closer to correct answer
-    for (int i = 0; i < alt.length; i++) {
-      String tempString = alt[i].transcript.trim();
-      int temp = tempString.toLowerCase().compareTo(quest.toLowerCase());
-      if (temp.abs() < closestVal.abs()) {
-        print("temp < closestVal");
-        print("tempString: $tempString");
-        print("lastWords: $lWords");
-        print("tempInt: $temp");
-        print("closestValInt: $closestVal");
-
-        closestIndex = i;
-        closestVal = temp;
-      }
-    }
-
-    if (closestIndex == -1) {
-      return lWords;
-    } else {
-      print("there was another");
-      print(alt[closestIndex].transcript);
-
-      lWords = alt[closestIndex].transcript;
-
-      return lWords;
-    }
   }
 
   bool isFinished() {

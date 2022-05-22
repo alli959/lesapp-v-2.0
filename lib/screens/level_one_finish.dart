@@ -1,25 +1,25 @@
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
+import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
-import '../models/quiz_brain_lvlOne_voice.dart';
-import '../models/quiz_brain_lvlThree_voice.dart';
-import '../models/quiz_brain_lvlTwo_voice.dart';
+
 import '../models/serverless/quiz_brain_lvlOne.dart';
 import '../models/serverless/quiz_brain_lvlThree_Easy.dart';
 import '../models/serverless/quiz_brain_lvlThree_Medium.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
 import '../models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import '../models/set_score.dart';
+import '../models/voices/quiz_brain_lvlOne_voice.dart';
+import '../models/voices/quiz_brain_lvlThree_voice.dart';
+import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 import '../services/auth.dart';
 import 'home/welcome.dart';
-import 'package:Lesaforrit/models/quiz_brain.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo.dart';
+
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import 'package:Lesaforrit/models/usr.dart';
@@ -32,17 +32,12 @@ class OneFinish extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthenticationBloc>(
-        create: (context) {
-          final _authService = RepositoryProvider.of<AuthService>(context);
-          return AuthenticationBloc(_authService)..add(GetUid());
-        },
-        child: LevelFin(
-          stig: stig,
-          image: 'assets/images/cat_skuggi-05.png',
-          undertext: '\n Stig!',
-          appBarText: 'Lágstafir',
-        ));
+    return LevelFin(
+      stig: stig,
+      image: 'assets/images/cat_skuggi-05.png',
+      undertext: '\n Stig!',
+      appBarText: 'Lágstafir',
+    );
   }
 }
 
@@ -59,49 +54,31 @@ class LevelFin extends StatelessWidget {
   String undertext;
   String appBarText;
 
-  Widget button1(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(
-                UpdateUserScore(score: stig.toString(), typeof: 'lvlOneScore'));
-        },
-        child: SetScore(
-          currentScore: stigamet.toStringAsFixed(0),
-          level: LvlOneChoose.id,
-          text: 'Borð 1: Stafir',
-        ));
+  Widget button1(double stigamet, DatabaseBloc databaseBloc) {
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
+    return SetScore(
+      currentScore: stigamet.toStringAsFixed(0),
+      level: LvlOneChoose.id,
+      text: 'Borð 1: Stafir',
+    );
   }
 
-  Widget button2(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(
-                UpdateUserScore(score: stig.toString(), typeof: 'lvlOneScore'));
-        },
-        child: SetScore(
-          currentScore: stigamet.toStringAsFixed(0),
-          level: LvlTwoChoose.id,
-          text: 'Borð 2: Orð',
-        ));
+  Widget button2(double stigamet, DatabaseBloc databaseBloc) {
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
+    return SetScore(
+      currentScore: stigamet.toStringAsFixed(0),
+      level: LvlTwoChoose.id,
+      text: 'Borð 2: Orð',
+    );
   }
 
-  Widget button3(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(
-                UpdateUserScore(score: stig.toString(), typeof: 'lvlOneScore'));
-        },
-        child: SetScore(
-          currentScore: stigamet.toStringAsFixed(0),
-          level: Welcome.id,
-          text: 'Heim',
-        ));
+  Widget button3(double stigamet, DatabaseBloc databaseBloc) {
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
+    return SetScore(
+      currentScore: stigamet.toStringAsFixed(0),
+      level: Wrapper.id,
+      text: 'Heim',
+    );
   }
 
   Finish finish = Finish();
@@ -132,44 +109,24 @@ class LevelFin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+    var databaseRepository = RepositoryProvider.of<DatabaseService>(context);
+
     String highestScore = '\n Jei þú slóst metið þitt!';
-    return (BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-      if (state is AuthenticationLoading) {
-        print("loading going on");
-        return Loading();
-      }
-      if (state is UserUid) {
-        print("UserScoreUpdate going on");
-        double stigamet = stig;
-        return finish.FinishMethod(
-          highestScore,
-          stigamet,
-          context,
-          formKey,
-          appBarText,
-          image,
-          stig,
-          button1(stigamet, state.uid),
-          button2(stigamet, state.uid),
-          button3(stigamet, state.uid),
-          cardColor,
-        );
-      }
-      double stigamet = stig;
-      return finish.FinishMethod(
-        highestScore,
-        stigamet,
-        context,
-        formKey,
-        appBarText,
-        image,
-        stig,
-        button1(stigamet, ''),
-        button2(stigamet, ''),
-        button3(stigamet, ''),
-        cardColor,
-      );
-    }));
+
+    double stigamet = stig;
+    return finish.FinishMethod(
+      highestScore,
+      stigamet,
+      context,
+      formKey,
+      appBarText,
+      image,
+      stig,
+      button1(stigamet, databaseBloc),
+      button2(stigamet, databaseBloc),
+      button3(stigamet, databaseBloc),
+      cardColor,
+    );
   }
 }

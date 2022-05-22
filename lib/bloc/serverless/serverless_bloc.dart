@@ -8,6 +8,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:meta/meta.dart';
 
+import '../../models/PrefVoice.dart';
+
 part 'serverless_event.dart';
 part 'serverless_state.dart';
 
@@ -51,8 +53,10 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
       Data value = data[i];
       List<int> textEncode = utf8.encode(value.Text);
       String textDecode = utf8.decode(textEncode);
-      print("data Text is ${textDecode}");
-      Question question = Question(textDecode, true, value.Dora, value.Karl);
+      var voiceType = await event.prefvoice;
+      print("voiceType is =============> $voiceType");
+      Question question =
+          Question(textDecode, true, value.Dora, value.Karl, voiceType);
       questionBank.add(question);
     }
     yield ServerlessFetch(questionBank: questionBank);

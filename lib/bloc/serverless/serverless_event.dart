@@ -9,7 +9,14 @@ abstract class ServerlessEvent extends Equatable {
 
 class PlayGameEvent extends ServerlessEvent {}
 
-class FetchEvent extends ServerlessEvent {}
+class FetchEvent extends ServerlessEvent {
+  Future<PrefVoice> prefvoice;
+
+  FetchEvent({this.prefvoice});
+
+  @override
+  List<Object> get props => [prefvoice];
+}
 
 class CheckAnswerEvent extends ServerlessEvent {
   final bool userAnswer;

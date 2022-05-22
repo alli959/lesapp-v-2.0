@@ -3,7 +3,7 @@ import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo_short.dart';
+
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +25,10 @@ class LevelTwoShort extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'words', 'easy')..add(FetchEvent());
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'words', 'easy')
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -49,7 +52,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlTwoEasy quizBrain = QuizBrainLvlTwoEasy();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
