@@ -1,0 +1,30 @@
+type UserScore @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  userdataID: ID! @index(name: "byUserData")
+  lvlOneCapsScore: Float
+  lvlOneScore: Float
+  lvlOneVoiceScore: Float
+  lvlThreeMediumScore: Float
+  lvlThreeVoiceScore: Float
+  lvlTwoEasyScore: Float
+  lvlTwoMediumScore: Float
+  lvlThreeEasyScore: Float
+  lvlTwoVoiceScore: Float
+}
+
+enum PrefVoice {
+  DORA
+  KARL
+}
+
+type UserData @model @auth(rules: [{allow: owner, operations: [create, delete, update, read]}, {allow: private, operations: [read]}]) {
+  id: ID!
+  name: String!
+  age: String
+  readingStage: String
+  prefVoice: PrefVoice
+  saveRecord: Boolean
+  manualFix: Boolean
+  UserScores: [UserScore] @hasMany(indexName: "byUserData", fields: ["id"])
+}
+ 

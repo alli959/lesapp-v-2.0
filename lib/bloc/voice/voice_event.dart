@@ -8,25 +8,31 @@ abstract class VoiceEvent extends Equatable {
 }
 
 class VoiceInitializeEvent extends VoiceEvent {
-  final Function listeningUpdate;
+  final Function statusListener;
+  final Function errorListener;
 
-  VoiceInitializeEvent({@required this.listeningUpdate});
+  VoiceInitializeEvent({
+    this.statusListener,
+    this.errorListener,
+  });
 
   @override
-  List<Object> get props => [listeningUpdate];
+  List<Object> get props => [statusListener, errorListener];
 }
 
 class VoiceStartedEvent extends VoiceEvent {
-  final Function listeningUpdate;
-  final Function checkAnswer;
+  final Function resultListener;
+  final Function doneListener;
 
-  VoiceStartedEvent({@required this.listeningUpdate, this.checkAnswer});
+  VoiceStartedEvent({this.resultListener, this.doneListener});
 
   @override
-  List<Object> get props => [listeningUpdate, checkAnswer];
+  List<Object> get props => [resultListener, doneListener];
 }
 
 class VoiceStoppedEvent extends VoiceEvent {}
+
+class VoiceCancelEvent extends VoiceEvent {}
 
 class DisplayTextEvent extends VoiceEvent {}
 
@@ -41,7 +47,7 @@ class VoiceFailureEvent extends VoiceEvent {
 
 class UpdateEvent extends VoiceEvent {
   final String lastWords;
-  final List<SpeechRecognitionWords> alternates;
+  final List<SpeechRecognitionAlternative> alternates;
   final bool isListening;
   final String question;
 
@@ -87,7 +93,16 @@ class ScoreKeeperEvent extends VoiceEvent {
   final bool threePoints;
   final bool fourPoints;
   final bool fivePoints;
-  final TotalPoints calc;
+
+  String username;
+
+  /// Correct, Incorrect, Manual_Correct, Manual_Incorrect
+  String typeoffile;
+  String question;
+  String answer;
+  Uint8List audio;
+  int trys;
+  int correct;
 
   ScoreKeeperEvent(
       {this.onePoint,
@@ -95,11 +110,35 @@ class ScoreKeeperEvent extends VoiceEvent {
       this.threePoints,
       this.fourPoints,
       this.fivePoints,
-      this.calc});
+      this.username,
+      this.typeoffile,
+      this.question,
+      this.answer,
+      this.audio,
+      this.trys,
+      this.correct});
 
   @override
-  List<Object> get props =>
-      [onePoint, twoPoints, threePoints, fourPoints, fivePoints, calc];
+  List<Object> get props => [
+        onePoint,
+        twoPoints,
+        threePoints,
+        fourPoints,
+        fivePoints,
+        [username],
+        [typeoffile],
+        [question],
+        [answer],
+        [audio],
+        [trys],
+        [correct],
+      ];
 }
 
 class ResetEvent extends VoiceEvent {}
+
+class IsListeningEvent extends VoiceEvent {}
+
+class IsNotListeningEvent extends VoiceEvent {}
+
+class SaveFileEvent extends VoiceEvent {}

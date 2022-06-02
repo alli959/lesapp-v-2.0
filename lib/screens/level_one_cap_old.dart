@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_cap.dart';
+
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
@@ -25,7 +25,10 @@ class LevelOneCap extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'letters', 'cap')..add(FetchEvent());
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'letters', 'cap')
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -49,7 +52,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlOne quizBrain = QuizBrainLvlOne(true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list

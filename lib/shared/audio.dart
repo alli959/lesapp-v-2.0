@@ -1,4 +1,3 @@
-import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:async';
@@ -7,8 +6,6 @@ class Audio {
   String sound1;
   String sound2;
   int whichSound;
-
-  QuizBrain quizBrain = QuizBrain();
   AudioCache playerCache = AudioCache();
   AudioPlayer audioPlayer1 = AudioPlayer();
   AudioPlayer audioPlayer2 = AudioPlayer();

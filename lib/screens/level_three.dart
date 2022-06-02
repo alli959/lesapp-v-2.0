@@ -3,7 +3,7 @@ import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree.dart';
+
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
 import 'package:Lesaforrit/screens/level_three_finish.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
@@ -26,8 +26,10 @@ class LevelThree extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
           return ServerlessBloc(_data, 'sentences', 'medium')
-            ..add(FetchEvent());
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -51,7 +53,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlThreeMedium quizBrain = QuizBrainLvlThreeMedium();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list

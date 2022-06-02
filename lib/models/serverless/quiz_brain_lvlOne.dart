@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:Lesaforrit/models/ModelProvider.dart';
 import 'package:Lesaforrit/models/question_cache.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/file.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:convert' show utf8;
 
 class QuizBrainLvlOne {
+  var prefVoice = PrefVoice.DORA;
   String correctSound = 'sound/correct_sound.mp3';
   String incorrectSound = 'sound/incorrect_sound.mp3';
   List<Object> data = [];
@@ -141,7 +143,11 @@ class QuizBrainLvlOne {
         }
         try {
           File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          print("file is $file1");
           Uint8List bytes = file1.readAsBytesSync();
+          print("length if bytes is ${bytes.length}");
+          print("bytes is $bytes");
+
           await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
@@ -377,8 +383,14 @@ class QuizBrainLvlOne {
   String getQuestionText1() {
     _question1 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
-    sound1 = _questionBank[_question1].file;
-    sound1Secondary = _questionBank[_question1].file2;
+    Question questionOne = _questionBank[_question1];
+    if (questionOne.prefVoice == PrefVoice.DORA) {
+      sound1 = questionOne.file;
+      sound1Secondary = questionOne.file2;
+    } else {
+      sound1 = questionOne.file2;
+      sound1Secondary = questionOne.file;
+    }
     return _questionBank[_question1].questionText;
   }
 
@@ -386,16 +398,20 @@ class QuizBrainLvlOne {
     // þessi kóði passar bara að við fáum ekki sömu stafi. Annars er hann eins og getQuestionText1()
     _question2 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
+
     if (_question1 == _question2) {
       _question2++;
-      sound2 = _questionBank[_question2].file;
-      sound2Secondary = _questionBank[_question2].file2;
-      return _questionBank[_question2].questionText;
-    } else {
-      sound2 = _questionBank[_question2].file;
-      sound2Secondary = _questionBank[_question2].file2;
     }
-    return _questionBank[_question2].questionText;
+    Question questionTwo = _questionBank[_question2];
+    if (questionTwo.prefVoice == PrefVoice.DORA) {
+      sound2 = questionTwo.file;
+      sound2Secondary = questionTwo.file2;
+    } else {
+      sound2 = questionTwo.file2;
+      sound2Secondary = questionTwo.file;
+    }
+
+    return questionTwo.questionText;
   }
 
   bool getCorrectAnswer() {

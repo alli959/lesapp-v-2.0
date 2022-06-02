@@ -8,18 +8,16 @@ environment:
 
 dependencies:
   bloc: ^7.2.0
-  animated_text_kit: ^2.5.3
+  animated_text_kit: ^4.2.1
   audioplayers: ^0.20.1
-  cloud_firestore: ^2.5.3
-  connectivity_plus: ^1.1.0
-  cupertino_icons: ^0.1.3
+  cloud_firestore: ^3.1.9
+  connectivity_plus: ^2.3.0
+  cupertino_icons: ^1.0.4
   equatable: ^2.0.3
-  firebase_auth: ^3.1.1
-  firebase_core: ^1.6.0
   flutter:
     sdk: flutter
   flutter_bloc: ^7.3.0
-  flutter_spinkit: ^4.1.2
+  flutter_spinkit: ^5.1.0
   hydrated_bloc: ^7.1.0
   icon_shadow: ^1.0.1
   imagebutton: ^0.0.6
@@ -27,17 +25,27 @@ dependencies:
   path_provider: ^2.0.5
   provider: ^6.0.1
   random_color: ^1.0.5
-  rflutter_alert: ^1.0.2
+  rflutter_alert: ^2.0.4
   flutter_aws_s3_client: ^0.6.0
-  speech_to_text: ^5.1.1
+  speech_to_text: ^5.4.3
   flutter_sound_lite: ^8.5.0
   http: ^0.13.4
   flutter_cache_manager: ^3.3.0
   webview_cookie_manager: ^2.0.6
+  google_speech: ^2.1.1
+  sound_stream: ^0.3.0
+  simple_s3: ^0.3.2
+  amplify_flutter: ^0.4.5
+  amplify_datastore: ^0.4.5
+  amplify_auth_cognito: ^0.4.5
+  amplify_api: ^0.4.5
+  amplify_storage_s3: ^0.4.5
+
+
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.2"
-  auto_size_text: ^2.1.0
+  auto_size_text: ^3.0.0
   flutter_test:
     sdk: flutter
 
@@ -45,6 +53,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/
     - assets/images/
     - assets/sound/
     - assets/soundLevelTwo/

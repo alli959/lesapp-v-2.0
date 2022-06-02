@@ -1,0 +1,26 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplify1ec1522daff44-staging-23516-authRole",
+      "UnauthRoleArn": "arn:aws:iam::797132616636:role/amplify-amplify1ec1522daff44-staging-23516-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::797132616636:role/amplify-amplify1ec1522daff44-staging-23516-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-amplify1ec1522daff44-staging-23516-deployment",
+      "UnauthRoleName": "amplify-amplify1ec1522daff44-staging-23516-unauthRole",
+      "StackName": "amplify-amplify1ec1522daff44-staging-23516",
+      "StackId": "arn:aws:cloudformation:eu-west-1:797132616636:stack/amplify-amplify1ec1522daff44-staging-23516/154c56b0-8a1a-11ec-b9b8-0a16bdc6cae5",
+      "AmplifyAppId": "dol0ql26879pu"
+    },
+    "categories": {
+      "auth": {
+        "lesappforma257feeb": {}
+      },
+      "storage": {
+        "lesappform3bd03779": {
+          "bucketName": "lesapp-data",
+          "region": "eu-west-1"
+        }
+      }
+    }
+  }
+}

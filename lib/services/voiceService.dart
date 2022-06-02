@@ -1,20 +1,27 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
-import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlOne_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree_voice.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbgrpc.dart'
+    hide RecognitionConfig, StreamingRecognitionConfig;
+import 'dart:async';
+
+import 'package:google_speech/google_speech.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sound_stream/sound_stream.dart';
+
+import '../models/voices/quiz_brain_lvlOne_voice.dart';
+import '../models/voices/quiz_brain_lvlThree_voice.dart';
+import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 
 class VoiceService {
-  final SpeechToText speech;
-  final BuildContext context;
-  List<SpeechRecognitionWords> alternates = [];
+  SpeechToText speech;
+  BuildContext context;
   bool hasSpeech = false;
   bool logEvents = false;
   double level = 0.0;
@@ -34,195 +41,191 @@ class VoiceService {
   List<bool> answerMap = [];
   List<String> questionArr = [];
   List<String> answerArr = [];
+  AudioPlayer player = AudioPlayer();
+  List<Uint8List> audioList = [];
 
   TotalPoints calc = TotalPoints();
+  List<String> base64 = [];
 
   QuizBrainLvlThreeVoice quizBrainLvlThree = QuizBrainLvlThreeVoice();
   QuizBrainLvlTwoVoice quizBrainLvlTwo = QuizBrainLvlTwoVoice();
   QuizBrainLvlOneVoice quizBrainLvlOne = QuizBrainLvlOneVoice();
 
-  Function onError;
+  final RecorderStream _recorder = RecorderStream();
+  PlayerStream _player = PlayerStream();
+  // Stream<StreamingRecognizeResponse> responseStream;
+  bool recognizing = false;
+  bool recognizeFinished = false;
+  String text = '';
+  StreamSubscription<List<int>> _audioStreamSubscription;
+  BehaviorSubject<List<int>> _audioStream;
+  RecognitionConfig config;
+
+  bool isSave = true;
+  bool isCancel = false;
 
   VoiceService({@required this.speech, this.context});
 
-  Future speechInit(Function statusListener) async {
-    hasSpeech = await speech.initialize(
-      onError: errorListener,
-      onStatus: statusListener,
-      debugLogging: true,
-      finalTimeout: Duration(milliseconds: 0),
-    );
-    this.onError = onError;
-    return hasSpeech;
+  Future speechInit(Function statusListener, Function errorListener,
+      [bool isSave = false]) async {
+    config = _getConfig();
+    this.isSave = isSave;
+    try {
+      _recorder.initialize();
+      _player.initialize();
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
-  void speechListen(Function resultListener) {
+  Future<String> getFilePath() async {
+    Directory appDocumentsDirectory = await getExternalStorageDirectory(); // 1
+    print("appDocumentsDirectory is $appDocumentsDirectory");
+    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String filePath = '$appDocumentsPath/demoaudiofile.wav'; // 3
+
+    return filePath;
+  }
+
+  Uint8List saveFile(List<Uint8List> contents, sampleRate) {
+    // File recordedFile = File(await getFilePath());
+    print("at savefile place");
+    // first stop recording
+    List<int> data = [];
+    for (var i = 0; i < contents.length; i++) {
+      try {
+        data.addAll(contents[i]);
+      } catch (err) {
+        print("there was an error $err");
+        throw err;
+      }
+    }
+
+    var channels = 1;
+
+    int byteRate = ((16 * sampleRate * channels) / 8).round();
+
+    var size = data.length;
+
+    var fileSize = size + 36;
+
+    Uint8List header = Uint8List.fromList([
+      // "RIFF"
+      82, 73, 70, 70,
+      fileSize & 0xff,
+      (fileSize >> 8) & 0xff,
+      (fileSize >> 16) & 0xff,
+      (fileSize >> 24) & 0xff,
+      // WAVE
+      87, 65, 86, 69,
+      // fmt
+      102, 109, 116, 32,
+      // fmt chunk size 16
+      16, 0, 0, 0,
+      // Type of format
+      1, 0,
+      // One channel
+      channels, 0,
+      // Sample rate
+      sampleRate & 0xff,
+      (sampleRate >> 8) & 0xff,
+      (sampleRate >> 16) & 0xff,
+      (sampleRate >> 24) & 0xff,
+      // Byte rate
+      byteRate & 0xff,
+      (byteRate >> 8) & 0xff,
+      (byteRate >> 16) & 0xff,
+      (byteRate >> 24) & 0xff,
+      // Uhm
+      ((16 * channels) / 8).round(), 0,
+      // bitsize
+      16, 0,
+      // "data"
+      100, 97, 116, 97,
+      size & 0xff,
+      (size >> 8) & 0xff,
+      (size >> 16) & 0xff,
+      (size >> 24) & 0xff,
+      ...data
+    ]);
+
+    File deployFile = new File.fromRawPath(header);
+    audioList = [];
+    // await recordedFile.writeAsBytes(header, flush: true);
+
+    return header;
+  }
+
+  // Future saveFile(List<Uint8List> contents) async {
+  //   File.fromRawPath(rawPath)
+  //   File file = File(await getFilePath()); // 1
+  //   List<int> bytlist = [];
+  //   for (var i = 0; i < contents.length; i++) {
+  //     print("contents[i] is =>>>>> ${contents[i]}");
+  //     try {
+  //       bytlist.addAll(contents[i]);
+  //     } catch (err) {
+  //       print("there was an error $err");
+  //       throw err;
+  //     }
+  //   }
+  //   await file.writeAsBytes(bytlist); // 2
+  // }
+
+  RecognitionConfig _getConfig() => RecognitionConfig(
+      encoding: AudioEncoding.LINEAR16,
+      model: RecognitionModel.basic,
+      maxAlternatives: 30,
+      enableAutomaticPunctuation: false,
+      sampleRateHertz: 16000,
+      languageCode: 'is-IS');
+
+  Future speechListen(resultListener, Function doneListener) async {
+    _audioStream = BehaviorSubject<List<int>>();
+    _audioStreamSubscription = _recorder.audioStream.listen((event) {
+      if (!_audioStream.isClosed) {
+        _audioStream.add(event);
+        audioList.add(event);
+        _player.writeChunk(event);
+      }
+    });
+
+    await _recorder.start();
+    print("after recorder start");
+    final responseStream = speech.streamingRecognize(
+        StreamingRecognitionConfig(config: config, interimResults: true),
+        _audioStream);
+    print("responseStream");
+    recognizing = true;
     try {
-      speech.listen(
-        onResult: resultListener,
-        listenFor: Duration(seconds: 30),
-        pauseFor: Duration(seconds: 10),
-        partialResults: true,
-        localeId: 'is_IS',
-        onSoundLevelChange: soundLevelListener,
-        cancelOnError: false,
-        listenMode: ListenMode.confirmation,
-      );
+      if (!_audioStream.isClosed) {
+        responseStream.listen(resultListener,
+            onDone: () => doneListener(
+                file: saveFile(audioList, 16000), isCancel: isCancel));
+      }
     } catch (err) {
       print("THERE WAS AN ERROR ${err}");
     }
+    this.isCancel = false;
   }
 
-  void errorListener(SpeechRecognitionError error) {
-    print("there was an error ${error}");
-    this.onError("test");
-    _logEvent(
-        'Received error status: $error, listening: ${speech.isListening}');
-    lastError = '${error.errorMsg} - ${error.permanent}';
+  Future stopRecording({bool isCancel = false}) async {
+    print("isCancel in stopeed Recording is ==> $isCancel");
+    // await saveFile(audioList, 16000);
+    this.isCancel = isCancel;
+    if (isCancel) {
+      audioList = [];
+    }
+    print("recording stopped");
+    await _recorder.stop();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
+    recognizing = false;
   }
 
-  void soundLevelListener(double lvl) {
-    minSoundLevel = math.min(minSoundLevel, level);
-    maxSoundLevel = math.max(maxSoundLevel, level);
-    level = lvl;
-  }
-
-  String displayText(lvl) {
-    var question;
-    if (lvl == "level_3") {
-      question = quizBrainLvlThree.getQuestionText();
-    }
-    if (lvl == "level_2") {
-      question = quizBrainLvlTwo.getQuestionText();
-    }
-    if (lvl == "level_1") {
-      question = quizBrainLvlOne.getQuestionText();
-    }
-    return question;
-  }
-
-  Map<String, Object> checkAnswer(
-      String userVoiceAnswer, String question, String lvl) {
-    // if (quizBrain.isFinished() == true) {
-    //   quizBrain.reset();
-    // } else {
-
-    if (lvl == "level_1") {
-      print("question = $question");
-      print("answer = $userVoiceAnswer");
-
-      if (question[0].toLowerCase() == userVoiceAnswer[0].toLowerCase()) {
-        userVoiceAnswer = question;
-      }
-    }
-
-    int totalCorrect = 0;
-    int totalIncorrect = 0;
-    List<String> questionArr = question.split(' ');
-    List<String> answerArr = userVoiceAnswer.split(' ');
-    Map<String, int> mapQuestion = {};
-    Map<String, int> mapAnswer = {};
-    List<bool> questionMap = [];
-    List<bool> answerMap = [];
-    // Creating hashmap of questions
-    for (var i = 0; i < questionArr.length; i++) {
-      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
-        mapQuestion[questionArr[i].toLowerCase()] += 1;
-      } else {
-        mapQuestion[questionArr[i].toLowerCase()] = 1;
-      }
-    }
-
-    // Creating hashmap of answers
-    for (var i = 0; i < answerArr.length; i++) {
-      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
-        mapAnswer[answerArr[i].toLowerCase()] += 1;
-      } else {
-        mapAnswer[answerArr[i].toLowerCase()] = 1;
-      }
-    }
-
-    // Creating colorBoard for questions
-    /* TODO  IF A WORD IS DUPLICATE */
-    for (var i = 0; i < questionArr.length; i++) {
-      if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
-        questionMap.add(true);
-      } else {
-        questionMap.add(false);
-      }
-    }
-
-    // Creating colorBoard for answers
-    /* TODO  IF A WORD IS DUPLICATE */
-
-    for (var i = 0; i < answerArr.length; i++) {
-      if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
-        totalCorrect += 1;
-        answerMap.add(true);
-      } else {
-        totalIncorrect += 1;
-        answerMap.add(false);
-      }
-    }
-
-    // calculating points
-    double points = totalCorrect / (totalCorrect + totalIncorrect);
-
-    return {
-      "points": points,
-      "correct": totalCorrect,
-      "questionMap": questionMap,
-      "answerMap": answerMap,
-      "questionArr": questionArr,
-      "answerArr": answerArr
-    };
-    // if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
-    //   return true;
-    //   // }
-    // }
-    // return false;
-  }
-
-  dynamic bestLastWord(String lastWords, String question,
-      List<SpeechRecognitionWords> alternates) {
-    print("inBestLastWordsFunction !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    print("${alternates}");
-    print(lastWords);
-    print(question);
-    int closestVal = lastWords.toLowerCase().compareTo(
-        question.toLowerCase()); //compare correct answer to voice input
-
-    int closestIndex =
-        -1; //index of closest value, if -1 then result.recongizedwords
-    //check if alternates are closer to correct answer
-    for (int i = 0; i < alternates.length; i++) {
-      String tempString = alternates[i].recognizedWords;
-      int temp = tempString.toLowerCase().compareTo(question.toLowerCase());
-      if (temp.abs() < closestVal.abs()) {
-        print("temp < closestVal");
-        print("tempString: $tempString");
-        print("lastWords: $lastWords");
-        print("tempInt: $temp");
-        print("closestValInt: $closestVal");
-
-        closestIndex = i;
-        closestVal = temp;
-      }
-    }
-
-    if (closestIndex == -1) {
-      return lastWords;
-    } else {
-      print("there was another");
-      print(alternates[closestIndex].recognizedWords);
-
-      lastWords = alternates[closestIndex].recognizedWords;
-
-      return alternates[closestIndex].recognizedWords;
-    }
-  }
-
-  void reset() {
+  Future reset() async {
+    await stopRecording();
     lastWords = ' ';
     lastError = ' ';
     lastStatus = ' ';
@@ -237,42 +240,8 @@ class VoiceService {
     calc.finalPoints = 0.0;
     calc.trys = 0;
   }
-}
 
-List<Widget> positionFinder(
-    double controllerVal, double maxControllerVal, double midX, double midY) {
-  List<Widget> returnVal = [];
-
-  if (controllerVal / maxControllerVal < 0.5) {
-    returnVal.add(
-      Transform.rotate(
-          angle: controllerVal * 2 * math.pi,
-          child: Image.asset('assets/images/star.png')),
-    );
-
-    return returnVal;
-  } else if (controllerVal / maxControllerVal < 0.7) {
-    returnVal.add(Positioned(
-        child: Image.asset('assets/images/explotion6.png'),
-        width: 300,
-        height: 243,
-        left: midX,
-        top: midY));
-
-    return returnVal;
-  }
-
-  returnVal.add(Positioned(
-      child: Image.asset('assets/images/star.png'),
-      width: 300 * (controllerVal / maxControllerVal),
-      height: 243 * (controllerVal / maxControllerVal),
-      left: midX,
-      top: midY));
-  return returnVal;
-}
-
-void _logEvent(String eventDescription) {
-  var eventTime = DateTime.now().toIso8601String();
-  print('$eventTime $eventDescription');
+  // Future SaveFile() async {
+  //   Share.file
   // }
 }

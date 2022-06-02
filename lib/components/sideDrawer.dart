@@ -90,6 +90,13 @@ class SideDrawer extends StatelessWidget {
                     LvlThreeChoose.id, (Route<dynamic> route) => false);
               },
             ),
+            RoundIconButton(
+              color: Colors.transparent,
+              icon: Icons.settings,
+              iconSize: 35,
+              circleSize: 55,
+              onPressed: () => print("settingsbutton pressed"),
+            ),
           ],
         ),
       ),

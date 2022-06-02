@@ -16,7 +16,6 @@ class ProfileView extends StatelessWidget {
   final DatabaseService data = DatabaseService();
   final UserData user = UserData();
   final Read read = Read();
-
   @override
   Widget build(BuildContext context) {
     //final users = Provider.of<List<Read>>(context) ?? []; // fæ villu

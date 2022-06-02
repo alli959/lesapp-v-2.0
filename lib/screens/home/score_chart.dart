@@ -57,7 +57,8 @@ class ScoreChart extends StatelessWidget {
                     Container(
                       child: BottomBar(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.popUntil(
+                                context, ModalRoute.withName('/wrapper'));
                           },
                           image: 'assets/images/bottomBar_ye.png'),
                     ),

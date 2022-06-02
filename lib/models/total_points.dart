@@ -1,8 +1,4 @@
-import 'package:Lesaforrit/models/quiz_brain.dart';
-
 class TotalPoints {
-  QuizBrain quizBrain = QuizBrain();
-
   //double score = 1;
   double _points;
   double finalPoints;

@@ -1,15 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:meta/meta.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
 part 'voice_event.dart';
 part 'voice_state.dart';
@@ -18,10 +24,17 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   // final SpeechToText _speech;
   final VoiceService _speech;
   final String level;
+  final SaveAudio audioSaver;
+  final DatabaseService databaseService;
+  final dialog;
 
-  VoiceBloc(VoiceService speech, String level)
+  VoiceBloc(VoiceService speech, String level, SaveAudio audioSaver,
+      DatabaseService databaseService, dialog)
       : _speech = speech,
         level = level,
+        audioSaver = audioSaver,
+        databaseService = databaseService,
+        dialog = dialog,
         super(VoiceInitial(
           hasSpeech: false,
           logEvents: false,
@@ -65,6 +78,9 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     if (event is VoiceStoppedEvent) {
       yield* _mapVoiceStopEvent(event);
     }
+    if (event is VoiceCancelEvent) {
+      yield* _mapVoiceCancelEvent(event);
+    }
     if (event is FindBestLastWordEvent) {
       yield* _mapFindBestLastWordEvent(event);
     }
@@ -76,55 +92,30 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     if (event is ResetEvent) {
       yield* _mapResetEventToState(event);
     }
+    if (event is IsListeningEvent) {
+      yield* _mapListeningoState(event);
+    }
+
+    if (event is IsNotListeningEvent) {
+      yield* _mapNotListeningoState(event);
+    }
   }
 
   Stream<VoiceState> _mapUpdateInitalizeToState(
       VoiceInitializeEvent event) async* {
     yield VoiceLoading();
-    print("lastWords in status ${_speech.lastWords}");
-    _logEvent('Initialize');
-    String lastWords = '';
-    List<SpeechRecognitionWords> alternates = [];
-    bool isListening = false;
-    String question = _speech.displayText(level);
-    _speech.question = question;
-
-    statusListener(String status) {
-      _logEvent(
-          'Received listener status: $status, listening: ${_speech.speech.isListening}');
-      print("I'm at the status listener");
-      // event.listeningUpdate(_speech.lastWords, _speech.alternates,
-      //     _speech.speech.isListening, _speech.question);
-    }
-
-    onError(String test) {
-      print("there was an error");
-      event.listeningUpdate(' ', alternates, false, _speech.question);
-    }
-
     try {
       // initialize the speech
-      var hasSpeech = await _speech.speechInit(statusListener);
+      var hasSpeech =
+          await _speech.speechInit(event.statusListener, event.errorListener);
       if (hasSpeech) {
-        yield VoiceHasInitialized(hasSpeech: hasSpeech);
-        //initiallize language
-        yield UpdateState(
-            lastWords: lastWords,
-            alternates: alternates,
-            isListening: isListening,
-            question: _speech.question);
-        yield VoiceLanguage(currentLocaleId: 'is_IS');
+        print("it has speech");
+        yield VoiceHasInitialized();
       }
-      print("was there a speech?");
     } catch (e) {
+      print("error initializing speech");
       yield VoiceFailure(error: e);
     }
-
-    yield UpdateState(
-        lastWords: _speech.lastWords,
-        alternates: _speech.alternates,
-        isListening: _speech.speech.isListening,
-        question: _speech.question);
   }
 
   Stream<VoiceState> _mapVoiceFailure(VoiceFailureEvent event) async* {
@@ -133,97 +124,19 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapVoiceStartedEvent(VoiceStartedEvent event) async* {
-    _logEvent('start listening');
-    // _speech.lastWords = ' ';
-    _speech.alternates = [];
-    _speech.isListening = true;
-
-    // String lastWords = '';
-    // List<SpeechRecognitionWords> alternates = [];
-    // bool isListening = false;
-
-    yield UpdateState(
-        lastWords: ' ',
-        alternates: _speech.alternates,
-        isListening: true,
-        question: _speech.question);
-
-    // Note that `listenFor` is the maximum, not the minimun, on some
-    // recognition will be stopped before this value is reached.
-    // Similarly `pauseFor` is a maximum not a minimum and may be ignored
-    // on some devices.
-    resultListener(SpeechRecognitionResult result) {
-      print("lastWords in result ${_speech.lastWords}");
-      _logEvent(
-          'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-      _speech.lastWords = '${result.recognizedWords}';
-      _speech.alternates = result.alternates;
-      // _speech.finalResult = result.finalResult;
-      _speech.isListening = _speech.speech.isListening;
-
-      if (!_speech.isListening) {
-        _speech.lastWords = _speech.bestLastWord(
-            _speech.lastWords, _speech.question, _speech.alternates);
-
-        Map<String, Object> points =
-            _speech.checkAnswer(_speech.lastWords, _speech.question, level);
-        double finalPoints = points['points'];
-        _speech.points = finalPoints;
-        _speech.questionMap = points['questionMap'];
-        _speech.answerMap = points['answerMap'];
-        _speech.questionArr = points['questionArr'];
-        _speech.answerArr = points['answerArr'];
-
-        print("answerMAp = ${_speech.answerMap}");
-
-        // the trys are each word
-        _speech.calc.trys += _speech.questionArr.length;
-        _speech.calc.correct += points['correct'];
-
-        bool onePoint = (finalPoints <= 0.2);
-        bool twoPoints = (finalPoints > 0.2 && finalPoints <= 0.4);
-        bool threePoints = (finalPoints > 0.4 && finalPoints <= 0.6);
-        bool fourPoints = (finalPoints > 0.6 && finalPoints <= 0.8);
-        bool fivePoints = (finalPoints > 0.8);
-
-        if (fivePoints) {
-          print("five Points");
-        }
-        if (fourPoints) {
-          print("four Points");
-        }
-        if (threePoints) {
-          print("three Points");
-        }
-        if (twoPoints) {
-          print("Two Points");
-        }
-        if (onePoint) {
-          print("one Points");
-        }
-
-        event.checkAnswer(onePoint, twoPoints, threePoints, fourPoints,
-            fivePoints, _speech.calc);
-      } else {
-        event.listeningUpdate(_speech.lastWords, _speech.alternates,
-            _speech.isListening, _speech.question);
-      }
-    }
-
     try {
-      _speech.speechListen(resultListener);
+      await _speech.speechListen(event.resultListener, event.doneListener);
+      yield IsListeningState();
     } catch (err) {
-      print("error = ${err}");
-
+      print("error = $err");
+      await _speech.stopRecording();
       yield VoiceFailure(error: err);
     }
     // yield NewQuestionState(question: _speech.question);
   }
 
   Stream<VoiceState> _mapNewQuestionEvent(NewQuestionEvent event) async* {
-    String question = _speech.displayText(level);
-    _speech.question = question;
-    yield NewQuestionState(question: question);
+    yield NewQuestionState();
   }
 
   Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
@@ -239,41 +152,99 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapVoiceStopEvent(VoiceStoppedEvent event) async* {
+    await _speech.stopRecording();
+    yield VoiceStop();
+  }
+
+  Stream<VoiceState> _mapVoiceCancelEvent(VoiceCancelEvent event) async* {
+    await _speech.stopRecording(isCancel: true);
     yield VoiceStop();
   }
 
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {
-    yield ScoreKeeper(
-        onePoint: event.onePoint,
-        twoPoints: event.twoPoints,
-        threePoints: event.threePoints,
-        fourPoints: event.fourPoints,
-        fivePoints: event.fivePoints,
-        calc: event.calc);
-    await Future.delayed(Duration(milliseconds: 200));
-    String question = _speech.displayText(level);
-    _speech.nextQuestion = question;
-
+    bool fivePoints = event.fivePoints;
+    bool fourPoints = event.fourPoints;
+    bool threePoints = event.threePoints;
+    bool twoPoints = event.twoPoints;
+    bool onePoint = event.onePoint;
+    String typeOfFile = event.typeoffile;
+    int trys = event.trys;
+    int correct = event.correct;
     // Getting the results ready
-    List<String> questionArr = _speech.questionArr;
-    List<String> answerArr = _speech.answerArr;
-    List<bool> questionMap = _speech.questionMap;
-    List<bool> answerMap = _speech.answerMap;
+    yield IsNotListeningState();
+    yield ShowResultState();
 
-    print("THIS IS THE QUESTIONARR ${questionArr}");
-    yield ShowResultState(
-        questionArr: questionArr,
-        answerArr: answerArr,
-        questionMap: questionMap,
-        answerMap: answerMap);
+    var isSaveVoice = await databaseService.getIsSaveVoice();
+    var isManualFix = await databaseService.getIsManualFix();
     await Future.delayed(Duration(milliseconds: 3000));
 
-    _speech.question = _speech.nextQuestion;
-    _speech.questionMap = [];
-    _speech.answerMap = [];
-    _speech.questionArr = [];
-    _speech.answerArr = [];
-    yield NewQuestionState(question: _speech.question);
+    if (event.answer != null && event.audio != null) {
+      print("We are adding score");
+
+      bool manualAnswer;
+
+      void callBackFunc(setAnswer) {
+        manualAnswer = setAnswer;
+        if (setAnswer) {
+          if (typeOfFile == "Incorrect") {
+            correct = trys;
+            typeOfFile = "Manual_Correct";
+            fivePoints = true;
+            fourPoints = false;
+            threePoints = false;
+            twoPoints = false;
+            onePoint = false;
+          }
+        }
+        if (!setAnswer) {
+          if (typeOfFile == "Correct") {
+            typeOfFile = "Manual_Incorrect";
+            correct = 0;
+            fivePoints = false;
+            fourPoints = false;
+            threePoints = false;
+            twoPoints = false;
+            onePoint = true;
+          }
+        }
+      }
+
+      if (isManualFix) {
+        await dialog(callBackFunc);
+      }
+      print("manualAnswer is $manualAnswer");
+
+      if (fivePoints) {
+        // check if user has disabled save feature
+        if (isSaveVoice) {
+          audioSaver.setData('testName', "$level/$typeOfFile", event.question,
+              event.answer, event.audio);
+        }
+      } else {
+        // check if user has disabled save feature
+        if (isSaveVoice) {
+          audioSaver.setData('testName', '$level/$typeOfFile', event.question,
+              event.answer, event.audio);
+        }
+      }
+
+      try {
+        await audioSaver.saveData();
+      } catch (err) {
+        print("there was an error saving data from bloc => $err");
+      }
+    }
+
+    print("Now new Question State should be yielded");
+
+    yield NewQuestionState(
+        onePoint: onePoint,
+        twoPoints: twoPoints,
+        threePoints: threePoints,
+        fourPoints: fourPoints,
+        fivePoints: fivePoints,
+        trys: trys,
+        correct: correct);
   }
 
   Stream<VoiceState> _mapFindBestLastWordEvent(
@@ -281,41 +252,6 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     String lastWords = event.lastWords;
     List<SpeechRecognitionWords> alternates = event.alternates;
     String question = event.question;
-
-    // int closestVal = lastWords.toLowerCase().compareTo(
-    //     letter.toLowerCase()); //compare correct answer to voice input
-
-    // int closestIndex =
-    //     -1; //index of closest value, if -1 then result.recongizedwords
-    // if (status == 'done') {
-    //   //check if alternates are closer to correct answer
-    //   for (int i = 0; i < alternates.length; i++) {
-    //     String tempString = alternates[i].recognizedWords;
-    //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-    //     if (temp.abs() < closestVal.abs()) {
-    //       print("temp < closestVal");
-    //       print("tempString: $tempString");
-    //       print("lastWords: $lastWords");
-    //       print("tempInt: $temp");
-    //       print("closestValInt: $closestVal");
-
-    //       closestIndex = i;
-    //       closestVal = temp;
-    //     }
-    //   }
-    //   if (closestIndex == -1) {
-    //     checkAnswer(lastWords);
-    //   } else {
-    //     print("there was another");
-    //     print(alternates[closestIndex].recognizedWords);
-
-    //     setState(() {
-    //       lastWords = alternates[closestIndex].recognizedWords;
-    //     });
-
-    //     checkAnswer(alternates[closestIndex].recognizedWords);
-    //   }
-    // }
   }
 
   Stream<VoiceState> _mapResetEventToState(ResetEvent event) async* {
@@ -324,69 +260,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     yield ResetState();
   }
 
-  /* Helper functions */
+  Stream<VoiceState> _mapListeningoState(IsListeningEvent event) async* {
+    yield IsListeningState();
+  }
 
-  // void errorListener(SpeechRecognitionError error) {
-  //   _logEvent(
-  //       'Received error status: $error, listening: ${_speech.isListening}');
-  //   VoiceFailureEvent(error: '${error.errorMsg} - ${error.permanent}');
-  // }
-
-  // void resultListener(SpeechRecognitionResult result) {
-  //   print("result alt");
-  //   print(result.alternates);
-  //   _logEvent(
-  //       'Result listener final: ${result.finalResult}, words: ${result.recognizedWords}');
-  //   WordsChange(
-  //       lastWords: '${result.recognizedWords}', alternates: result.alternates);
-  //   // LastWordsEvent(
-  //   //     lastWords: '${result.recognizedWords}', alternates: result.alternates);
-  // }
-
-  // void soundLevelListener(double level) {
-  //   print("soundLevelListener stuff");
-  //   SoundLevelEvent(level: level);
-  // }
-
-  // void statusListener(String status) {
-  //   _logEvent(
-  //       'Received listener status: $status, listening: ${_speech.isListening}');
-  //   VoiceStatusEvent(lastStatus: status);
-  //   // int closestVal = lastWords.toLowerCase().compareTo(
-  //   //     letter.toLowerCase()); //compare correct answer to voice input
-
-  //   // int closestIndex =
-  //   //     -1; //index of closest value, if -1 then result.recongizedwords
-  //   // if (status == 'done') {
-  //   //   //check if alternates are closer to correct answer
-  //   //   for (int i = 0; i < alternates.length; i++) {
-  //   //     String tempString = alternates[i].recognizedWords;
-  //   //     int temp = tempString.toLowerCase().compareTo(letter.toLowerCase());
-  //   //     if (temp.abs() < closestVal.abs()) {
-  //   //       print("temp < closestVal");
-  //   //       print("tempString: $tempString");
-  //   //       print("lastWords: $lastWords");
-  //   //       print("tempInt: $temp");
-  //   //       print("closestValInt: $closestVal");
-
-  //   //       closestIndex = i;
-  //   //       closestVal = temp;
-  //   //     }
-  //   //   }
-  //   //   if (closestIndex == -1) {
-  //   //     checkAnswer(lastWords);
-  //   //   } else {
-  //   //     print("there was another");
-  //   //     print(alternates[closestIndex].recognizedWords);
-
-  //   //     setState(() {
-  //   //       lastWords = alternates[closestIndex].recognizedWords;
-  //   //     });
-
-  //   //     checkAnswer(alternates[closestIndex].recognizedWords);
-  //   //   }
-  //   // }
-  // }
+  Stream<VoiceState> _mapNotListeningoState(IsNotListeningEvent event) async* {
+    yield IsNotListeningState();
+  }
 
   void _logEvent(String eventDescription) {
     var eventTime = DateTime.now().toIso8601String();

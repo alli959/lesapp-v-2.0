@@ -9,6 +9,8 @@ import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/settings.dart';
+
 class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -106,6 +108,18 @@ class SideMenu extends StatelessWidget {
                             },
                           ),
                         ),
+                        Expanded(
+                          child: RoundIconButton(
+                            color: Colors.transparent,
+                            icon: Icons.settings,
+                            iconSize: 35,
+                            circleSize: 35,
+                            onPressed: () {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  Settings.id, (Route<dynamic> route) => false);
+                            },
+                          ),
+                        )
                       ],
                     ),
                   ),

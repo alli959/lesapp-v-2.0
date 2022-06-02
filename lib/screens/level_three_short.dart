@@ -7,9 +7,9 @@ import 'package:Lesaforrit/components/round_icon_button.dart';
 import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlThree_short.dart';
+
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
-import 'package:Lesaforrit/models/quiz_brain_lvlTwo_short.dart';
+
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
@@ -29,7 +29,10 @@ class LevelThreeShort extends StatelessWidget {
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
-          return ServerlessBloc(_data, 'sentences', 'easy')..add(FetchEvent());
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'sentences', 'easy')
+            ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -53,7 +56,6 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  Letters letters = Letters();
   QuizBrainLvlThreeEasy quizBrain = QuizBrainLvlThreeEasy();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
