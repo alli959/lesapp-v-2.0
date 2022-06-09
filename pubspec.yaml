@@ -10,7 +10,6 @@ dependencies:
   bloc: ^7.2.0
   animated_text_kit: ^4.2.1
   audioplayers: ^0.20.1
-  cloud_firestore: ^3.1.9
   connectivity_plus: ^2.3.0
   cupertino_icons: ^1.0.4
   equatable: ^2.0.3
@@ -34,12 +33,11 @@ dependencies:
   webview_cookie_manager: ^2.0.6
   google_speech: ^2.1.1
   sound_stream: ^0.3.0
-  simple_s3: ^0.3.2
-  amplify_flutter: ^0.4.5
-  amplify_datastore: ^0.4.5
-  amplify_auth_cognito: ^0.4.5
-  amplify_api: ^0.4.5
-  amplify_storage_s3: ^0.4.5
+  amplify_flutter: ^0.4.0
+  amplify_datastore: ^0.4.0
+  amplify_auth_cognito: ^0.4.0
+  amplify_api: ^0.4.0
+  amplify_storage_s3: ^0.4.0
 
 
 

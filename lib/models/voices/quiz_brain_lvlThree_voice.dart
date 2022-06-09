@@ -23,7 +23,7 @@ class QuizBrainLvlThreeVoice {
 
   Future<AudioPlayer> playCorrect() async {
     try {
-      correctPlayer = await cache.play(correctSound, volume: 0.7);
+      correctPlayer = await cache.play(correctSound, volume: 0.2);
       await Future.delayed(Duration(milliseconds: 1000));
       correctPlayer.stop();
     } catch (err) {
@@ -35,7 +35,7 @@ class QuizBrainLvlThreeVoice {
 
   Future<AudioPlayer> playIncorrect() async {
     try {
-      incorrectPlayer = await cache.play(incorrectSound, volume: 0.7);
+      incorrectPlayer = await cache.play(incorrectSound, volume: 0.2);
       await Future.delayed(Duration(milliseconds: 1000));
       incorrectPlayer.stop();
     } catch (err) {
