@@ -35,17 +35,15 @@ class TwoVoiceFinish extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthenticationBloc>(
-        create: (context) {
-          final _authService = RepositoryProvider.of<AuthService>(context);
-          return AuthenticationBloc(_authService)..add(GetUid());
-        },
-        child: LevelFin(
-          stig: stig,
-          image: 'assets/images/bear_shadow.png',
-          undertext: '\n stig fyrir þetta borð!',
-          appBarText: 'Upplesin Orð',
-        ));
+    var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlTwoVoiceScore'));
+
+    return LevelFin(
+      stig: stig,
+      image: 'assets/images/bear_shadow.png',
+      undertext: '\n stig fyrir þetta borð!',
+      appBarText: 'Upplesin Orð',
+    );
   }
 }
 
@@ -63,45 +61,27 @@ class LevelFin extends StatelessWidget {
   String appBarText;
 
   Widget button1(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlTwoVoiceScore'));
-        },
-        child: SetScore(
-          currentScoreTwoVoice: stigamet.toStringAsFixed(0),
-          level: LvlTwoChoose.id,
-          text: 'Borð 2: Orð',
-        ));
+    return SetScore(
+      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
+      level: LvlTwoChoose.id,
+      text: 'Borð 2: Orð',
+    );
   }
 
   Widget button2(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlTwoVoiceScore'));
-        },
-        child: SetScore(
-          currentScoreTwoVoice: stigamet.toStringAsFixed(0),
-          level: LvlThreeChoose.id,
-          text: 'Borð 3: Setningar',
-        ));
+    return SetScore(
+      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
+      level: LvlThreeChoose.id,
+      text: 'Borð 3: Setningar',
+    );
   }
 
   Widget button3(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlTwoVoiceScore'));
-        },
-        child: SetScore(
-          currentScoreTwoVoice: stigamet.toStringAsFixed(0),
-          level: Welcome.id,
-          text: 'Heim',
-        ));
+    return SetScore(
+      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
+      level: Welcome.id,
+      text: 'Heim',
+    );
   }
 
   Finish finish = Finish();
@@ -133,32 +113,23 @@ class LevelFin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     VoiceService voiceService = RepositoryProvider.of<VoiceService>(context);
+    var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+
     voiceService.reset();
     String highestScore = '\n Þú slóst metið þitt!';
-    return (BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
+    double stigamet = stig;
+    return BlocBuilder<DatabaseBloc, DatabaseState>(builder: (context, state) {
       if (state is AuthenticationLoading) {
         print("loading going on");
         return Loading();
       }
-      if (state is UserUid) {
-        print("UserScoreUpdate going on");
-        double stigamet = stig;
-        return finish.FinishMethod(
-          highestScore,
-          stigamet,
-          context,
-          formKey,
-          appBarText,
-          image,
-          stig,
-          button1(stigamet, state.uid),
-          button2(stigamet, state.uid),
-          button3(stigamet, state.uid),
-          cardColorLvlTwo,
-        );
+      if (state is IsNewRecord) {
+        if (state.newRecord) {
+          highestScore = '\n Þú slóst metið þitt!';
+        } else {
+          highestScore = 'Metið þitt er ${state.record}';
+        }
       }
-      double stigamet = stig;
       return finish.FinishMethod(
         highestScore,
         stigamet,
@@ -172,6 +143,6 @@ class LevelFin extends StatelessWidget {
         button3(stigamet, ''),
         cardColorLvlTwo,
       );
-    }));
+    });
   }
 }

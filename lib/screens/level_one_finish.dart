@@ -32,6 +32,8 @@ class OneFinish extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
     return LevelFin(
       stig: stig,
       image: 'assets/images/cat_skuggi-05.png',
@@ -55,7 +57,6 @@ class LevelFin extends StatelessWidget {
   String appBarText;
 
   Widget button1(double stigamet, DatabaseBloc databaseBloc) {
-    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
     return SetScore(
       currentScore: stigamet.toStringAsFixed(0),
       level: LvlOneChoose.id,
@@ -64,7 +65,6 @@ class LevelFin extends StatelessWidget {
   }
 
   Widget button2(double stigamet, DatabaseBloc databaseBloc) {
-    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
     return SetScore(
       currentScore: stigamet.toStringAsFixed(0),
       level: LvlTwoChoose.id,
@@ -73,7 +73,6 @@ class LevelFin extends StatelessWidget {
   }
 
   Widget button3(double stigamet, DatabaseBloc databaseBloc) {
-    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneScore'));
     return SetScore(
       currentScore: stigamet.toStringAsFixed(0),
       level: Wrapper.id,
@@ -110,23 +109,31 @@ class LevelFin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
-    var databaseRepository = RepositoryProvider.of<DatabaseService>(context);
 
     String highestScore = '\n Jei þú slóst metið þitt!';
+    return BlocBuilder<DatabaseBloc, DatabaseState>(builder: (context, state) {
+      if (state is IsNewRecord) {
+        if (state.newRecord) {
+          highestScore = '\n Þú slóst metið þitt!';
+        } else {
+          highestScore = '\n Metið þitt er ${state.record}';
+        }
+      }
 
-    double stigamet = stig;
-    return finish.FinishMethod(
-      highestScore,
-      stigamet,
-      context,
-      formKey,
-      appBarText,
-      image,
-      stig,
-      button1(stigamet, databaseBloc),
-      button2(stigamet, databaseBloc),
-      button3(stigamet, databaseBloc),
-      cardColor,
-    );
+      double stigamet = stig;
+      return finish.FinishMethod(
+        highestScore,
+        stigamet,
+        context,
+        formKey,
+        appBarText,
+        image,
+        stig,
+        button1(stigamet, databaseBloc),
+        button2(stigamet, databaseBloc),
+        button3(stigamet, databaseBloc),
+        cardColor,
+      );
+    });
   }
 }

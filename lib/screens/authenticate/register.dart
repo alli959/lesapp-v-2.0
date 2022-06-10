@@ -69,7 +69,7 @@ class _RegisterState extends State<RegisterForm> {
               backgroundColor: Color(0xFFE0FF62),
               automaticallyImplyLeading: false,
               actions: <Widget>[
-                FlatButton.icon(
+                TextButton.icon(
                     onPressed: () {
                       _onLoginViewButtonPressed();
                     },

@@ -33,17 +33,14 @@ class OneCapsFinish extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthenticationBloc>(
-        create: (context) {
-          final _authService = RepositoryProvider.of<AuthService>(context);
-          return AuthenticationBloc(_authService)..add(GetUid());
-        },
-        child: LevelFin(
-          stig: stig,
-          image: 'assets/images/cat_skuggi-05.png',
-          undertext: '\n Stig!',
-          appBarText: 'Hástafir',
-        ));
+    var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlOneCapsScore'));
+    return LevelFin(
+      stig: stig,
+      image: 'assets/images/cat_skuggi-05.png',
+      undertext: '\n Stig!',
+      appBarText: 'Hástafir',
+    );
   }
 }
 
@@ -61,45 +58,27 @@ class LevelFin extends StatelessWidget {
   String appBarText;
 
   Widget button1(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlOneCapsScore'));
-        },
-        child: SetScore(
-          currentScoreCaps: stigamet.toStringAsFixed(0),
-          level: LvlOneChoose.id,
-          text: 'Borð 1: Stafir',
-        ));
+    return SetScore(
+      currentScoreCaps: stigamet.toStringAsFixed(0),
+      level: LvlOneChoose.id,
+      text: 'Borð 1: Stafir',
+    );
   }
 
   Widget button2(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlOneCapsScore'));
-        },
-        child: SetScore(
-          currentScoreCaps: stigamet.toStringAsFixed(0),
-          level: LvlTwoChoose.id,
-          text: 'Borð 2: Orð',
-        ));
+    return SetScore(
+      currentScoreCaps: stigamet.toStringAsFixed(0),
+      level: LvlTwoChoose.id,
+      text: 'Borð 2: Orð',
+    );
   }
 
   Widget button3(double stigamet, String uid) {
-    return BlocProvider<DatabaseBloc>(
-        create: (context) {
-          final _databaseService = DatabaseService(uid: uid);
-          return DatabaseBloc(_databaseService)
-            ..add(UpdateUserScore(score: stig, typeof: 'lvlOneCapsScore'));
-        },
-        child: SetScore(
-          currentScoreCaps: stigamet.toStringAsFixed(0),
-          level: Welcome.id,
-          text: 'Heim',
-        ));
+    return SetScore(
+      currentScoreCaps: stigamet.toStringAsFixed(0),
+      level: Welcome.id,
+      text: 'Heim',
+    );
   }
 
   Finish finish = Finish();
@@ -131,28 +110,14 @@ class LevelFin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String highestScore = '\n Þú slóst metið þitt!';
-    return (BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-      if (state is AuthenticationLoading) {
-        print("loading going on");
-        return Loading();
-      }
-      if (state is UserUid) {
-        print("UserScoreUpdate going on");
-        double stigamet = stig;
-        return finish.FinishMethod(
-          highestScore,
-          stigamet,
-          context,
-          formKey,
-          appBarText,
-          image,
-          stig,
-          button1(stigamet, state.uid),
-          button2(stigamet, state.uid),
-          button3(stigamet, state.uid),
-          cardColor,
-        );
+    double stigamet = stig;
+    return (BlocBuilder<DatabaseBloc, DatabaseState>(builder: (context, state) {
+      if (state is IsNewRecord) {
+        if (state.newRecord) {
+          highestScore = '\n Þú slóst metið þitt!';
+        } else {
+          highestScore = '\n Metið þitt er ${state.record}';
+        }
       }
       double stigamet = stig;
       return finish.FinishMethod(

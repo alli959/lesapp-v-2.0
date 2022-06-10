@@ -2,6 +2,7 @@ import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -20,6 +21,13 @@ class Settings extends StatelessWidget {
   PrefVoice prefVoice = PrefVoice.DORA;
   bool isManualCorrection = false;
   bool voiceRecord = true;
+
+  String voiceDora = 'sound/Dora_introduction.mp3';
+  String voiceKarl = 'sound/Karl_introduction.mp3';
+
+  AudioPlayer playerDora = AudioPlayer();
+  AudioPlayer playerKarl = AudioPlayer();
+  AudioCache cache = AudioCache();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +59,7 @@ class Settings extends StatelessWidget {
           body: Container(
               // B L Á A  K O R T I Ð
               decoration: BoxDecoration(
-                color: Color(0xFF101820), // - - - * * - - -//
+                color: Color(0xFFF2AA4C), // - - - * * - - -//
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(55),
                     topRight: Radius.circular(55)),
@@ -100,8 +108,13 @@ class Settings extends StatelessWidget {
                                                     'assets/icons/woman_speaking.png'),
                                                 width: 75,
                                                 height: 75,
-                                                onTap: () =>
-                                                    print("woman pressed"),
+                                                onTap: () async => {
+                                                  playerDora = await cache
+                                                      .play(voiceDora),
+                                                  await Future.delayed(Duration(
+                                                      milliseconds: 4000)),
+                                                  playerDora.stop()
+                                                },
                                               ),
                                             ),
                                             Center(
@@ -136,16 +149,22 @@ class Settings extends StatelessWidget {
                                           Column(children: [
                                             Center(
                                               child: ImageButton(
-                                                children: <Widget>[],
-                                                unpressedImage: Image.asset(
-                                                    'assets/icons/man_speaking.png'),
-                                                pressedImage: Image.asset(
-                                                    'assets/icons/man_speaking.png'),
-                                                width: 75,
-                                                height: 75,
-                                                onTap: () =>
-                                                    print("man pressed"),
-                                              ),
+                                                  children: <Widget>[],
+                                                  unpressedImage: Image.asset(
+                                                      'assets/icons/man_speaking.png'),
+                                                  pressedImage: Image.asset(
+                                                      'assets/icons/man_speaking.png'),
+                                                  width: 75,
+                                                  height: 75,
+                                                  onTap: () async => {
+                                                        playerKarl = await cache
+                                                            .play(voiceKarl),
+                                                        await Future.delayed(
+                                                            Duration(
+                                                                milliseconds:
+                                                                    4000)),
+                                                        playerKarl.stop()
+                                                      }),
                                             ),
                                             Center(
                                                 child: Padding(
@@ -190,78 +209,76 @@ class Settings extends StatelessWidget {
                               Padding(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                                   // F J Ö L D I   R É T T   G I S K A Ð / Tilraunir
-                                  child: Expanded(
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          width: 300,
-                                          height: 150,
-                                          decoration: BoxDecoration(
-                                              color: Color(0xFFF2AA4C),
-                                              border: Border.all(
-                                                color: Color(0xFFF2AA4C),
-                                                width: 5,
-                                              ),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20))),
-                                          child: CheckboxListTile(
-                                            title: Text(
-                                              "Handvirk villumeðhöndlun fyrir raddgreiningu",
-                                              style: TextStyle(
-                                                fontFamily: 'Metropolis',
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            //    <-- label
-                                            value: isManualCorrection,
-                                            onChanged: (newValue) => {
-                                              _databaseBloc.add(
-                                                  ActionPerformedEvent(
-                                                      prefVoice: prefVoice,
-                                                      saveRecord: voiceRecord,
-                                                      manualFix: newValue))
-                                            },
-                                          )))),
+
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      width: 300,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFF989394),
+                                          border: Border.all(
+                                            color: Color(0xFF989394),
+                                            width: 5,
+                                          ),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20))),
+                                      child: CheckboxListTile(
+                                        title: Text(
+                                          "Handvirk villumeðhöndlun fyrir raddgreiningu",
+                                          style: TextStyle(
+                                            fontFamily: 'Metropolis',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        //    <-- label
+                                        value: isManualCorrection,
+                                        onChanged: (newValue) => {
+                                          _databaseBloc.add(
+                                              ActionPerformedEvent(
+                                                  prefVoice: prefVoice,
+                                                  saveRecord: voiceRecord,
+                                                  manualFix: newValue))
+                                        },
+                                      ))),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                                 // F J Ö L D I   R É T T   G I S K A Ð / Tilraunir
-                                child: Expanded(
-                                    child: Container(
-                                        alignment: Alignment.center,
-                                        width: 300,
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                            color: Color(0xFFF2AA4C),
-                                            border: Border.all(
-                                              color: Color(0xFFF2AA4C),
-                                              width: 5,
-                                            ),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: CheckboxListTile(
-                                          title: Text(
-                                            "Leyfa vistun á upptökum til að hægt sé að bæta talgreinirinn. (Vistast ekki undir nafni)",
-                                            style: TextStyle(
-                                              fontFamily: 'Metropolis',
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          //    <-- label
-                                          value: voiceRecord,
-                                          // selected: isManualCorrection,
 
-                                          onChanged: (newValue) => {
-                                            _databaseBloc.add(
-                                                ActionPerformedEvent(
-                                                    prefVoice: prefVoice,
-                                                    saveRecord: newValue,
-                                                    manualFix:
-                                                        isManualCorrection))
-                                          },
-                                        ))),
+                                child: Container(
+                                    alignment: Alignment.center,
+                                    width: 300,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xFF989394),
+                                        border: Border.all(
+                                          color: Color(0xFF989394),
+                                          width: 5,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: CheckboxListTile(
+                                      title: Text(
+                                        "Leyfa vistun á upptökum til að hægt sé að bæta talgreinirinn. (Vistast ekki undir nafni)",
+                                        style: TextStyle(
+                                          fontFamily: 'Metropolis',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      //    <-- label
+                                      value: voiceRecord,
+                                      // selected: isManualCorrection,
+
+                                      onChanged: (newValue) => {
+                                        _databaseBloc.add(ActionPerformedEvent(
+                                            prefVoice: prefVoice,
+                                            saveRecord: newValue,
+                                            manualFix: isManualCorrection))
+                                      },
+                                    )),
                               ),
                             ],
                           ),

@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
 import '../models/UserData.dart';
+import '../models/UserScore.dart';
 
 class MyProfile extends StatefulWidget {
   static const String id = 'my_profile';
@@ -27,12 +28,15 @@ class _MyProfileState extends State<MyProfile> {
   String currentScore;
   String currentAge;
   String currentReadingStage;
+
   UserData userData =
       UserData(name: 'name', age: 'age', readingStage: 'readingState');
   final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
+    final _database = RepositoryProvider.of<DatabaseService>(context);
+
     return (BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       if (state is AuthenticationLoading) {
@@ -50,264 +54,242 @@ class _MyProfileState extends State<MyProfile> {
             return Loading();
           }
           if (state is UserDataState) {
-            return StreamBuilder<UserData>(
-                stream: state.userdata,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    this.userData = snapshot.data;
-                  }
-                  print("top loading");
-                  return Form(
-                    key: _formKey,
-                    child: Center(
-                      child: Column(
+            return Form(
+              key: _formKey,
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Stack(
+                        //alignment: Alignment.center,
                         children: <Widget>[
-                          Expanded(
-                            child: Stack(
-                              //alignment: Alignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Center(
-                                    child: CircleAvatar(
-                                      radius: 190,
-                                      backgroundColor: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Divider(
-                                        color: blai,
-                                        indent: 140,
-                                        endIndent: 140,
-                                        thickness: 1.3),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          userData.name,
-                                          style: myPagesName,
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 5.0),
-                                      child: Divider(
-                                          color: blai,
-                                          indent: 140,
-                                          endIndent: 140,
-                                          thickness: 1.3),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Aldur: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          userData.age,
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Lestrarstig: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          userData.readingStage,
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '\nStigamet ',
-                                          style: myPagesBold,
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ],
-                                    ),
-                                    Divider(
-                                        color: blai,
-                                        indent: 140,
-                                        endIndent: 140,
-                                        thickness: 1.3),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Hástafir: ',
-                                          style: myPages,
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Text(
-                                          // userData.lvlOneCapsScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Lágstafir: ',
-                                          style: myPages,
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Text(
-                                          // userData.lvlOneScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Upplestur stafa: ',
-                                          style: myPages,
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Text(
-                                          // userData.lvlOneVoiceScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Stutt orð: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlTwoEasyScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Löng orð: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlTwoMediumScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Upplestur orða: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlTwoVoiceScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Stuttar setningar: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlThreeEasyScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Langar setningar: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlThreeMediumScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Upplestur setninga: ',
-                                          style: myPages,
-                                        ),
-                                        Text(
-                                          // userData.lvlThreeVoiceScore
-                                          "0",
-                                          style: myPages,
-                                        ),
-                                      ],
-                                    ),
-                                    Divider(
-                                        color: blai,
-                                        indent: 140,
-                                        endIndent: 140,
-                                        thickness: 1.3),
-                                  ],
-                                ),
-                              ],
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Center(
+                              child: CircleAvatar(
+                                radius: 190,
+                                backgroundColor: Colors.black,
+                              ),
                             ),
                           ),
-                          Container(
-                            child: BottomBar(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                image: 'assets/images/bottomBar_ye.png'),
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Divider(
+                                  color: blai,
+                                  indent: 140,
+                                  endIndent: 140,
+                                  thickness: 1.3),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    state.userdata.name,
+                                    style: myPagesName,
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 5.0),
+                                child: Divider(
+                                    color: blai,
+                                    indent: 140,
+                                    endIndent: 140,
+                                    thickness: 1.3),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Aldur: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    state.userdata.age,
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Lestrarstig: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    state.userdata.readingStage,
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '\nStigamet ',
+                                    style: myPagesBold,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                              ),
+                              Divider(
+                                  color: blai,
+                                  indent: 140,
+                                  endIndent: 140,
+                                  thickness: 1.3),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Hástafir: ',
+                                    style: myPages,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    // userData.lvlOneCapsScore
+                                    "${state.userscore.lvlOneCapsScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Lágstafir: ',
+                                    style: myPages,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    // userData.lvlOneScore
+                                    "${state.userscore.lvlOneScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upplestur stafa: ',
+                                    style: myPages,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                  Text(
+                                    // userData.lvlOneVoiceScore
+                                    "${state.userscore.lvlOneVoiceScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Stutt orð: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlTwoEasyScore
+                                    "${state.userscore.lvlTwoEasyScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Löng orð: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlTwoMediumScore
+                                    "${state.userscore.lvlTwoMediumScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upplestur orða: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlTwoVoiceScore
+                                    "${state.userscore.lvlTwoVoiceScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Stuttar setningar: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlThreeEasyScore
+                                    "${state.userscore.lvlThreeEasyScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Langar setningar: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlThreeMediumScore
+                                    "${state.userscore.lvlThreeMediumScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upplestur setninga: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlThreeVoiceScore
+                                    "${state.userscore.lvlThreeVoiceScore}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Divider(
+                                  color: blai,
+                                  indent: 140,
+                                  endIndent: 140,
+                                  thickness: 1.3),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                  );
-                  // return Loading();
-                });
+                    Container(
+                      child: BottomBar(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          image: 'assets/images/bottomBar_ye.png'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+            // return Loading();
           }
           print("mid loading");
           return Loading();
