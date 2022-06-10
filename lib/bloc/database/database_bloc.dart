@@ -96,7 +96,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
         isNewRecord = true;
       }
       await _databaseService.updateUserScore(event.score, event.typeof);
-      yield IsNewRecord(newRecord: isNewRecord);
+      yield IsNewRecord(newRecord: isNewRecord, record: maxScore);
       // Stream<UserData> userData = await _databaseService.userData;
 
       // yield UserScoreUpdate(userData: userData);
@@ -109,8 +109,8 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     yield DatabaseLoading();
 
     try {
-      Stream<UserData> userData = await _databaseService.userData;
-      Stream<UserScore> userScore = await _databaseService.userScore;
+      UserData userData = await _databaseService.getUserData();
+      UserScore userScore = await _databaseService.getUserScores();
       yield UserDataState(userdata: userData, userscore: userScore);
     } catch (e) {
       yield DatabaseFailure();
@@ -120,7 +120,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
   Stream<DatabaseState> _mapUsersToState(GetUsers event) async* {
     yield DatabaseLoading();
     try {
-      Stream<List<Read>> users = DatabaseService().users;
+      Stream<List<Read>> users = await DatabaseService().users;
       yield UsersState(users: users);
     } catch (e) {
       yield DatabaseFailure();

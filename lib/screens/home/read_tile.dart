@@ -9,36 +9,36 @@ class ReadTile extends StatelessWidget {
   ReadTile({this.read, this.rank});
 
   String concat() {
-    String zero = read.lvlOneScore;
-    String one = read.lvlOneCapsScore;
-    String oneVoice = read.lvlOneVoiceScore;
-    String two = read.lvlTwoEasyScore;
-    String twoLong = read.lvlTwoMediumScore;
-    String twoVoice = read.lvlTwoVoiceScore;
-    String three = read.lvlThreeEasyScore;
-    String threeLong = read.lvlThreeMediumScore;
-    String threeVoice = read.lvlThreeVoiceScore;
+    double zero = read.lvlOneScore;
+    double one = read.lvlOneCapsScore;
+    double oneVoice = read.lvlOneVoiceScore;
+    double two = read.lvlTwoEasyScore;
+    double twoLong = read.lvlTwoMediumScore;
+    double twoVoice = read.lvlTwoVoiceScore;
+    double three = read.lvlThreeEasyScore;
+    double threeLong = read.lvlThreeMediumScore;
+    double threeVoice = read.lvlThreeVoiceScore;
     double total = read.totalpoints;
     String concat = 'HEILDARSTIG: ' +
         total.toStringAsFixed(0) +
         '\n1)\n   Hástafir:    ' +
-        one +
+        "$one" +
         ',\n   Lágstafir:   ' +
-        zero +
+        "$read" +
         ',\n   Lesin orð:  ' +
-        oneVoice +
+        "$oneVoice" +
         '\n2)\n   Stutt orð:   ' +
-        two +
+        "$two" +
         ',\n   Löng orð:   ' +
-        twoLong +
+        "$twoLong" +
         ',\n   Lesin orð:  ' +
-        twoVoice +
+        "$twoVoice" +
         '\n3)\n   Stuttar setningar:   ' +
-        three +
+        "$three" +
         ',\n   Langar setningar:   ' +
-        threeLong +
+        "$threeLong" +
         ',\n   Lesnar setningar:   ' +
-        threeVoice;
+        "$threeVoice";
     return concat;
   }
 

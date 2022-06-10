@@ -119,7 +119,6 @@ class LevelFin extends StatelessWidget {
     var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
 
     String highestScore = '\n Þú slóst metið þitt!';
-    print("UserScoreUpdate going on");
     double stigamet = stig;
     return BlocBuilder<DatabaseBloc, DatabaseState>(
       builder: (context, state) {
@@ -127,7 +126,7 @@ class LevelFin extends StatelessWidget {
           if (state.newRecord) {
             highestScore = '\n Þú slóst metið þitt!';
           } else {
-            highestScore = 'Þú slóst ekki metið þitt';
+            highestScore = 'Metið þitt er ${state.record}';
           }
         }
         return finish.FinishMethod(

@@ -2,15 +2,15 @@ class Read {
   final String name;
   final String age;
   final String readingStage;
-  final String lvlOneCapsScore;
-  final String lvlOneScore;
-  final String lvlOneVoiceScore;
-  final String lvlThreeEasyScore;
-  final String lvlThreeMediumScore;
-  final String lvlThreeVoiceScore;
-  final String lvlTwoEasyScore;
-  final String lvlTwoMediumScore;
-  final String lvlTwoVoiceScore;
+  final double lvlOneCapsScore;
+  final double lvlOneScore;
+  final double lvlOneVoiceScore;
+  final double lvlThreeEasyScore;
+  final double lvlThreeMediumScore;
+  final double lvlThreeVoiceScore;
+  final double lvlTwoEasyScore;
+  final double lvlTwoMediumScore;
+  final double lvlTwoVoiceScore;
   final double totalpoints;
 
   Read({

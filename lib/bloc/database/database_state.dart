@@ -32,8 +32,8 @@ class DatabaseLoading extends DatabaseState {}
 class DatabaseFailure extends DatabaseState {}
 
 class UserDataState extends DatabaseState {
-  final Stream<UserData> userdata;
-  final Stream<UserScore> userscore;
+  final UserData userdata;
+  final UserScore userscore;
 
   UserDataState({@required this.userdata, this.userscore});
 
@@ -75,7 +75,8 @@ class ActionPerformedState extends DatabaseState {
 
 class IsNewRecord extends DatabaseState {
   final bool newRecord;
-  IsNewRecord({@required this.newRecord});
+  final double record;
+  IsNewRecord({@required this.newRecord, this.record});
 
   @override
   List<Object> get props => [newRecord];
