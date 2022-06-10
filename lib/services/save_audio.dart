@@ -13,7 +13,6 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 // import 'package:simple_s3/simple_s3.dart';
 
-import '../S3_keys.dart';
 import '../models/data.dart';
 import 'dart:convert' show utf8;
 import 'package:uuid/uuid.dart';

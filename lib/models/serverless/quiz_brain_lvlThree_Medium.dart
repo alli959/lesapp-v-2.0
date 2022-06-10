@@ -11,6 +11,7 @@ import 'package:Lesaforrit/shared/audio.dart';
 import '../data.dart';
 import '../../services/get_data.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'dart:io' show Platform;
 
 import 'dart:convert' show utf8;
 
@@ -83,7 +84,7 @@ class QuizBrainLvlThreeMedium {
 
   Future<AudioPlayer> playCorrect() async {
     try {
-      correctPlayer = await cache.play(correctSound, volume: 0.4);
+      correctPlayer = await cache.play(correctSound, volume: 0.2);
       await Future.delayed(Duration(milliseconds: 1000));
       correctPlayer.stop();
     } catch (err) {
@@ -95,7 +96,7 @@ class QuizBrainLvlThreeMedium {
 
   Future<AudioPlayer> playIncorrect() async {
     try {
-      incorrectPlayer = await cache.play(incorrectSound, volume: 0.4);
+      incorrectPlayer = await cache.play(incorrectSound, volume: 0.2);
       await Future.delayed(Duration(milliseconds: 1000));
       incorrectPlayer.stop();
     } catch (err) {
@@ -114,9 +115,22 @@ class QuizBrainLvlThreeMedium {
         if (sound1 == null) {
           return null;
         }
+        if (!Platform.isAndroid) {
+          try {
+            spilari.play(sound1, isLocal: false);
+            return null;
+          } catch (err) {
+            print("there was an error playing sound ${sound1}");
+            return null;
+          }
+        }
         try {
           File file1 = await DefaultCacheManager().getSingleFile(sound1);
+          print("file is $file1");
           Uint8List bytes = file1.readAsBytesSync();
+          print("length if bytes is ${bytes.length}");
+          print("bytes is $bytes");
+
           await spilari.playBytes(bytes);
         } catch (err) {
           print("there was an error playing sound $err");
@@ -125,6 +139,15 @@ class QuizBrainLvlThreeMedium {
       } else {
         if (sound2 == null) {
           return null;
+        }
+        if (!Platform.isAndroid) {
+          try {
+            spilari.play(sound2, isLocal: false);
+            return null;
+          } catch (err) {
+            print("there was an error playing sound ${sound2}");
+            return null;
+          }
         }
         try {
           File file1 = await DefaultCacheManager().getSingleFile(sound2);
@@ -147,6 +170,15 @@ class QuizBrainLvlThreeMedium {
         if (sound1Secondary == null) {
           return null;
         }
+        if (!Platform.isAndroid) {
+          try {
+            player.play(sound1Secondary, isLocal: false);
+            return null;
+          } catch (err) {
+            print("there was an error playing sound ${sound1}");
+            return null;
+          }
+        }
         try {
           File file1 =
               await DefaultCacheManager().getSingleFile(sound1Secondary);
@@ -159,6 +191,15 @@ class QuizBrainLvlThreeMedium {
       } else {
         if (sound2Secondary == null) {
           return null;
+        }
+        if (!Platform.isAndroid) {
+          try {
+            spilari.play(sound2Secondary, isLocal: false);
+            return null;
+          } catch (err) {
+            print("there was an error playing sound ${sound2Secondary}");
+            return null;
+          }
         }
         try {
           File file1 =
@@ -184,8 +225,18 @@ class QuizBrainLvlThreeMedium {
         if (sound1 == null) {
           return null;
         }
+
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Karl.mp3') {
+          if (!Platform.isAndroid) {
+            try {
+              player.play(sound1, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound1}");
+              return null;
+            }
+          }
           try {
             File file1 = await DefaultCacheManager().getSingleFile(sound1);
             Uint8List bytes = file1.readAsBytesSync();
@@ -195,6 +246,15 @@ class QuizBrainLvlThreeMedium {
             return null;
           }
         } else {
+          if (!Platform.isAndroid) {
+            try {
+              player.play(sound1Secondary, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound1Secondary}");
+              return null;
+            }
+          }
           try {
             File file1 =
                 await DefaultCacheManager().getSingleFile(sound1Secondary);
@@ -208,6 +268,15 @@ class QuizBrainLvlThreeMedium {
       } else {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Karl.mp3') {
+          if (!Platform.isAndroid) {
+            try {
+              spilari.play(sound2, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound2}");
+              return null;
+            }
+          }
           try {
             File file1 = await DefaultCacheManager().getSingleFile(sound2);
             Uint8List bytes = file1.readAsBytesSync();
@@ -217,6 +286,15 @@ class QuizBrainLvlThreeMedium {
             return null;
           }
         } else {
+          if (!Platform.isAndroid) {
+            try {
+              spilari.play(sound2Secondary, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound2Secondary}");
+              return null;
+            }
+          }
           try {
             File file1 =
                 await DefaultCacheManager().getSingleFile(sound2Secondary);
@@ -242,8 +320,18 @@ class QuizBrainLvlThreeMedium {
         if (sound1 == null) {
           return null;
         }
+
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Dora.mp3') {
+          if (!Platform.isAndroid) {
+            try {
+              player.play(sound1, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound1}");
+              return null;
+            }
+          }
           try {
             File file1 = await DefaultCacheManager().getSingleFile(sound1);
             Uint8List bytes = file1.readAsBytesSync();
@@ -253,6 +341,15 @@ class QuizBrainLvlThreeMedium {
             return null;
           }
         } else {
+          if (!Platform.isAndroid) {
+            try {
+              spilari.play(sound1Secondary, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound1}");
+              return null;
+            }
+          }
           try {
             File file1 =
                 await DefaultCacheManager().getSingleFile(sound1Secondary);
@@ -266,6 +363,15 @@ class QuizBrainLvlThreeMedium {
       } else {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Dora.mp3') {
+          if (!Platform.isAndroid) {
+            try {
+              spilari.play(sound2, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound2}");
+              return null;
+            }
+          }
           try {
             File file1 = await DefaultCacheManager().getSingleFile(sound2);
             Uint8List bytes = file1.readAsBytesSync();
@@ -275,6 +381,15 @@ class QuizBrainLvlThreeMedium {
             return null;
           }
         } else {
+          if (!Platform.isAndroid) {
+            try {
+              spilari.play(sound2Secondary, isLocal: false);
+              return null;
+            } catch (err) {
+              print("there was an error playing sound ${sound2Secondary}");
+              return null;
+            }
+          }
           try {
             File file1 =
                 await DefaultCacheManager().getSingleFile(sound2Secondary);
