@@ -1,4 +1,4 @@
-package thuri.lesapp
+package thuri.Lesaforrit
 
 import io.flutter.embedding.android.FlutterActivity
 
