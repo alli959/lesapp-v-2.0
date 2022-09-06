@@ -356,7 +356,7 @@ class DatabaseService {
 
       return await lesaCollection.save(userData);
     } catch (err) {
-      print("there was an error getting user data ====> $err");
+      print("there was an error setting user data ====> $err");
     }
   }
 

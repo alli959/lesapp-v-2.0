@@ -21,6 +21,7 @@ class AuthService {
       await Amplify.addPlugin(AmplifyStorageS3());
       await Amplify.addPlugin(datastorePlugin);
       await Amplify.addPlugin(AmplifyAPI());
+
       await Amplify.configure(amplifyconfig);
       // call Amplify.configure to use the initialized categories in your app
     } on Exception catch (e) {
@@ -57,11 +58,14 @@ class AuthService {
       case 'USER_DELETED':
         print('USER HAS BEEN DELETED');
         break;
+      default:
+        print("other hub activity is =>  ${hubEvent.eventName}");
     }
   });
 
   Future<bool> isLoggedIn() async {
-    var authSession = await _auth.fetchAuthSession();
+    var authSession = await _auth.fetchAuthSession(
+        options: CognitoSessionOptions(getAWSCredentials: true));
     return authSession.isSignedIn;
   }
 
@@ -80,6 +84,7 @@ class AuthService {
   Future<AuthUser> getCurrentUser() async {
     try {
       var currentUser = await _auth.getCurrentUser();
+
       return currentUser;
     } catch (err) {
       print("user is logged out");
