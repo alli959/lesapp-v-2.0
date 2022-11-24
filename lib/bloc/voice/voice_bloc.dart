@@ -228,11 +228,11 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         }
       }
 
-      try {
-        await audioSaver.saveData();
-      } catch (err) {
-        print("there was an error saving data from bloc => $err");
-      }
+      //try {
+      //await audioSaver.saveData();
+      //} catch (err) {
+      //print("there was an error saving data from bloc => $err");
+      //}
     }
 
     print("Now new Question State should be yielded");

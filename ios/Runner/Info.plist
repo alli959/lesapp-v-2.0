@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key></key>
+	<string></string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -19,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -27,9 +29,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSFileProviderDomainUsageDescription</key>
-	<string>User needs to be able to access files</string>
+	<string>User needs to be able to access files so temp audio file can be saved and deleted</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app requires micraphone usage</string>
+	<string>This app requires microphone usage to be able to play the games</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app requires Speech Recognition usage to be able to play the games</string>
 	<key>UILaunchStoryboardName</key>

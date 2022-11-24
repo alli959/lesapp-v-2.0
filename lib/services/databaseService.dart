@@ -325,6 +325,7 @@ class DatabaseService {
       return isSaveVoice;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return false;
     }
   }
 
@@ -337,6 +338,7 @@ class DatabaseService {
       return isManualFix;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return false;
     }
   }
 
