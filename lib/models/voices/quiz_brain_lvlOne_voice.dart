@@ -22,27 +22,11 @@ class QuizBrainLvlOneVoice {
   AudioPlayer incorrectPlayer = AudioPlayer();
 
   Future<AudioPlayer> playCorrect() async {
-    try {
-      correctPlayer = await cache.play(correctSound, volume: 0.2);
-      await Future.delayed(Duration(milliseconds: 1000));
-      correctPlayer.stop();
-    } catch (err) {
-      print("there was an error playing correct sound $err");
-      return null;
-    }
-    return null;
+    print("correct sound");
   }
 
   Future<AudioPlayer> playIncorrect() async {
-    try {
-      incorrectPlayer = await cache.play(incorrectSound, volume: 0.2);
-      await Future.delayed(Duration(milliseconds: 1000));
-      incorrectPlayer.stop();
-    } catch (err) {
-      print("there was an error playing correct sound");
-      return null;
-    }
-    return null;
+    print("incorrect sound");
   }
 
   List<String> _questionBank = [

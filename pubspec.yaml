@@ -38,6 +38,7 @@ dependencies:
   amplify_api: ^0.6.0
   amplify_storage_s3: ^0.6.0
   change_app_package_name: ^1.1.0
+  audio_session: ^0.1.10
 
 
 

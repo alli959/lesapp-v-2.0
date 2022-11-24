@@ -325,6 +325,7 @@ class DatabaseService {
       return isSaveVoice;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return false;
     }
   }
 
@@ -337,6 +338,7 @@ class DatabaseService {
       return isManualFix;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return false;
     }
   }
 
@@ -356,7 +358,7 @@ class DatabaseService {
 
       return await lesaCollection.save(userData);
     } catch (err) {
-      print("there was an error getting user data ====> $err");
+      print("there was an error setting user data ====> $err");
     }
   }
 
