@@ -14,6 +14,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/serverless/serverless_bloc.dart';
+import '../models/quiz_brain.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
 
@@ -53,7 +54,8 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlTwoMedium quizBrain = QuizBrainLvlTwoMedium();
+  QuizBrain quizBrain =
+      QuizBrain(typeofdifficulty: "medium", typeofgame: "words");
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();

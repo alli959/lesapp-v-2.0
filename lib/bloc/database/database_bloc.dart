@@ -111,6 +111,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     try {
       UserData userData = await _databaseService.getUserData();
       UserScore userScore = await _databaseService.getUserScores();
+
       yield UserDataState(userdata: userData, userscore: userScore);
     } catch (e) {
       yield DatabaseFailure();

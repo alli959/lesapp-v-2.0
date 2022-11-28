@@ -25,13 +25,15 @@ dependencies:
   provider: ^6.0.1
   random_color: ^1.0.5
   rflutter_alert: ^2.0.4
-  speech_to_text: ^5.4.3
+  speech_to_text: ^6.1.0
   flutter_sound_lite: ^8.5.0
   http: ^0.13.4
   flutter_cache_manager: ^3.3.0
   webview_cookie_manager: ^2.0.6
   google_speech: ^2.1.1
-  sound_stream: ^0.3.0
+  sound_stream:
+    git:
+      url: https://github.com/alli959/flutter-sound-stream.git
   amplify_flutter: ^0.6.0
   amplify_datastore: ^0.6.0
   amplify_auth_cognito: ^0.6.0

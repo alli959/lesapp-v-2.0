@@ -66,9 +66,8 @@ class _MyProfileState extends State<MyProfile> {
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Center(
-                              child: CircleAvatar(
-                                radius: 190,
-                                backgroundColor: Colors.black,
+                              child: Container(
+                                color: Colors.black54,
                               ),
                             ),
                           ),
@@ -149,7 +148,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlOneCapsScore
-                                    "${state.userscore.lvlOneCapsScore}",
+                                    "${state.userscore.lvlOneCapsScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -164,7 +163,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlOneScore
-                                    "${state.userscore.lvlOneScore}",
+                                    "${state.userscore.lvlOneScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -179,7 +178,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlOneVoiceScore
-                                    "${state.userscore.lvlOneVoiceScore}",
+                                    "${state.userscore.lvlOneVoiceScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -193,7 +192,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlTwoEasyScore
-                                    "${state.userscore.lvlTwoEasyScore}",
+                                    "${state.userscore.lvlTwoEasyScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -207,7 +206,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlTwoMediumScore
-                                    "${state.userscore.lvlTwoMediumScore}",
+                                    "${state.userscore.lvlTwoMediumScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -221,7 +220,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlTwoVoiceScore
-                                    "${state.userscore.lvlTwoVoiceScore}",
+                                    "${state.userscore.lvlTwoVoiceScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -235,7 +234,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlThreeEasyScore
-                                    "${state.userscore.lvlThreeEasyScore}",
+                                    "${state.userscore.lvlThreeEasyScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -249,7 +248,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlThreeMediumScore
-                                    "${state.userscore.lvlThreeMediumScore}",
+                                    "${state.userscore.lvlThreeMediumScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -263,7 +262,7 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                   Text(
                                     // userData.lvlThreeVoiceScore
-                                    "${state.userscore.lvlThreeVoiceScore}",
+                                    "${state.userscore.lvlThreeVoiceScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],

@@ -54,7 +54,7 @@ class _SignInState extends State<SignInForm> {
         backgroundColor: Color(0xFFE0FF62),
         automaticallyImplyLeading: false,
         actions: <Widget>[
-          FlatButton.icon(
+          TextButton.icon(
               onPressed: () {
                 _onRegisterViewButtonPressed();
               },

@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../models/quiz_brain.dart';
 import 'level_three_short_finish.dart';
 
 // B O R D  E I T T
@@ -56,7 +57,8 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlThreeEasy quizBrain = QuizBrainLvlThreeEasy();
+  QuizBrain quizBrain =
+      QuizBrain(typeofgame: "sentences", typeofdifficulty: "easy");
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();

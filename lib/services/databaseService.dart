@@ -25,8 +25,8 @@ class DatabaseService {
 
   StreamSubscription hubSubscription =
       Amplify.Hub.listen([HubChannel.DataStore], (hubEvent) async {
-    print("EVENT NAME IS ===============> ${hubEvent.eventName}");
-    print("EVENT PAYLOAD IS ===============> ${hubEvent.payload}");
+    // print("EVENT NAME IS ===============> ${hubEvent.eventName}");
+    // print("EVENT PAYLOAD IS ===============> ${hubEvent.payload}");
   });
 
   Future updateUserData(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
+import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
@@ -54,7 +55,7 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlOne quizBrain = QuizBrainLvlOne(false);
+  QuizBrain quizBrain = QuizBrain(typeofgame: "letters", isCap: false);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();

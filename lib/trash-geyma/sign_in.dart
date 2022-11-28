@@ -80,7 +80,7 @@ class _SignInState extends State<SignInForm> {
         backgroundColor: Color(0xFFE0FF62),
         automaticallyImplyLeading: false,
         actions: <Widget>[
-          FlatButton.icon(
+          TextButton.icon(
               onPressed: () {
                 print("pressed");
                 // widget.toggleView();
@@ -136,8 +136,8 @@ class _SignInState extends State<SignInForm> {
                   child: TextFormField(
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 6
-                        ? 'Lykilorð þarf að vera a.m.k 6 stafir'
+                    validator: (value) => value.length < 8
+                        ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                         : null,
                     onChanged: (value) {
                       setState(() {
@@ -180,7 +180,7 @@ class _SignInState extends State<SignInForm> {
   }
 
   void _showError(String error) {
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(error),
       backgroundColor: Theme.of(context).errorColor,
     ));

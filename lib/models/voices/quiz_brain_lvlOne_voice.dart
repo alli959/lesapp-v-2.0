@@ -1,5 +1,6 @@
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
+import '../PrefVoice.dart';
 import '../question.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
@@ -20,6 +21,9 @@ class QuizBrainLvlOneVoice {
   String incorrectSound = 'sound/incorrect_sound.mp3';
   AudioPlayer correctPlayer = AudioPlayer();
   AudioPlayer incorrectPlayer = AudioPlayer();
+
+  //add new values
+  var prefVoice = PrefVoice.DORA;
 
   Future<AudioPlayer> playCorrect() async {
     print("correct sound");

@@ -3,6 +3,7 @@ import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
+import 'package:Lesaforrit/models/quiz_brain.dart';
 
 import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
 import 'package:Lesaforrit/screens/level_three_finish.dart';
@@ -53,7 +54,8 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlThreeMedium quizBrain = QuizBrainLvlThreeMedium();
+  QuizBrain quizBrain =
+      QuizBrain(typeofgame: "sentences", typeofdifficulty: "medium");
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +14,7 @@ import '../bloc/serverless/serverless_bloc.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
 import 'level_one_caps_finish.dart';
+import 'package:Lesaforrit/models/quiz_brain.dart';
 
 // B O R D  E I T T
 class LevelOneCap extends StatelessWidget {
@@ -52,7 +52,7 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlOne quizBrain = QuizBrainLvlOne(true);
+  QuizBrain quizBrain = QuizBrain(typeofgame: "letters", isCap: true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
