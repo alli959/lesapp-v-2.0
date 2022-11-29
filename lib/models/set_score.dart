@@ -3,12 +3,6 @@ import 'dart:async';
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/models/UserData.dart';
-
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Easy.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlThree_voice.dart';
@@ -19,6 +13,8 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+
+import 'quiz_brain.dart';
 
 class SetScore extends StatelessWidget {
   String currentScore;
@@ -47,14 +43,9 @@ class SetScore extends StatelessWidget {
 
   static const String id = 'SetScore';
   final _formKey = GlobalKey<FormState>();
-  QuizBrainLvlOne quizBrainLvlOneCaps = QuizBrainLvlOne(true);
-  QuizBrainLvlOne quizBrainLvlOne = QuizBrainLvlOne(false);
+  QuizBrain quizBrain = QuizBrain();
   QuizBrainLvlOneVoice quizBrainLvlOneVoice = QuizBrainLvlOneVoice();
-  QuizBrainLvlTwoEasy quizBrainLvlTwoEasy = QuizBrainLvlTwoEasy();
-  QuizBrainLvlTwoMedium quizBrainLvlTwoMedium = QuizBrainLvlTwoMedium();
   QuizBrainLvlTwoVoice quizBrainLvlTwoVoice = QuizBrainLvlTwoVoice();
-  QuizBrainLvlThreeEasy quizBrainLvlThreeEasy = QuizBrainLvlThreeEasy();
-  QuizBrainLvlThreeMedium quizBrainLvlThreeMedium = QuizBrainLvlThreeMedium();
   QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
 
   String _currentName;

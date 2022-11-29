@@ -25,6 +25,7 @@ import 'package:speech_to_text/speech_to_text_provider.dart';
 import 'dart:async';
 import 'dart:math';
 
+import '../models/quiz_brain_voice.dart';
 import '../services/save_audio.dart';
 
 class LevelTwoVoice extends StatelessWidget {
@@ -98,7 +99,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlTwoVoice quizBrain = QuizBrainLvlTwoVoice();
+  QuizBrainVoice quizBrain = QuizBrainVoice();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -399,7 +400,7 @@ class _QuizPageState extends State<QuizPage> {
               isListening = false;
               isShowResult = true;
             }
-            if (state is NewQuestionState) {
+            if (state is NewVoiceQuestionState) {
               Map<String, bool> val = {
                 "onePoint": state.onePoint,
                 "twoPoints": state.twoPoints,

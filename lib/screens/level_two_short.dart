@@ -12,7 +12,6 @@ import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/quiz_brain.dart';
-import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
 import 'level_two_short_finish.dart';

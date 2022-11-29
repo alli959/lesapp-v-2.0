@@ -28,6 +28,8 @@ import 'dart:math' as math;
 
 import 'package:speech_to_text/speech_to_text_provider.dart';
 
+import '../models/quiz_brain_voice.dart';
+
 class LevelThreeVoice extends StatelessWidget {
   static const String id = 'level_three_short_voice';
   @override
@@ -99,7 +101,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlThreeVoice quizBrain = QuizBrainLvlThreeVoice();
+  QuizBrainVoice quizBrain = QuizBrainVoice();
   TimerWidget timer;
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
@@ -413,7 +415,7 @@ class _QuizPageState extends State<QuizPage> {
               isShowResult = true;
             }
 
-            if (state is NewQuestionState) {
+            if (state is NewVoiceQuestionState) {
               Map<String, bool> val = {
                 "onePoint": state.onePoint,
                 "twoPoints": state.twoPoints,

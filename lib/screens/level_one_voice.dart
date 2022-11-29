@@ -25,6 +25,9 @@ import 'package:speech_to_text/speech_to_text_provider.dart';
 import 'dart:async';
 import 'dart:math';
 
+import '../bloc/serverless/serverless_bloc.dart';
+import '../models/quiz_brain_voice.dart';
+import '../services/get_data.dart';
 import '../services/save_audio.dart';
 
 class LevelOneVoice extends StatelessWidget {
@@ -71,22 +74,29 @@ class LevelOneVoice extends StatelessWidget {
     final _speech = RepositoryProvider.of<VoiceService>(context);
     final _audioSave = RepositoryProvider.of<SaveAudio>(context);
     final _databaseService = RepositoryProvider.of<DatabaseService>(context);
-
-    return BlocProvider<VoiceBloc>(
-      create: (context) =>
-          VoiceBloc(_speech, 'level_1', _audioSave, _databaseService, dialog),
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: appBar,
-          title: Text('Raddgreining Stafa',
-              style: TextStyle(
-                  fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
-          iconTheme: IconThemeData(size: 36, color: Colors.black),
-        ),
-        endDrawer: SideMenu(),
-        body: QuizPage(),
-      ),
-    );
+    return BlocProvider<ServerlessBloc>(
+        create: (context) {
+          final _data = RepositoryProvider.of<GetData>(context);
+          final _database = RepositoryProvider.of<DatabaseService>(context);
+          var prefVoice = _database.getPreferedVoice();
+          return ServerlessBloc(_data, 'letters', 'low')
+            ..add(FetchEvent(prefvoice: prefVoice));
+        },
+        child: BlocProvider<VoiceBloc>(
+          create: (context) => VoiceBloc(
+              _speech, 'level_1', _audioSave, _databaseService, dialog),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: appBar,
+              title: Text('Raddgreining Stafa',
+                  style: TextStyle(
+                      fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
+              iconTheme: IconThemeData(size: 36, color: Colors.black),
+            ),
+            endDrawer: SideMenu(),
+            body: QuizPage(),
+          ),
+        ));
   }
 }
 
@@ -98,7 +108,7 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  QuizBrainLvlOneVoice quizBrain = QuizBrainLvlOneVoice();
+  QuizBrainVoice quizBrain = QuizBrainVoice();
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -224,7 +234,9 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _serverlessBloc = BlocProvider.of<ServerlessBloc>(context);
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
+
     listeningUpdate(
         String lastWords,
         List<SpeechRecognitionAlternative> alternates,
@@ -275,7 +287,6 @@ class _QuizPageState extends State<QuizPage> {
 
     void errorListener(SpeechRecognitionError error) {
       print("there was an error ${error}");
-      _logEvent('Received error status: $error');
       isNotListeningFunc();
     }
 
@@ -367,111 +378,126 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     // _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
-    return Container(
-      child: Scaffold(
-        body: BlocListener<VoiceBloc, VoiceState>(
-          listener: (context, state) {
-            if (state is VoiceFailure) {
-              print("VOICEBLOC STATE AFTER FAILURE ${_voiceBloc.state}");
-            }
-          },
-          child: BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
-            if (state is VoiceLoading) {
-              return Loading();
-            }
-            if (state is VoiceHasInitialized) {
-              print("state is voice initial");
-              getNewQuestion();
-            }
+    return BlocBuilder<ServerlessBloc, ServerlessState>(
+        builder: (context, state) {
+      if (state is ServerlessLoading) {
+        print("loading going on");
+        return Loading();
+      }
+      if (state is ServerlessFetch) {
+        print("state is serverlessfetch");
+        if (!started) {
+          quizBrain.addData(state.questionBank);
+        }
+      }
 
-            if (state is VoiceFailure) {}
-
-            if (state is UpdateState) {
-              if (state.lastWords != lastWords) {
-                lastWords = state.lastWords;
-                alternates = state.alternates;
+      return Container(
+        child: Scaffold(
+          body: BlocListener<VoiceBloc, VoiceState>(
+            listener: (context, state) {
+              if (state is VoiceFailure) {
+                print("VOICEBLOC STATE AFTER FAILURE ${_voiceBloc.state}");
               }
-              if (lastWords.toLowerCase().trim() ==
-                  question.toLowerCase().trim()) {
-                _voiceBloc.add(VoiceStoppedEvent());
+            },
+            child:
+                BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
+              if (state is VoiceLoading) {
+                return Loading();
               }
-            }
+              if (state is VoiceHasInitialized) {
+                print("state is voice initial");
+                getNewQuestion();
+              }
 
-            if (state is ShowResultState) {
-              isListening = false;
-              isShowResult = true;
-            }
+              if (state is VoiceFailure) {}
 
-            if (state is NewQuestionState) {
-              Map<String, bool> val = {
-                "onePoint": state.onePoint,
-                "twoPoints": state.twoPoints,
-                "threePoints": state.threePoints,
-                "fourPoints": state.fourPoints,
-                "fivePoints": state.fivePoints,
-              };
-              calc.trys += state.trys;
-              calc.correct += state.correct;
+              if (state is UpdateState) {
+                if (state.lastWords != lastWords) {
+                  lastWords = state.lastWords;
+                  alternates = state.alternates;
+                }
+                if (lastWords.toLowerCase().trim() ==
+                    question.toLowerCase().trim()) {
+                  _voiceBloc.add(VoiceStoppedEvent());
+                }
+              }
 
-              addScore(val);
-              getNewQuestion();
-            }
+              if (state is ShowResultState) {
+                isListening = false;
+                isShowResult = true;
+              }
 
-            if (state is IsListeningState) {
-              isListening = true;
-            }
-            if (state is IsNotListeningState) {
-              isListening = false;
-            }
-            if (state is VoiceStop) {
-              isListening = false;
-            }
+              if (state is NewVoiceQuestionState) {
+                Map<String, bool> val = {
+                  "onePoint": state.onePoint,
+                  "twoPoints": state.twoPoints,
+                  "threePoints": state.threePoints,
+                  "fourPoints": state.fourPoints,
+                  "fivePoints": state.fivePoints,
+                };
+                calc.trys += state.trys;
+                calc.correct += state.correct;
 
-            return Column(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: RecognitionResultsWidget(
-                      questionTime: questionTime,
-                      isListening: isListening,
-                      isShowResult: isShowResult,
-                      questionArr: questionArr,
-                      answerArr: answerArr,
-                      questionMap: questionMap,
-                      answerMap: answerMap,
-                      ondoneListener: doneListener,
-                      resultListener: resultListener,
-                      listeningUpdate: listeningUpdate,
-                      checkAnswer: checkAnswer,
-                      question: question,
-                      lastWords: lastWords,
-                      scoreKeeper: scoreKeeper,
-                      trys: calc.trys,
-                      correct: calc.correct.toString(),
-                      stig:
-                          "STIG : ${calc.checkPoints(calc.correct, calc.trys)}",
-                      cardColor: cardColor,
-                      stigColor: lightBlue,
-                      fontSize: 39,
-                      bottomBar: BottomBar(
-                          onTap: () {
-                            _voiceBloc.add(ResetEvent());
-                            Navigator.pop(context);
-                          },
-                          image: 'assets/images/bottomBar_bl.png'),
-                      shadowLevel: 30),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  color: lightBlue,
-                  child: SpeechStatusWidget(isListening: isListening),
-                ),
-              ],
-            );
-          }),
+                addScore(val);
+                getNewQuestion();
+              }
+
+              if (state is IsListeningState) {
+                isListening = true;
+              }
+              if (state is IsNotListeningState) {
+                isListening = false;
+              }
+              if (state is VoiceStop) {
+                isListening = false;
+              }
+
+              return Column(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: RecognitionResultsWidget(
+                        questionTime: questionTime,
+                        isListening: isListening,
+                        isShowResult: isShowResult,
+                        questionArr: questionArr,
+                        answerArr: answerArr,
+                        questionMap: questionMap,
+                        answerMap: answerMap,
+                        ondoneListener: doneListener,
+                        resultListener: resultListener,
+                        listeningUpdate: listeningUpdate,
+                        checkAnswer: checkAnswer,
+                        question: question,
+                        lastWords: lastWords,
+                        scoreKeeper: scoreKeeper,
+                        trys: calc.trys,
+                        correct: calc.correct.toString(),
+                        stig:
+                            "STIG : ${calc.checkPoints(calc.correct, calc.trys)}",
+                        cardColor: cardColor,
+                        stigColor: lightBlue,
+                        fontSize: 39,
+                        bottomBar: BottomBar(
+                            onTap: () {
+                              _voiceBloc.add(ResetEvent());
+                              Navigator.pop(context);
+                            },
+                            image: 'assets/images/bottomBar_bl.png'),
+                        shadowLevel: 30),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: lightBlue,
+                    child: SpeechStatusWidget(isListening: isListening),
+                  ),
+                ],
+              );
+            }),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void _logEvent(String eventDescription) {

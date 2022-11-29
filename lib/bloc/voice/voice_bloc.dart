@@ -63,7 +63,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapVoiceStartedEvent(event);
     }
 
-    if (event is NewQuestionEvent) {
+    if (event is NewVoiceQuestionEvent) {
       yield* _mapNewQuestionEvent(event);
     }
 
@@ -132,11 +132,11 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       await _speech.stopRecording();
       yield VoiceFailure(error: err);
     }
-    // yield NewQuestionState(question: _speech.question);
+    // yield NewVoiceQuestionState(question: _speech.question);
   }
 
-  Stream<VoiceState> _mapNewQuestionEvent(NewQuestionEvent event) async* {
-    yield NewQuestionState();
+  Stream<VoiceState> _mapNewQuestionEvent(NewVoiceQuestionEvent event) async* {
+    yield NewVoiceQuestionState();
   }
 
   Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
@@ -237,7 +237,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
     print("Now new Question State should be yielded");
 
-    yield NewQuestionState(
+    yield NewVoiceQuestionState(
         onePoint: onePoint,
         twoPoints: twoPoints,
         threePoints: threePoints,

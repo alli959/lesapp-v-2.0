@@ -3,7 +3,6 @@ import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/models/quiz_brain.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';

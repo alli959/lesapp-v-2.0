@@ -119,7 +119,7 @@ class SoundLevelState extends VoiceState {
   List<Object> get props => [level];
 }
 
-class NewQuestionState extends VoiceState {
+class NewVoiceQuestionState extends VoiceState {
   final bool onePoint;
   final bool twoPoints;
   final bool threePoints;
@@ -128,7 +128,7 @@ class NewQuestionState extends VoiceState {
   final int trys;
   final int correct;
 
-  NewQuestionState(
+  NewVoiceQuestionState(
       {this.onePoint,
       this.twoPoints,
       this.threePoints,

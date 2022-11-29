@@ -1,10 +1,5 @@
 import 'package:Lesaforrit/components/sidemenu.dart';
-
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Easy.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
+import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlTwo_voice.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +10,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'voices/quiz_brain_lvlThree_voice.dart';
 
 class Finish {
-  QuizBrainLvlOne quizBrainLvlOneCaps = QuizBrainLvlOne(true);
-  QuizBrainLvlOne quizBrainLvlOne = QuizBrainLvlOne(false);
+  QuizBrain quizBrain = QuizBrain();
   QuizBrainLvlOneVoice quizBrainLvlOneVoice = QuizBrainLvlOneVoice();
-  QuizBrainLvlTwoEasy quizBrainLvlTwoEasy = QuizBrainLvlTwoEasy();
-  QuizBrainLvlTwoMedium quizBrainLvlTwoMedium = QuizBrainLvlTwoMedium();
   QuizBrainLvlTwoVoice quizBrainLvlTwoVoice = QuizBrainLvlTwoVoice();
-  QuizBrainLvlThreeEasy quizBrainLvlThreeEasy = QuizBrainLvlThreeEasy();
-  QuizBrainLvlThreeMedium quizBrainLvlThreeMedium = QuizBrainLvlThreeMedium();
   QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
 
   Form FinishMethod(
@@ -39,14 +29,9 @@ class Finish {
     Color appBarColor,
   ) {
     String writePoints() {
-      quizBrainLvlOneCaps.reset();
-      quizBrainLvlOne.reset();
+      quizBrain.reset();
       quizBrainLvlOneVoice.reset();
-      quizBrainLvlTwoEasy.reset();
-      quizBrainLvlTwoMedium.reset();
       quizBrainLvlTwoVoice.reset();
-      quizBrainLvlThreeEasy.reset();
-      quizBrainLvlThreeMedium.reset();
       quizBrainLvlThreeVoice.reset();
       return stig.toStringAsFixed(0);
     }

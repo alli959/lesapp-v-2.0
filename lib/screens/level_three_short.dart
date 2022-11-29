@@ -8,8 +8,6 @@ import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
-
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:Lesaforrit/trash-geyma/letters.dart';

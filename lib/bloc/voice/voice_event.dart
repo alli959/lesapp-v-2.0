@@ -78,10 +78,10 @@ class SoundLevelEvent extends VoiceEvent {
   List<Object> get props => [level];
 }
 
-class NewQuestionEvent extends VoiceEvent {
+class NewVoiceQuestionEvent extends VoiceEvent {
   final String question;
 
-  NewQuestionEvent({@required this.question});
+  NewVoiceQuestionEvent({@required this.question});
 
   @override
   List<Object> get props => [question];

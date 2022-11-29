@@ -1,10 +1,5 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
-
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlOne.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Easy.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlThree_Medium.dart';
-import 'package:Lesaforrit/models/serverless/quiz_brain_lvlTwo_Medium.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
@@ -12,7 +7,7 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
-import '../models/serverless/quiz_brain_lvlTwo_Easy.dart';
+import '../models/quiz_brain.dart';
 import '../models/set_score.dart';
 import '../models/voices/quiz_brain_lvlOne_voice.dart';
 import '../models/voices/quiz_brain_lvlThree_voice.dart';
@@ -84,28 +79,17 @@ class LevelFin extends StatelessWidget {
     );
   }
 
+  final formKey = GlobalKey<FormState>();
   Finish finish = Finish();
-  QuizBrainLvlOne quizBrainLvlOneCaps = QuizBrainLvlOne(true);
-  QuizBrainLvlOne quizBrainLvlOne = QuizBrainLvlOne(false);
+  QuizBrain quizBrain = QuizBrain();
   QuizBrainLvlOneVoice quizBrainLvlOneVoice = QuizBrainLvlOneVoice();
-  QuizBrainLvlTwoEasy quizBrainLvlTwoEasy = QuizBrainLvlTwoEasy();
-  QuizBrainLvlTwoMedium quizBrainLvlTwoMedium = QuizBrainLvlTwoMedium();
   QuizBrainLvlTwoVoice quizBrainLvlTwoVoice = QuizBrainLvlTwoVoice();
-  QuizBrainLvlThreeEasy quizBrainLvlThreeEasy = QuizBrainLvlThreeEasy();
-  QuizBrainLvlThreeMedium quizBrainLvlThreeMedium = QuizBrainLvlThreeMedium();
   QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
 
-  final formKey = GlobalKey<FormState>();
-
   String writePoints() {
-    quizBrainLvlOneCaps.reset();
-    quizBrainLvlOne.reset();
+    quizBrain.reset();
     quizBrainLvlOneVoice.reset();
-    quizBrainLvlTwoEasy.reset();
-    quizBrainLvlTwoMedium.reset();
     quizBrainLvlTwoVoice.reset();
-    quizBrainLvlThreeEasy.reset();
-    quizBrainLvlThreeMedium.reset();
     quizBrainLvlThreeVoice.reset();
     return stig.toStringAsFixed(0);
   }
