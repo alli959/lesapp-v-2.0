@@ -1,6 +1,5 @@
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
 
-import 'package:Lesaforrit/screens/level_two_short.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,6 @@ import '../models/voices/quiz_brain_lvlThree_voice.dart';
 import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 import '../services/auth.dart';
 import 'home/welcome.dart';
-import 'level_two.dart';
 
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';

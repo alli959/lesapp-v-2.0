@@ -1,24 +1,37 @@
 import 'dart:async';
-import 'package:Lesaforrit/bloc/serverless/serverless_bloc.dart';
-import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
+import 'package:Lesaforrit/screens/level_finish.dart';
 
 import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../models/quiz_brain.dart';
+import '../bloc/serverless/serverless_bloc.dart';
+import '../components/arguments.dart';
+import '../models/listeners/level_listener.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
-import 'level_two_short_finish.dart';
+import 'level_one_caps_finish.dart';
+import 'package:Lesaforrit/models/quiz_brain.dart';
 
-// B O R D  E I T T
-class LevelTwoShort extends StatelessWidget {
-  static const String id = 'level_two_short';
+class Level extends StatelessWidget {
+  static const String id = 'level';
+
+  LevelListener _levelListenerConfig;
+  GameType _gameType;
+  String _difficulty;
+
+  Level(LevelArguments arguments) {
+    this._gameType = arguments.gameType;
+    this._levelListenerConfig = new LevelListener(arguments.gameType);
+    this._difficulty = _levelListenerConfig.selecteddifficulty;
+    this._levelListenerConfig.init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,24 +40,27 @@ class LevelTwoShort extends StatelessWidget {
           final _data = RepositoryProvider.of<GetData>(context);
           final _database = RepositoryProvider.of<DatabaseService>(context);
           var prefVoice = _database.getPreferedVoice();
-          return ServerlessBloc(_data, 'words', 'easy')
+          return ServerlessBloc(_data, _levelListenerConfig.typeofgame,
+              _levelListenerConfig.selecteddifficulty)
             ..add(FetchEvent(prefvoice: prefVoice));
         },
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: appBar,
-            title: Text('Stutt Orð',
+            title: Text(_levelListenerConfig.title,
                 style: TextStyle(fontSize: 22, color: Colors.black)),
             iconTheme: IconThemeData(size: 36, color: Colors.black),
           ),
           endDrawer: SideMenu(),
-          body: QuizPage(),
+          body: QuizPage(config: _levelListenerConfig),
         ));
   }
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key}) : super(key: key);
+  QuizPage({Key key, this.config}) : super(key: key);
+
+  LevelListener config;
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -52,8 +68,7 @@ class QuizPage extends StatefulWidget {
 
 // The state of the widget
 class _QuizPageState extends State<QuizPage> {
-  QuizBrain quizBrain =
-      QuizBrain(typeofdifficulty: "easy", typeofgame: "words");
+  QuizBrain quizBrain = QuizBrain(typeofgame: "letters", isCap: true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -67,14 +82,13 @@ class _QuizPageState extends State<QuizPage> {
   double soundPad = 100;
   double soundPadBottom = 0;
   double soundIconSize = 50;
-
   String upperLetterImageCorrect = 'assets/images/star.png';
   String lowerLetterImageCorrect = 'assets/images/star.png';
   String upperLetterImageIncorrect = 'assets/images/sorryWrong.png';
   String lowerLetterImageIncorrect = 'assets/images/sorryWrong.png';
+  String emptyImage = 'assets/images/empty.png';
   String upperLetterImage = 'assets/images/empty.png';
   String lowerLetterImage = 'assets/images/empty.png';
-  String emptyImage = 'assets/images/empty.png';
   Color letterColorOne = Colors.black;
   Color letterColorTwo = Colors.black;
 
@@ -90,7 +104,6 @@ class _QuizPageState extends State<QuizPage> {
   void checkAnswer(bool wasCorrect) {
     enabled = true;
     soundPress = 0;
-
     if (quizBrain.isFinished() == true) {
       scoreKeeper = [];
       quizBrain.reset(); // empty scorekeeper
@@ -105,7 +118,6 @@ class _QuizPageState extends State<QuizPage> {
           size: 31,
         ));
         quizBrain.stars++;
-        // delay();
       } else {
         // Notandi valdi  R A N G T  //  F A L S E
         if (scoreKeeper.isNotEmpty) {
@@ -117,28 +129,28 @@ class _QuizPageState extends State<QuizPage> {
         }
       }
     }
-    // Kemur með nýja spurningu, en ef notandi hefur fengið 10 stjörnur þá flytaj í finishborð (e. 1 sec)
     if (quizBrain.stars < 10) {
       getNewQuestion();
       qEnabled = true;
     } else {
       Timer(Duration(seconds: 1), () {
+        // print("finish type is ${widget.config.finishtype.name}");
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TwoShortFinish(
-              stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
-            ),
-          ),
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) => LevelFinish(
+                LevelFinishArguments(widget.config.finishtype,
+                    calc.calculatePoints(calc.correct, calc.trys) * 100),
+              ),
+            ));
       });
     }
   }
 
   void check(answer) {
     if (answer == 'upperCorrect') {
-      upperLetterImage = upperLetterImageCorrect;
       quizBrain.playCorrect();
+      upperLetterImage = upperLetterImageCorrect;
     }
     if (answer == 'lowerCorrect') {
       quizBrain.playCorrect();
@@ -155,6 +167,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void getNewQuestion() {
+    print("we are at the new question function");
     letterOne = quizBrain.getQuestionText1();
     letterTwo = quizBrain.getQuestionText2();
     upperLetterImage = emptyImage;
@@ -173,9 +186,11 @@ class _QuizPageState extends State<QuizPage> {
         return Loading();
       }
       if (state is ServerlessFetch) {
-        print("state is serverlessfetch");
+        print("state is serverlessfetcherino");
+        print("SERVERLESS FETCH AT LEVEL ${state.questionBank}");
         if (!started) {
-          quizBrain.addData(state.questionBank);
+          quizBrain.addData(state.questionBank, widget.config.isCap,
+              widget.config.typeofgame, widget.config.selecteddifficulty);
         }
       }
       if (state is CheckAnswerState) {
@@ -208,12 +223,12 @@ class _QuizPageState extends State<QuizPage> {
         started = true;
         quizBrain.playLocalAsset();
       }
-
+      print("state is neither serverlessfetch nor loading");
       return (LevelTemplate(
-          fontSize: 78,
-          cardColor: cardColorLvlTwo,
-          stigColor: lightGreen,
-          shadowLevel: 145,
+          fontSize: widget.config.fontsize,
+          cardColor: widget.config.cardcolor,
+          stigColor: widget.config.stigcolor,
+          shadowLevel: widget.config.shadowlevel,
           soundCircleSize: soundCircleSize,
           soundPad: soundPad,
           soundPadBottom: soundPadBottom,
@@ -247,7 +262,7 @@ class _QuizPageState extends State<QuizPage> {
               onTap: () {
                 Navigator.pop(context);
               },
-              image: 'assets/images/bottomBar_gr.png'),
+              image: widget.config.bottombarimage),
           stig: "STIG : ${calc.checkPoints(calc.correct, calc.trys)}"));
     });
   }

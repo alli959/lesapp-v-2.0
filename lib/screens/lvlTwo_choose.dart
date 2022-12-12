@@ -1,9 +1,11 @@
 import 'package:Lesaforrit/models/choose_long_short.dart';
-import 'package:Lesaforrit/screens/level_two_short.dart';
-import 'package:Lesaforrit/screens/level_two_voice.dart';
+import 'package:Lesaforrit/models/listeners/level_listener.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'level_two.dart';
+import '../components/arguments.dart';
+import '../models/listeners/level_voice_listener.dart';
+import 'level.dart';
+import 'level_voice.dart';
 
 class LvlTwoChoose extends StatelessWidget {
   static const String id = 'lvl_two_choose';
@@ -13,17 +15,20 @@ class LvlTwoChoose extends StatelessWidget {
     return Choose(
         buttonOne: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
-              LevelTwoShort.id, (Route<dynamic> route) => false);
+              Level.id, (Route<dynamic> route) => false,
+              arguments: LevelArguments(GameType.wordsEasy));
           // Navigator.pushNamed(context, LevelTwoShort.id);  // þessi hreinsar ekki routes en efri gerir það
         },
         buttonTwo: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
-              LevelTwo.id, (Route<dynamic> route) => false);
+              Level.id, (Route<dynamic> route) => false,
+              arguments: LevelArguments(GameType.wordsMedium));
           // Navigator.pushNamed(context, LevelTwo.id);
         },
         buttonThree: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
-              LevelTwoVoice.id, (Route<dynamic> route) => false);
+              LevelVoice.id, (Route<dynamic> route) => false,
+              arguments: LevelVoiceArguments(VoiceGameType.words));
         },
         buttonTextOne: 'Stutt orð',
         buttonTextTwo: 'Lengri orð',

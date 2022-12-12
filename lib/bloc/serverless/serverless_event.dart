@@ -11,11 +11,12 @@ class PlayGameEvent extends ServerlessEvent {}
 
 class FetchEvent extends ServerlessEvent {
   Future<PrefVoice> prefvoice;
+  Function difficulty = null;
 
-  FetchEvent({this.prefvoice});
+  FetchEvent({this.prefvoice, this.difficulty});
 
   @override
-  List<Object> get props => [prefvoice];
+  List<Object> get props => [prefvoice, difficulty];
 }
 
 class CheckAnswerEvent extends ServerlessEvent {

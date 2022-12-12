@@ -4,19 +4,21 @@ import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 
+import 'listeners/level_voice_listener.dart';
+
 class Choose extends StatelessWidget {
   static const String id = 'low_or_caps';
-  Choose({
-    this.buttonOne,
-    this.buttonTwo,
-    this.buttonThree,
-    this.buttonTextOne,
-    this.buttonTextTwo,
-    this.buttonTextThree,
-    this.appBarText,
-    this.image,
-    this.appBarColor,
-  });
+  Choose(
+      {this.buttonOne,
+      this.buttonTwo,
+      this.buttonThree,
+      this.buttonTextOne,
+      this.buttonTextTwo,
+      this.buttonTextThree,
+      this.appBarText,
+      this.image,
+      this.appBarColor,
+      this.gametype});
 
   Function buttonOne;
   Function buttonTwo;
@@ -27,6 +29,7 @@ class Choose extends StatelessWidget {
   String appBarText;
   String image;
   Color appBarColor;
+  VoiceGameType gametype;
 
   @override
   Widget build(BuildContext context) {

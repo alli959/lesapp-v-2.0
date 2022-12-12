@@ -110,9 +110,11 @@ class VoiceService {
   Uint8List saveFile(List<Uint8List> contents, sampleRate) {
     // File recordedFile = File(await getFilePath());
     print("at savefile place");
+    print("contents are $contents");
     // first stop recording
     List<int> data = [];
     for (var i = 0; i < contents.length; i++) {
+      print("i is $i");
       try {
         data.addAll(contents[i]);
       } catch (err) {
@@ -271,6 +273,7 @@ class VoiceService {
 
   Future stopRecording({bool isCancel = false}) async {
     print("isCancel in stopeed Recording is ==> $isCancel");
+    print("audioList is => $audioList");
     // await saveFile(audioList, 16000);
     this.isCancel = isCancel;
     if (isCancel || !isSave) {

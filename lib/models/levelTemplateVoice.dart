@@ -97,6 +97,9 @@ class LevelTemplateVoice extends StatelessWidget {
 
     _onCancelButtonPressed() {
       print("cancelbutton pressed");
+      this.answerArr = [];
+      this.answerMap = [];
+      this.lastWords = "";
       _voiceBloc.add(VoiceCancelEvent());
     }
 
@@ -333,7 +336,7 @@ class LevelTemplateVoice extends StatelessWidget {
                       fit: FlexFit.tight,
                       child: Container(
                         child: RoundIconButton(
-                          color: Colors.transparent,
+                          color: Colors.white,
                           icon: Icons.arrow_back,
                           iconSize: 35,
                           circleSize: 55,
@@ -358,7 +361,7 @@ class LevelTemplateVoice extends StatelessWidget {
                       fit: FlexFit.tight,
                       child: Container(
                         child: RoundIconButton(
-                          color: Colors.transparent,
+                          color: Colors.white,
                           icon: Icons.stop,
                           iconSize: 35,
                           circleSize: 55,
@@ -379,10 +382,10 @@ class LevelTemplateVoice extends StatelessWidget {
                 ])
               : Column(children: [
                   RoundIconButton(
-                    color: Colors.transparent,
+                    color: Colors.white,
                     icon: Icons.mic,
-                    iconSize: 35,
-                    circleSize: 55,
+                    iconSize: 50,
+                    circleSize: 70,
                     onPressed: () =>
                         !isShowResult ? _onVoiceButtonPressed() : {},
                   ),

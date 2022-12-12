@@ -44,25 +44,36 @@ class QuizBrainVoice {
     print("incorrect sound");
   }
 
-  List<Question> _questionBank;
+  List<Question> _questionBank = [];
 
-  void addData(List<Question> questionbank) {
+  void addData(
+      List<Question> questionbank, String typeofgame, String difficulty) {
+    print(
+        "IN VOICE ADD DATA WITH (${questionbank.map((e) => e.questionText)})");
+
+    if (typeofgame != null) {
+      this.typeofgame = typeofgame;
+    }
+    if (difficulty != null) {
+      this.typeofgamedifficulty = typeofgamedifficulty;
+    }
+
     if (this.typeofgame == "letters") {
       if (!hasInitialized) {
-        if (isCap) {
-          for (var i = 0; i < questionbank.length; i++) {
-            String text = questionbank[i].questionText;
-            if (text.toUpperCase() == text) {
-              this._questionBank.add(questionbank[i]);
-            }
+        for (var i = 0; i < questionbank.length; i++) {
+          Question question = questionbank[i];
+
+          String text = question.questionText;
+          if (text.toUpperCase() == text) {
+            text = text + text.toLowerCase();
+            print("text is $text");
+            questionbank[i].questionText = text;
+          } else {
+            text = text.toUpperCase() + text;
+            print("text is $text");
           }
-        } else {
-          for (var i = 0; i < questionbank.length; i++) {
-            String text = questionbank[i].questionText;
-            if (text.toLowerCase() == text) {
-              this._questionBank.add(questionbank[i]);
-            }
-          }
+          question.setQuestionText(text);
+          this._questionBank.add(question);
         }
         hasInitialized = true;
       }

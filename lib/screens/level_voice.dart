@@ -1,3 +1,21 @@
+// variables that need to be changed depending on level
+
+//INIT config =>
+
+// type                   level_1                      level_2                                                        level_3
+// level                  "level_1"                    "level_2"                                                      "level_3"
+// typeofgame             "letters"                    "words"                                                        "sentences"
+// typeofdifficulty        null                        ["easy","medium"]                                              ["easy",medium]
+// selecteddifficulty      "low"                       "easy"||"medium"                                               "easy"||"medium"
+// difftranslate           ""                          {"easy": "Auðvellt", "medium": "Miðlungs"}                     {"easy": "Auðvellt", "medium": "Miðlungs"}
+// title                   "Raddgreining Stafa"        "Raddgreining Orða ${difftranslate[$selecteddifficulty]}"      "Raddgreining Setninga ${difftranslate[$selecteddifficulty]}"
+// questionTime            3                           5                                                              8
+// finishwidget            OneVoiceFinish              TwoVoiceFinish                                                 ThreeVoiceFinish
+// contColor               lightBlue                   Color.fromARGB(255, 109, 223, 112)                             Theme.of(context).backgroundColor
+// cardColor               cardColor                   cardColorLvlTwo                                                cardColorLvlThree
+// stigColor               lightCyan                   lightGreen                                                     lightBlue
+// isLetter                true                        false                                                          false
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
@@ -6,35 +24,97 @@ import 'package:Lesaforrit/components/my_flutter_app_icons.dart';
 import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
+import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/screens/level_one_voice_finish.dart';
 import 'package:Lesaforrit/screens/level_three_short_finish.dart';
+import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
-import 'package:Lesaforrit/trash-geyma/letters.dart';
+import 'package:Lesaforrit/shared/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:speech_to_text/speech_to_text_provider.dart';
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' as math;
+
+import 'package:speech_to_text/speech_to_text_provider.dart';
 
 import '../bloc/serverless/serverless_bloc.dart';
+import '../components/arguments.dart';
 import '../models/quiz_brain_voice.dart';
 import '../services/get_data.dart';
-import '../services/save_audio.dart';
+import 'level_finish.dart';
 
-class LevelOneVoice extends StatelessWidget {
-  static const String id = 'level_One_voice';
+class LevelVoice extends StatelessWidget {
+  static const String id = 'level_voice';
+
+  LevelVoiceListener _levelVoiceConfig;
+
+  String _difficulty;
+  bool haschosendifficulty = false;
+  VoiceGameType _gameType;
+
+  LevelVoice(LevelVoiceArguments arguments) {
+    this._gameType = arguments.gameType;
+    this._levelVoiceConfig = new LevelVoiceListener(this._gameType);
+    this._levelVoiceConfig.init();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<bool> dialog(callback) async {
+    Future<bool> showDifficultyDialog(callback) async {
+      return _levelVoiceConfig.haschosendifficulty
+          ? true
+          : await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text('Veldu erfiðleikastig'),
+                  content: const Text('Veldu erfiðleikastig fyrir leik'), //FIX
+                  actions: [
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      color: Colors.lightGreen,
+                      child: TextButton(
+                        child: Text('Auðvellt',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          callback("easy");
+                          _levelVoiceConfig.setDifficulty("easy");
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      color: Colors.blueGrey,
+                      child: TextButton(
+                        child: Text('Miðlungs',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          callback("medium");
+                          _levelVoiceConfig.setDifficulty("medium");
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+    }
+
+    Future<bool> manualFixDialog(callback) async {
       return await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -74,41 +154,47 @@ class LevelOneVoice extends StatelessWidget {
     final _speech = RepositoryProvider.of<VoiceService>(context);
     final _audioSave = RepositoryProvider.of<SaveAudio>(context);
     final _databaseService = RepositoryProvider.of<DatabaseService>(context);
+
     return BlocProvider<ServerlessBloc>(
         create: (context) {
           final _data = RepositoryProvider.of<GetData>(context);
           final _database = RepositoryProvider.of<DatabaseService>(context);
           var prefVoice = _database.getPreferedVoice();
-          return ServerlessBloc(_data, 'letters', 'low')
-            ..add(FetchEvent(prefvoice: prefVoice));
+          return ServerlessBloc(_data, _levelVoiceConfig.typeofgame,
+              _levelVoiceConfig.selecteddifficulty)
+            ..add(FetchEvent(
+                prefvoice: prefVoice, difficulty: showDifficultyDialog));
         },
         child: BlocProvider<VoiceBloc>(
-          create: (context) => VoiceBloc(
-              _speech, 'level_1', _audioSave, _databaseService, dialog),
+          create: (context) => VoiceBloc(_speech, _levelVoiceConfig.level,
+              _audioSave, _databaseService, manualFixDialog),
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: appBar,
-              title: Text('Raddgreining Stafa',
+              title: Text(_levelVoiceConfig.title,
                   style: TextStyle(
-                      fontSize: 22, color: Color.fromARGB(255, 57, 53, 53))),
+                      fontSize: _gameType.name == "sentences" ? 18 : 22,
+                      color: Color.fromARGB(255, 57, 53, 53))),
               iconTheme: IconThemeData(size: 36, color: Colors.black),
             ),
             endDrawer: SideMenu(),
-            body: QuizPage(),
+            body: QuizPage(config: _levelVoiceConfig),
           ),
         ));
   }
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key}) : super(key: key);
+  QuizPage({Key key, this.config}) : super(key: key);
 
+  LevelVoiceListener config;
   @override
   _QuizPageState createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
   QuizBrainVoice quizBrain = QuizBrainVoice();
+  TimerWidget timer;
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
   DatabaseService databaseService = DatabaseService();
@@ -144,7 +230,9 @@ class _QuizPageState extends State<QuizPage> {
   double maxSoundLevel;
   double level;
   bool isShowResult = false;
-  int questionTime = 3;
+  File audioFile;
+  int questionTime = 8;
+  bool areButtonsDisabled = false;
 
   void addScore(Map<String, bool> state) {
     quizBrain.stars++;
@@ -188,13 +276,13 @@ class _QuizPageState extends State<QuizPage> {
       // _voiceBloc.add(ResetEvent());
       Timer(Duration(seconds: 1), () {
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OneVoiceFinish(
-              stig: (calc.calculatePoints(calc.correct, calc.trys)) * 100,
-            ),
-          ),
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) => LevelFinish(
+                LevelFinishArguments(widget.config.finishtype,
+                    calc.calculatePoints(calc.correct, calc.trys) * 100),
+              ),
+            ));
       });
     }
   }
@@ -214,6 +302,7 @@ class _QuizPageState extends State<QuizPage> {
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
     isShowResult = false;
+    areButtonsDisabled = false;
   }
 
   void cancelRecord() {
@@ -234,27 +323,27 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final _serverlessBloc = BlocProvider.of<ServerlessBloc>(context);
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
-
-    listeningUpdate(
-        String lastWords,
-        List<SpeechRecognitionAlternative> alternates,
-        bool isListening,
-        String question) {
+    LevelVoiceListener config = widget.config;
+    listeningUpdate(String lWords, List<SpeechRecognitionAlternative> alter,
+        bool isList, String quest) {
+      print("alternatives =============>>>>>> $alternates");
       // if (!isListening) {
       //   _voiceBloc.add(NewQuestionEvent(question: question));
       // }
+      var newLWords = quizBrain.bestLastWord(lWords, quest, alter);
       _voiceBloc.add(UpdateEvent(
-          lastWords: lastWords,
-          alternates: alternates,
-          isListening: isListening,
-          question: question));
+          lastWords: newLWords,
+          alternates: alter,
+          isListening: isList,
+          question: quest));
     }
 
     checkAnswer(bool onePoint, bool twoPoints, bool threePoints,
         bool fourPoints, bool fivePoints,
         {String username,
+
+        /// Correct, Incorrect, Manual_Correct, Manual_Incorrect
         String typeoffile,
         String question,
         String answer,
@@ -281,12 +370,17 @@ class _QuizPageState extends State<QuizPage> {
           correct: correct));
     }
 
+    isListeningFunc() {
+      _voiceBloc.add(IsListeningEvent());
+    }
+
     isNotListeningFunc() {
       _voiceBloc.add(IsNotListeningEvent());
     }
 
     void errorListener(SpeechRecognitionError error) {
       print("there was an error ${error}");
+      _logEvent('Received error status: $error');
       isNotListeningFunc();
     }
 
@@ -295,10 +389,11 @@ class _QuizPageState extends State<QuizPage> {
     }
 
     void doneListener({Uint8List file = null, bool isCancel = false}) {
-      if (isCancel) {
+      if (isCancel || lastWords == "") {
         cancelRecord();
       } else {
         print("call is done and below are the values");
+
         print("lastWords is =============> $lastWords");
         print("alternates are =============> $alternates");
         // bool isFinal = result.results.map((e) => e.isFinal) as bool;
@@ -311,7 +406,7 @@ class _QuizPageState extends State<QuizPage> {
         lastWords = quizBrain.bestLastWord(lastWords, question, alternates);
 
         Map<String, Object> score =
-            quizBrain.isCorrect(lastWords, question, "level_1");
+            quizBrain.isCorrect(lastWords, question, config.level);
         double finalPoints = score['points'];
         points = finalPoints;
 
@@ -377,7 +472,6 @@ class _QuizPageState extends State<QuizPage> {
           statusListener: statusListener, errorListener: errorListener));
     }
 
-    // _voiceBloc.add(VoiceInitializeEvent(listeningUpdate: listeningUpdate));
     return BlocBuilder<ServerlessBloc, ServerlessState>(
         builder: (context, state) {
       if (state is ServerlessLoading) {
@@ -387,31 +481,33 @@ class _QuizPageState extends State<QuizPage> {
       if (state is ServerlessFetch) {
         print("state is serverlessfetch");
         if (!started) {
-          quizBrain.addData(state.questionBank);
+          quizBrain.addData(state.questionBank, widget.config.typeofgame,
+              widget.config.selecteddifficulty);
         }
       }
-
       return Container(
         child: Scaffold(
           body: BlocListener<VoiceBloc, VoiceState>(
             listener: (context, state) {
               if (state is VoiceFailure) {
                 print("VOICEBLOC STATE AFTER FAILURE ${_voiceBloc.state}");
+                print("voice failure, why is this happening?");
               }
             },
             child:
                 BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
               if (state is VoiceLoading) {
+                print(
+                    "VOICEBLOC STATE AFTER Voice Loading ${_voiceBloc.state}");
                 return Loading();
               }
               if (state is VoiceHasInitialized) {
                 print("state is voice initial");
                 getNewQuestion();
               }
-
               if (state is VoiceFailure) {}
-
               if (state is UpdateState) {
+                print("state is updatestate");
                 if (state.lastWords != lastWords) {
                   lastWords = state.lastWords;
                   alternates = state.alternates;
@@ -441,7 +537,6 @@ class _QuizPageState extends State<QuizPage> {
                 addScore(val);
                 getNewQuestion();
               }
-
               if (state is IsListeningState) {
                 isListening = true;
               }
@@ -457,7 +552,7 @@ class _QuizPageState extends State<QuizPage> {
                   Expanded(
                     flex: 4,
                     child: RecognitionResultsWidget(
-                        questionTime: questionTime,
+                        questionTime: config.questionTime,
                         isListening: isListening,
                         isShowResult: isShowResult,
                         questionArr: questionArr,
@@ -475,11 +570,12 @@ class _QuizPageState extends State<QuizPage> {
                         correct: calc.correct.toString(),
                         stig:
                             "STIG : ${calc.checkPoints(calc.correct, calc.trys)}",
-                        cardColor: cardColor,
-                        stigColor: lightBlue,
+                        cardColor: config.cardColor,
+                        stigColor: config.stigColor,
                         fontSize: 39,
                         bottomBar: BottomBar(
                             onTap: () {
+                              print("tapped");
                               _voiceBloc.add(ResetEvent());
                               Navigator.pop(context);
                             },
@@ -488,7 +584,7 @@ class _QuizPageState extends State<QuizPage> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
-                    color: lightBlue,
+                    color: config.contColor,
                     child: SpeechStatusWidget(isListening: isListening),
                   ),
                 ],
@@ -559,29 +655,29 @@ class RecognitionResultsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LevelTemplateVoice(
-        questionTime: questionTime,
-        isListening: isListening,
-        isShowResult: isShowResult,
-        questionArr: questionArr,
-        answerArr: answerArr,
-        questionMap: questionMap,
-        answerMap: answerMap,
-        ondoneListener: ondoneListener,
-        resultListener: resultListener,
-        listeningUpdate: listeningUpdate,
-        checkAnswer: checkAnswer,
-        fontSize: 39,
-        cardColor: cardColor,
-        stigColor: lightCyan,
-        shadowLevel: 30,
-        question: question,
-        lastWords: lastWords,
-        scoreKeeper: scoreKeeper,
-        trys: trys,
-        correct: correct,
-        stig: stig,
-        bottomBar: bottomBar,
-        isLetters: true);
+      questionTime: questionTime,
+      isListening: isListening,
+      isShowResult: isShowResult,
+      questionArr: questionArr,
+      answerArr: answerArr,
+      questionMap: questionMap,
+      answerMap: answerMap,
+      ondoneListener: ondoneListener,
+      resultListener: resultListener,
+      listeningUpdate: listeningUpdate,
+      checkAnswer: checkAnswer,
+      fontSize: 39,
+      cardColor: cardColor,
+      stigColor: stigColor,
+      shadowLevel: 30,
+      question: question,
+      lastWords: lastWords,
+      scoreKeeper: scoreKeeper,
+      trys: trys,
+      correct: correct,
+      stig: stig,
+      bottomBar: bottomBar,
+    );
   }
 }
 
@@ -601,11 +697,11 @@ class SpeechStatusWidget extends StatelessWidget {
         child: isListening
             ? Text(
                 "Að hlusta...",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               )
             : Text(
-                'Ekki að hlusta',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Ekki að hlusta, ýttu á hljóðnema',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
       ),
     );

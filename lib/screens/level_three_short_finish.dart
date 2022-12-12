@@ -1,7 +1,4 @@
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
-
-import 'package:Lesaforrit/screens/level_three.dart';
-import 'package:Lesaforrit/screens/level_three_short.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';

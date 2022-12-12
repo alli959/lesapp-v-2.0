@@ -8,6 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:meta/meta.dart';
 
+import '../../components/dialog.dart';
 import '../../models/PrefVoice.dart';
 
 part 'serverless_event.dart';
@@ -16,7 +17,7 @@ part 'serverless_state.dart';
 class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
   final GetData _data;
   final String _typeofgame;
-  final String _typeofdifficulty;
+  String _typeofdifficulty;
   ServerlessBloc(GetData data, String typeofgame, String typeofdifficulty)
       : assert(data != null),
         _data = data,
@@ -40,6 +41,14 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
   Stream<ServerlessState> _mapFetchData(FetchEvent event) async* {
     print("at fetchdata guy");
     yield ServerlessLoading();
+    if (event.difficulty != null) {
+      print("ERR EVENT DIFFICULTY IS NOT NULL");
+      await event.difficulty(
+          (String difficulty) => {this._typeofdifficulty = difficulty});
+    }
+    yield ServerlessLoading();
+    print(
+        "bloc type of game and difficulty is $_typeofgame, $_typeofdifficulty");
     _data.setData(_typeofgame, _typeofdifficulty);
     List<Data> data;
     try {

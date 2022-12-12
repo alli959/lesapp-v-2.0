@@ -1,41 +1,56 @@
-import 'package:Lesaforrit/bloc/database/database_bloc.dart';
+import 'package:Lesaforrit/components/arguments.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
-import 'package:Lesaforrit/services/auth.dart';
-import 'package:Lesaforrit/services/voiceService.dart';
+import 'package:Lesaforrit/models/quiz_brain_voice.dart';
+import 'package:Lesaforrit/screens/lvlOne_choose.dart';
+import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
+
+import '../models/listeners/level_finish_listener.dart';
 import '../models/quiz_brain.dart';
 import '../models/set_score.dart';
 import '../models/voices/quiz_brain_lvlOne_voice.dart';
 import '../models/voices/quiz_brain_lvlThree_voice.dart';
 import '../models/voices/quiz_brain_lvlTwo_voice.dart';
+import '../services/auth.dart';
 import 'home/welcome.dart';
 
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import 'package:Lesaforrit/models/usr.dart';
-
 import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
-class TwoVoiceFinish extends StatelessWidget {
-  TwoVoiceFinish({@required this.stig});
+class LevelFinish extends StatelessWidget {
   double stig;
-  static const String id = 'TwoVoiceFinish';
+  FinishGameType gameType;
+  FinishGameListener _config;
 
+  LevelFinish(LevelFinishArguments args) {
+    this.stig = args.score;
+    this.gameType = args.gameType;
+    this._config = new FinishGameListener(gameType);
+    this._config.init();
+  }
+
+  // static const String id = 'LevelFinish';
   @override
   Widget build(BuildContext context) {
+    print("stig is => $stig");
+    // print("gameType is => ${this.gameType.name}");
+    print("stig is => $stig");
+    print("stig is => $stig");
     var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
-    databaseBloc..add(UpdateUserScore(score: stig, typeof: 'lvlTwoVoiceScore'));
-
+    databaseBloc..add(UpdateUserScore(score: stig, typeof: _config.typeofkey));
     return LevelFin(
       stig: stig,
-      image: 'assets/images/bear_shadow.png',
-      undertext: '\n stig fyrir þetta borð!',
-      appBarText: 'Upplesin Orð',
+      image: _config.image,
+      undertext: '\n Stig!',
+      appBarText: _config.appBarText,
     );
   }
 }
@@ -53,65 +68,58 @@ class LevelFin extends StatelessWidget {
   String undertext;
   String appBarText;
 
-  Widget button1(double stigamet, String uid) {
+  Widget button1(double stig, DatabaseBloc databaseBloc) {
     return SetScore(
-      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
+      currentScore: stig.toStringAsFixed(0),
+      level: LvlOneChoose.id,
+      text: 'Borð 1: Stafir',
+    );
+  }
+
+  Widget button2(double stig, DatabaseBloc databaseBloc) {
+    return SetScore(
+      currentScore: stig.toStringAsFixed(0),
       level: LvlTwoChoose.id,
       text: 'Borð 2: Orð',
     );
   }
 
-  Widget button2(double stigamet, String uid) {
+  Widget button3(double stig, DatabaseBloc databaseBloc) {
     return SetScore(
-      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
+      currentScore: stig.toStringAsFixed(0),
       level: LvlThreeChoose.id,
       text: 'Borð 3: Setningar',
     );
   }
 
-  Widget button3(double stigamet, String uid) {
-    return SetScore(
-      currentScoreTwoVoice: stigamet.toStringAsFixed(0),
-      level: Welcome.id,
-      text: 'Heim',
-    );
-  }
-
-  final formKey = GlobalKey<FormState>();
   Finish finish = Finish();
   QuizBrain quizBrain = QuizBrain();
-  QuizBrainLvlOneVoice quizBrainLvlOneVoice = QuizBrainLvlOneVoice();
-  QuizBrainLvlTwoVoice quizBrainLvlTwoVoice = QuizBrainLvlTwoVoice();
-  QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
+  QuizBrainVoice quizBrainVoice = QuizBrainVoice();
 
   String writePoints() {
     quizBrain.reset();
-    quizBrainLvlOneVoice.reset();
-    quizBrainLvlTwoVoice.reset();
-    quizBrainLvlThreeVoice.reset();
+    quizBrainVoice.reset();
     return stig.toStringAsFixed(0);
   }
 
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    VoiceService voiceService = RepositoryProvider.of<VoiceService>(context);
     var databaseBloc = BlocProvider.of<DatabaseBloc>(context);
 
-    voiceService.reset();
-    String highestScore = '\n Þú slóst metið þitt!';
+    String highestScore = '\n Jei þú slóst metið þitt!';
     double stigamet = stig;
     return BlocBuilder<DatabaseBloc, DatabaseState>(builder: (context, state) {
-      if (state is AuthenticationLoading) {
-        print("loading going on");
-        return Loading();
-      }
       if (state is IsNewRecord) {
         if (state.newRecord) {
           highestScore = '\n Þú slóst metið þitt!';
+          stigamet = state.record;
         } else {
-          highestScore = 'Metið þitt er ${state.record}';
+          highestScore = '\n Metið þitt er ${state.record}';
         }
       }
+
       return finish.FinishMethod(
         highestScore,
         stigamet,
@@ -120,10 +128,10 @@ class LevelFin extends StatelessWidget {
         appBarText,
         image,
         stig,
-        button1(stigamet, ''),
-        button2(stigamet, ''),
-        button3(stigamet, ''),
-        cardColorLvlTwo,
+        button1(stig, databaseBloc),
+        button2(stig, databaseBloc),
+        button3(stig, databaseBloc),
+        cardColor,
       );
     });
   }

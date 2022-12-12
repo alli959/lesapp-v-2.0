@@ -46,10 +46,7 @@ class QuizBrain {
   bool isCap;
   GetData getdata;
   bool hasInitialized = false;
-  List<Question> _questionBank = [
-    Question('Epli', true, 'soundLevelTwo/long/Epli.mp3'),
-    Question('Gras', true, 'soundLevelTwo/long/Gras.mp3'),
-  ];
+  List<Question> _questionBank = [];
 
   List<QuestionCache> _questionCache = [];
 
@@ -70,7 +67,24 @@ class QuizBrain {
     }
   }
 
-  void addData(List<Question> questionbank) {
+  void addData(List<Question> questionbank,
+      [bool isCapParam, String typeOfGameParam, String typeOfDifficultyParam]) {
+    if (typeOfGameParam != null) {
+      this.typeofgame = typeOfGameParam;
+    }
+    if (isCapParam != null) {
+      this.isCap = isCapParam;
+    }
+    if (typeOfDifficultyParam == "cap") {
+      this.isCap = true;
+    }
+    if (typeOfDifficultyParam == "low") {
+      this.isCap = false;
+    }
+    if (typeOfDifficultyParam != null) {
+      this.typeofgamedifficulty = typeOfDifficultyParam;
+    }
+
     if (this.typeofgame == "letters") {
       if (!hasInitialized) {
         if (isCap) {

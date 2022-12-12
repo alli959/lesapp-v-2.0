@@ -35,6 +35,7 @@ class BottomBar extends StatelessWidget {
                   Navigator.pushNamed(context, Wrapper.id);
                 },
                 size: null,
+                color: Colors.white.withBlue(220),
               ),
             ),
           ),
@@ -51,6 +52,7 @@ class BottomBar extends StatelessWidget {
                   Navigator.pushNamed(context, ProfileView.id);
                 },
                 size: null,
+                color: Colors.white.withBlue(220),
               ),
             ),
           ),

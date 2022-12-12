@@ -15,11 +15,12 @@ class PlayGameState extends ServerlessState {}
 
 class ServerlessFetch extends ServerlessState {
   final List<Question> questionBank;
+  Function difficulty;
 
-  ServerlessFetch({@required this.questionBank});
+  ServerlessFetch({@required this.questionBank, difficulty});
 
   @override
-  List<Object> get props => [questionBank];
+  List<Object> get props => [questionBank, difficulty];
 }
 
 class CheckAnswerState extends ServerlessState {

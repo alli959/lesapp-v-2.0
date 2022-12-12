@@ -60,6 +60,15 @@ class LevelTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Making sure that the first letter of every letter/word/sentence is large
+
+    this.letterOne = this.letterOne.length > 1
+        ? this.letterOne[0].toUpperCase() + this.letterOne.substring(1)
+        : this.letterOne;
+    this.letterTwo = this.letterTwo.length > 1
+        ? this.letterTwo[0].toUpperCase() + this.letterTwo.substring(1)
+        : this.letterTwo;
+
     return Container(
       // B L Á A  K O R T I Ð
       decoration: BoxDecoration(

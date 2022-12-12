@@ -13,8 +13,6 @@ import '../models/voices/quiz_brain_lvlOne_voice.dart';
 import '../models/voices/quiz_brain_lvlThree_voice.dart';
 import '../models/voices/quiz_brain_lvlTwo_voice.dart';
 import 'home/welcome.dart';
-import 'level_three.dart';
-import 'level_three_short.dart';
 
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:provider/provider.dart';
