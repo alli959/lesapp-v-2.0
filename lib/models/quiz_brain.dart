@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:Lesaforrit/models/ModelProvider.dart';
 import 'package:Lesaforrit/models/question_cache.dart';
+import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/file.dart';
 import 'dart:io' show Platform;
@@ -22,8 +23,8 @@ import 'dart:convert' show utf8;
 import './question_cache.dart';
 
 class QuizBrain {
-  String correctSound = 'sound/correct_sound.mp3';
-  String incorrectSound = 'sound/incorrect_sound.mp3';
+  String correctSound = 'assets/sound/correct_sound.mp3';
+  String incorrectSound = 'assets/sound/incorrect_sound.mp3';
   List<Object> data = [];
   // Audio audio = Audio();
   AudioCache cache = AudioCache();
@@ -47,10 +48,15 @@ class QuizBrain {
   GetData getdata;
   bool hasInitialized = false;
   List<Question> _questionBank = [];
+  AudioSessionService audioSessionService;
 
   List<QuestionCache> _questionCache = [];
 
-  QuizBrain({String typeofgame, String typeofdifficulty, bool isCap = true}) {
+  QuizBrain({
+    String typeofgame,
+    String typeofdifficulty,
+    bool isCap = true,
+  }) {
     this.typeofgame = typeofgame;
     this.typeofgamedifficulty = typeofdifficulty;
     this.isCap = isCap;
@@ -68,7 +74,13 @@ class QuizBrain {
   }
 
   void addData(List<Question> questionbank,
-      [bool isCapParam, String typeOfGameParam, String typeOfDifficultyParam]) {
+      [bool isCapParam,
+      String typeOfGameParam,
+      String typeOfDifficultyParam,
+      AudioSessionService _audioSessionServiceParam]) {
+    this.audioSessionService = _audioSessionServiceParam;
+    this.audioSessionService.init();
+
     if (typeOfGameParam != null) {
       this.typeofgame = typeOfGameParam;
     }
@@ -112,9 +124,11 @@ class QuizBrain {
 
   Future<AudioPlayer> playCorrect() async {
     try {
-      correctPlayer = await cache.play(correctSound, volume: 0.2);
+      await audioSessionService.setPlayerLocalUrl(correctSound, 70);
       await Future.delayed(Duration(milliseconds: 1000));
-      correctPlayer.stop();
+      audioSessionService.play();
+      // correctPlayer = await cache.play(correctSound, volume: 0.2);
+      // correctPlayer.stop();
     } catch (err) {
       print("there was an error playing correct sound $err");
       return null;
@@ -124,9 +138,12 @@ class QuizBrain {
 
   Future<AudioPlayer> playIncorrect() async {
     try {
-      incorrectPlayer = await cache.play(incorrectSound, volume: 0.2);
+      await audioSessionService.setPlayerLocalUrl(incorrectSound, 250);
       await Future.delayed(Duration(milliseconds: 1000));
-      incorrectPlayer.stop();
+      audioSessionService.play();
+      // incorrectPlayer = await cache.play(incorrectSound, volume: 0.2);
+      // await Future.delayed(Duration(milliseconds: 1000));
+      // incorrectPlayer.stop();
     } catch (err) {
       print("there was an error playing correct sound");
       return null;
@@ -162,101 +179,52 @@ class QuizBrain {
         if (sound1 == null) {
           return null;
         }
-        if (!Platform.isAndroid) {
-          try {
-            spilari.play(sound1, isLocal: false);
-            return null;
-          } catch (err) {
-            print("there was an error playing sound ${sound1}");
-            return null;
-          }
-        }
+        // if (!Platform.isAndroid) {
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound1);
-          print("file is $file1");
-          Uint8List bytes = file1.readAsBytesSync();
-          print("length if bytes is ${bytes.length}");
-          print("bytes is $bytes");
-
-          await spilari.playBytes(bytes);
+          await audioSessionService.setPlayerUrl(sound1);
+          audioSessionService.play();
+          // spilari.play(sound1, isLocal: false);
+          return null;
         } catch (err) {
-          print("there was an error playing sound $err");
+          print("there was an error playing sound ${sound1}");
           return null;
         }
+        // }
+        // try {
+        //   File file1 = await DefaultCacheManager().getSingleFile(sound1);
+        //   print("file is $file1");
+        //   Uint8List bytes = file1.readAsBytesSync();
+        //   print("length if bytes is ${bytes.length}");
+        //   print("bytes is $bytes");
+
+        //   await spilari.playBytes(bytes);
+        // } catch (err) {
+        //   print("there was an error playing sound $err");
+        //   return null;
+        // }
       } else {
         if (sound2 == null) {
           return null;
         }
-        if (!Platform.isAndroid) {
-          try {
-            spilari.play(sound2, isLocal: false);
-            return null;
-          } catch (err) {
-            print("there was an error playing sound ${sound2}");
-            return null;
-          }
-        }
+        // if (!Platform.isAndroid) {
         try {
-          File file1 = await DefaultCacheManager().getSingleFile(sound2);
-          Uint8List bytes = file1.readAsBytesSync();
-          await spilari.playBytes(bytes);
+          await audioSessionService.setPlayerUrl(sound2);
+          audioSessionService.play();
+          // spilari.play(sound2, isLocal: false);
+          return null;
         } catch (err) {
-          print("there was an error playing sound $err");
+          print("there was an error playing sound ${sound2}");
           return null;
         }
-      }
-    }
-    return null;
-  }
-
-  Future<AudioPlayer> playSecondaryAsset() async {
-    if (hasInitialized) {
-      print("sound1 secondary is $sound1Secondary");
-      print("sound2 secondary is $sound2Secondary");
-      if (whichSound == 1) {
-        if (sound1Secondary == null) {
-          return null;
-        }
-        if (!Platform.isAndroid) {
-          try {
-            player.play(sound1Secondary, isLocal: false);
-            return null;
-          } catch (err) {
-            print("there was an error playing sound ${sound1}");
-            return null;
-          }
-        }
-        try {
-          File file1 =
-              await DefaultCacheManager().getSingleFile(sound1Secondary);
-          Uint8List bytes = file1.readAsBytesSync();
-          await player.playBytes(bytes);
-        } catch (err) {
-          print("there was an error playing sound $err");
-          return null;
-        }
-      } else {
-        if (sound2Secondary == null) {
-          return null;
-        }
-        if (!Platform.isAndroid) {
-          try {
-            spilari.play(sound2Secondary, isLocal: false);
-            return null;
-          } catch (err) {
-            print("there was an error playing sound ${sound2Secondary}");
-            return null;
-          }
-        }
-        try {
-          File file1 =
-              await DefaultCacheManager().getSingleFile(sound2Secondary);
-          Uint8List bytes = file1.readAsBytesSync();
-          await spilari.playBytes(bytes);
-        } catch (err) {
-          print("there was an error playing sound $err");
-          return null;
-        }
+        // }
+        // try {
+        //   File file1 = await DefaultCacheManager().getSingleFile(sound2);
+        //   Uint8List bytes = file1.readAsBytesSync();
+        //   await spilari.playBytes(bytes);
+        // } catch (err) {
+        //   print("there was an error playing sound $err");
+        //   return null;
+        // }
       }
     }
     return null;
@@ -272,83 +240,44 @@ class QuizBrain {
         if (sound1 == null) {
           return null;
         }
-
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Karl.mp3') {
-          if (!Platform.isAndroid) {
-            try {
-              player.play(sound1, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound1}");
-              return null;
-            }
-          }
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
-            Uint8List bytes = file1.readAsBytesSync();
-            await player.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound1);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         } else {
-          if (!Platform.isAndroid) {
-            try {
-              player.play(sound1Secondary, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound1Secondary}");
-              return null;
-            }
-          }
           try {
-            File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
-            Uint8List bytes = file1.readAsBytesSync();
-            await player.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound1Secondary);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         }
       } else {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Karl.mp3') {
-          if (!Platform.isAndroid) {
-            try {
-              spilari.play(sound2, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound2}");
-              return null;
-            }
-          }
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
-            Uint8List bytes = file1.readAsBytesSync();
-            await spilari.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound2);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         } else {
-          if (!Platform.isAndroid) {
-            try {
-              spilari.play(sound2Secondary, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound2Secondary}");
-              return null;
-            }
-          }
           try {
-            File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
-            Uint8List bytes = file1.readAsBytesSync();
-            await spilari.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound2Secondary);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         }
@@ -370,80 +299,42 @@ class QuizBrain {
 
         var sound1FileEnding = sound1.split('_')[1];
         if (sound1FileEnding == 'Dora.mp3') {
-          if (!Platform.isAndroid) {
-            try {
-              player.play(sound1, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound1}");
-              return null;
-            }
-          }
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound1);
-            Uint8List bytes = file1.readAsBytesSync();
-            await player.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound1);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         } else {
-          if (!Platform.isAndroid) {
-            try {
-              spilari.play(sound1Secondary, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound1}");
-              return null;
-            }
-          }
           try {
-            File file1 =
-                await DefaultCacheManager().getSingleFile(sound1Secondary);
-            Uint8List bytes = file1.readAsBytesSync();
-            await spilari.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound1Secondary);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         }
       } else {
         var sound2FileEnding = sound2.split('_')[1];
         if (sound2FileEnding == 'Dora.mp3') {
-          if (!Platform.isAndroid) {
-            try {
-              spilari.play(sound2, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound2}");
-              return null;
-            }
-          }
           try {
-            File file1 = await DefaultCacheManager().getSingleFile(sound2);
-            Uint8List bytes = file1.readAsBytesSync();
-            await spilari.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound2);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         } else {
-          if (!Platform.isAndroid) {
-            try {
-              spilari.play(sound2Secondary, isLocal: false);
-              return null;
-            } catch (err) {
-              print("there was an error playing sound ${sound2Secondary}");
-              return null;
-            }
-          }
           try {
-            File file1 =
-                await DefaultCacheManager().getSingleFile(sound2Secondary);
-            Uint8List bytes = file1.readAsBytesSync();
-            await spilari.playBytes(bytes);
+            await audioSessionService.setPlayerUrl(sound2Secondary);
+            audioSessionService.play();
+            // spilari.play(sound2, isLocal: false);
           } catch (err) {
-            print("there was an error playing sound $err");
+            print("there was an error playing sound ${err}");
             return null;
           }
         }

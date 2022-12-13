@@ -206,6 +206,10 @@ class VoiceService {
     session.devicesChangedEventStream.listen((event) {
       print('Devices added:   ${event.devicesAdded}');
       print('Devices removed: ${event.devicesRemoved}');
+    }, onDone: () {
+      print('Done!');
+    }, onError: (error) {
+      print('Error: $error');
     });
     session.interruptionEventStream.listen((event) {
       if (event.begin) {

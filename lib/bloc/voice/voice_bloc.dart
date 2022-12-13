@@ -153,12 +153,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
   Stream<VoiceState> _mapVoiceStopEvent(VoiceStoppedEvent event) async* {
     await _speech.stopRecording();
-    yield VoiceStop();
+    yield VoiceStop(isCancel: false);
   }
 
   Stream<VoiceState> _mapVoiceCancelEvent(VoiceCancelEvent event) async* {
     await _speech.stopRecording(isCancel: true);
-    yield VoiceStop();
+    // yield AnswerCleanedState();
+    yield VoiceStop(isCancel: true);
   }
 
   Stream<VoiceState> _mapScoreKeeperToState(ScoreKeeperEvent event) async* {

@@ -14,9 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/serverless/serverless_bloc.dart';
 import '../components/arguments.dart';
 import '../models/listeners/level_listener.dart';
+import '../services/audio_session.dart';
 import '../services/get_data.dart';
 import '../shared/loading.dart';
-import 'level_one_caps_finish.dart';
 import 'package:Lesaforrit/models/quiz_brain.dart';
 
 class Level extends StatelessWidget {
@@ -178,7 +178,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final _serverlessBloc = BlocProvider.of<ServerlessBloc>(context);
-
+    final _audiosession = RepositoryProvider.of<AudioSessionService>(context);
     return BlocBuilder<ServerlessBloc, ServerlessState>(
         builder: (context, state) {
       if (state is ServerlessLoading) {
@@ -189,8 +189,12 @@ class _QuizPageState extends State<QuizPage> {
         print("state is serverlessfetcherino");
         print("SERVERLESS FETCH AT LEVEL ${state.questionBank}");
         if (!started) {
-          quizBrain.addData(state.questionBank, widget.config.isCap,
-              widget.config.typeofgame, widget.config.selecteddifficulty);
+          quizBrain.addData(
+              state.questionBank,
+              widget.config.isCap,
+              widget.config.typeofgame,
+              widget.config.selecteddifficulty,
+              _audiosession);
         }
       }
       if (state is CheckAnswerState) {

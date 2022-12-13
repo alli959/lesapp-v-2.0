@@ -41,3 +41,5 @@ class NewQuestionState extends ServerlessState {
 
   NewQuestionState({this.wasCorrect});
 }
+
+class DifficultySet extends ServerlessState {}

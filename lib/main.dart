@@ -2,6 +2,7 @@ import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/screens/level_voice.dart';
 import 'package:Lesaforrit/screens/settings.dart';
+import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -18,9 +19,6 @@ import 'package:Lesaforrit/screens/authenticate/sign_in.dart';
 import 'package:Lesaforrit/screens/home/score_chart.dart';
 import 'package:Lesaforrit/models/set_score.dart';
 import 'package:Lesaforrit/screens/home/welcome.dart';
-import 'package:Lesaforrit/screens/level_one_caps_finish.dart';
-import 'package:Lesaforrit/screens/level_three_finish.dart';
-import 'package:Lesaforrit/screens/level_two_finish.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
 import 'package:Lesaforrit/screens/lvlThree_choose.dart';
 import 'package:Lesaforrit/screens/lvlTwo_choose.dart';
@@ -34,7 +32,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/google_speech.dart';
 import 'models/ModelProvider.dart';
 import 'models/levelTemplate.dart';
-import 'package:Lesaforrit/screens/level_one_finish.dart';
 import 'amplifyconfiguration.dart';
 import 'shared/constants.dart';
 
@@ -72,6 +69,9 @@ void main() async {
         RepositoryProvider<SaveAudio>(create: (context) {
           return SaveAudio("username", "Correct", "question", "answer", null);
         }),
+        RepositoryProvider<AudioSessionService>(create: (context) {
+          return AudioSessionService();
+        })
       ],
       child: MultiBlocProvider(providers: [
         BlocProvider<AuthenticationBloc>(
@@ -123,17 +123,6 @@ class lesApp extends StatelessWidget {
             LvlTwoChoose.id: (context) => LvlTwoChoose(),
             LvlThreeChoose.id: (context) => LvlThreeChoose(),
             LevelTemplate.id: (context) => LevelTemplate(),
-            // LevelVoice.id: (context) => LevelVoice(),
-            // LevelOne.id: (context) => LevelOne(),
-            // LevelOneCap.id: (context) => LevelOneCap(),
-            // LevelTwo.id: (context) => LevelTwo(),
-            // LevelTwoShort.id: (context) => LevelTwoShort(),
-            // LevelThree.id: (context) => LevelThree(),
-            // LevelThreeShort.id: (context) => LevelThreeShort(),
-            OneFinish.id: (context) => OneFinish(),
-            OneCapsFinish.id: (context) => OneCapsFinish(),
-            TwoFinish.id: (context) => TwoFinish(),
-            ThreeFinish.id: (context) => ThreeFinish(),
             SignIn.id: (context) => SignIn(),
             Register.id: (context) => Register(),
             Wrapper.id: (context) => Wrapper(),

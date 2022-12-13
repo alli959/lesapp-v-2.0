@@ -74,7 +74,14 @@ class VoiceStart extends VoiceState {
   List<Object> get props => [isListening];
 }
 
-class VoiceStop extends VoiceState {}
+class VoiceStop extends VoiceState {
+  final bool isCancel;
+
+  VoiceStop({@required this.isCancel});
+
+  @override
+  List<Object> get props => [isCancel];
+}
 
 class VoiceCancel extends VoiceState {}
 
@@ -188,3 +195,5 @@ class ResetState extends VoiceState {}
 class IsListeningState extends VoiceState {}
 
 class IsNotListeningState extends VoiceState {}
+
+class AnswerCleanedState extends VoiceState {}

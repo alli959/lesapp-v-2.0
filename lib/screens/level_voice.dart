@@ -27,9 +27,6 @@ import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
-import 'package:Lesaforrit/screens/level_one_voice_finish.dart';
-import 'package:Lesaforrit/screens/level_three_short_finish.dart';
-import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
@@ -104,6 +101,7 @@ class LevelVoice extends StatelessWidget {
                         onPressed: () {
                           callback("medium");
                           _levelVoiceConfig.setDifficulty("medium");
+
                           Navigator.of(context).pop();
                         },
                       ),
@@ -166,21 +164,26 @@ class LevelVoice extends StatelessWidget {
                 prefvoice: prefVoice, difficulty: showDifficultyDialog));
         },
         child: BlocProvider<VoiceBloc>(
-          create: (context) => VoiceBloc(_speech, _levelVoiceConfig.level,
-              _audioSave, _databaseService, manualFixDialog),
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: appBar,
-              title: Text(_levelVoiceConfig.title,
-                  style: TextStyle(
-                      fontSize: _gameType.name == "sentences" ? 18 : 22,
-                      color: Color.fromARGB(255, 57, 53, 53))),
-              iconTheme: IconThemeData(size: 36, color: Colors.black),
-            ),
-            endDrawer: SideMenu(),
-            body: QuizPage(config: _levelVoiceConfig),
-          ),
-        ));
+            create: (context) => VoiceBloc(_speech, _levelVoiceConfig.level,
+                _audioSave, _databaseService, manualFixDialog),
+            child: BlocBuilder<ServerlessBloc, ServerlessState>(
+                builder: (context, state) {
+              if (state is DifficultySet) {
+                return Scaffold(body: Loading());
+              }
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: appBar,
+                  title: Text(_levelVoiceConfig.title,
+                      style: TextStyle(
+                          fontSize: _gameType.name == "letters" ? 22 : 18,
+                          color: Color.fromARGB(255, 57, 53, 53))),
+                  iconTheme: IconThemeData(size: 36, color: Colors.black),
+                ),
+                endDrawer: SideMenu(),
+                body: QuizPage(config: _levelVoiceConfig),
+              );
+            })));
   }
 }
 
@@ -544,7 +547,11 @@ class _QuizPageState extends State<QuizPage> {
                 isListening = false;
               }
               if (state is VoiceStop) {
-                isListening = false;
+                if (state.isCancel) {
+                  cancelRecord();
+                } else {
+                  isListening = false;
+                }
               }
 
               return Column(

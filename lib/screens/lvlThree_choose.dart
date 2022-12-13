@@ -3,7 +3,7 @@ import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/game/game_bloc.dart';
+import '../bloc/game/audio_bloc.dart';
 import '../components/arguments.dart';
 import '../models/listeners/level_listener.dart';
 import 'level.dart';

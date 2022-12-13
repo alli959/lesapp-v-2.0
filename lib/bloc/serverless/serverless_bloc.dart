@@ -46,6 +46,7 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
       await event.difficulty(
           (String difficulty) => {this._typeofdifficulty = difficulty});
     }
+    yield DifficultySet();
     yield ServerlessLoading();
     print(
         "bloc type of game and difficulty is $_typeofgame, $_typeofdifficulty");

@@ -1,14 +1,9 @@
 import 'dart:core';
 
-import 'package:Lesaforrit/screens/level_three_voice_finish.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-
-import '../../screens/level_one_voice_finish.dart';
-import '../../screens/level_three_finish.dart';
-import '../../screens/level_two_voice_finish.dart';
 
 enum FinishGameType {
   letters,

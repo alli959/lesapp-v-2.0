@@ -97,9 +97,6 @@ class LevelTemplateVoice extends StatelessWidget {
 
     _onCancelButtonPressed() {
       print("cancelbutton pressed");
-      this.answerArr = [];
-      this.answerMap = [];
-      this.lastWords = "";
       _voiceBloc.add(VoiceCancelEvent());
     }
 
@@ -187,25 +184,52 @@ class LevelTemplateVoice extends StatelessWidget {
               children: <Widget>[
                 Container(
                     child: !isShowResult
-                        ? QuestionCard(
-                            cardChild: AutoSizeText(
-                              lastWords,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontFamily: 'Metropolis-Regular.otf',
-                                fontWeight: FontWeight.w800,
-                                fontSize: fontSize,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: Offset(3.0, 3.0),
-                                    blurRadius: 20.0,
-                                    color: Color.fromARGB(shadowLevel, 0, 0, 0),
+                        ? BlocBuilder<VoiceBloc, VoiceState>(
+                            builder: (context, state) {
+                            if (state is AnswerCleanedState) {
+                              lastWords = "";
+                              return QuestionCard(
+                                cardChild: AutoSizeText(
+                                  "",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Metropolis-Regular.otf',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: fontSize,
+                                    shadows: <Shadow>[
+                                      Shadow(
+                                        offset: Offset(3.0, 3.0),
+                                        blurRadius: 20.0,
+                                        color: Color.fromARGB(
+                                            shadowLevel, 0, 0, 0),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
+                              );
+                            }
+                            return QuestionCard(
+                              cardChild: AutoSizeText(
+                                lastWords,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Metropolis-Regular.otf',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: fontSize,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(3.0, 3.0),
+                                      blurRadius: 20.0,
+                                      color:
+                                          Color.fromARGB(shadowLevel, 0, 0, 0),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
+                            );
+                          })
                         : QuestionCard(
                             cardChild: RichText(
                               textAlign: TextAlign.center,
