@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:bloc/bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/exceptions/authentication_exception.dart';
@@ -54,9 +55,22 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         yield RegisterFailure(error: 'Something wierd happened');
       }
     } on AuthenticationException catch (e) {
-      yield RegisterFailure(error: e.message);
+      print("AuthenticationException: " + e.message);
+      yield RegisterFailure(error: "Villa við nýskráningu");
+    } on UsernameExistsException catch (e) {
+      print("UsernameExistsException: " + e.message);
+      yield RegisterFailure(error: "Netfang er nú þegar í notkun");
+    } on InvalidPasswordException catch (e) {
+      print("InvalidPasswordException: " + e.message);
+      yield RegisterFailure(error: "Ógilt lykilorð");
+    } on InvalidParameterException catch (e) {
+      print("InvalidParameterException: " + e.message);
+      yield RegisterFailure(error: "Ógildar upplýsingar");
+    } on UserNotFoundException catch (e) {
+      print("UserNotFoundException: " + e.message);
+      yield RegisterFailure(error: "Notandi fannst ekki");
     } catch (err) {
-      yield RegisterFailure(error: err.message ?? 'An unknown error occured');
+      yield RegisterFailure(error: err);
     }
   }
 }

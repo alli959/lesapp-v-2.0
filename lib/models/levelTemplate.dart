@@ -95,12 +95,23 @@ class LevelTemplate extends StatelessWidget {
                   padding:
                       EdgeInsets.fromLTRB(0, soundPad + 25, 0, soundPadBottom),
                   child: letterOne.length == 0
-                      ? RoundIconButton(
-                          icon: Icons.play_arrow_rounded,
-                          iconSize: soundIconSize,
-                          circleSize: soundCircleSize,
-                          onPressed: onPlay,
-                        )
+                      ? Column(children: [
+                          RoundIconButton(
+                            icon: Icons.play_arrow_rounded,
+                            iconSize: soundIconSize,
+                            circleSize: soundCircleSize,
+                            onPressed: onPlay,
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Text(
+                                'Ýttu á takka til að hefja leik',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                ),
+                              ))
+                        ])
                       : Container(
                           decoration: BoxDecoration(
                               color: stigColor,

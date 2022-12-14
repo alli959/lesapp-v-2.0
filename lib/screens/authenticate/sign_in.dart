@@ -50,7 +50,10 @@ class _SignInState extends State<SignInForm> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Skrá inn'),
+        title: Text('Skrá inn',
+            style: TextStyle(
+              color: Colors.black,
+            )),
         backgroundColor: Color(0xFFE0FF62),
         automaticallyImplyLeading: false,
         actions: <Widget>[
@@ -58,14 +61,20 @@ class _SignInState extends State<SignInForm> {
               onPressed: () {
                 _onRegisterViewButtonPressed();
               },
-              icon: Icon(Icons.face),
-              label: Text('Nýskráning'))
+              icon: Icon(Icons.face, size: 28),
+              label: Text('Nýskráning'),
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    side: BorderSide(color: Colors.grey, width: 0.5)),
+              ))
         ],
       ),
       body: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is LoginFailure) {
             print("oh no!");
+            this.error = "Rangt Netfang eða Lykilorð";
           }
         },
         child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {

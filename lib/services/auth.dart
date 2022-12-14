@@ -181,7 +181,7 @@ class AuthService {
       }
     } catch (e) {
       print(e.toString());
-      return null;
+      throw e;
     }
     print("we should not be here");
     return null;

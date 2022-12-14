@@ -128,11 +128,19 @@ class Finish {
                   ],
                 ),
               ),
-              SizedBox(
-                  height: 95.0,
-                  width: double.infinity,
-                  child: Image.asset('assets/images/bottomBar_ye.png',
-                      fit: BoxFit.cover)),
+              Expanded(
+                  flex: 2,
+                  child: BottomBar(
+                      onTap: () {
+                        print("tapped");
+                        Navigator.pop(context);
+                      },
+                      image: 'assets/images/bottomBar_bl.png')),
+              // SizedBox(
+              //     height: 95.0,
+              //     width: double.infinity,
+              //     child: Image.asset('assets/images/bottomBar_ye.png',
+              //         fit: BoxFit.cover)),
             ],
           ),
         ),

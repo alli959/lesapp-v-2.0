@@ -48,6 +48,9 @@ import 'shared/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // add these lines
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   final serviceAccount = ServiceAccount.fromString((await rootBundle
       .loadString('assets/graphite-flare-324114-285b1cf5c32b.json')));
   SpeechToText speech = SpeechToText.viaServiceAccount(serviceAccount);

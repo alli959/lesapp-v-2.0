@@ -282,14 +282,10 @@ class _QuizPageState extends State<QuizPage> {
     if (quizBrain.isFinished()) {
       // _voiceBloc.add(ResetEvent());
       Timer(Duration(seconds: 1), () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LevelFinish(
-                LevelFinishArguments(widget.config.finishtype,
-                    calc.calculatePoints(calc.correct, calc.trys) * 100),
-              ),
-            ));
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            LevelFinish.id, (Route<dynamic> route) => false,
+            arguments: LevelFinishArguments(widget.config.finishtype,
+                calc.calculatePoints(calc.correct, calc.trys) * 100));
       });
     }
   }

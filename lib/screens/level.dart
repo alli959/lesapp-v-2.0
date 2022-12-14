@@ -132,17 +132,14 @@ class _QuizPageState extends State<QuizPage> {
     if (quizBrain.stars < 10) {
       getNewQuestion();
       qEnabled = true;
+      enabled = true;
     } else {
       Timer(Duration(seconds: 1), () {
         // print("finish type is ${widget.config.finishtype.name}");
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LevelFinish(
-                LevelFinishArguments(widget.config.finishtype,
-                    calc.calculatePoints(calc.correct, calc.trys) * 100),
-              ),
-            ));
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            LevelFinish.id, (Route<dynamic> route) => false,
+            arguments: LevelFinishArguments(widget.config.finishtype,
+                calc.calculatePoints(calc.correct, calc.trys) * 100));
       });
     }
   }
@@ -198,6 +195,8 @@ class _QuizPageState extends State<QuizPage> {
         }
       }
       if (state is CheckAnswerState) {
+        enabled = false;
+        qEnabled = false;
         print("State of checkAnswerState iss $state");
         if (state.upperImageCorrect) {
           check('upperCorrect');
@@ -220,6 +219,7 @@ class _QuizPageState extends State<QuizPage> {
         letterOne = quizBrain.getQuestionText1();
         letterTwo = quizBrain.getQuestionText2();
         enabled = true;
+        qEnabled = true;
         soundCircleSize = 55;
         soundPad = 0.0;
         soundPadBottom = 10;

@@ -26,6 +26,8 @@ import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
 class LevelFinish extends StatelessWidget {
+  static const String id = 'LevelFinish';
+
   double stig;
   FinishGameType gameType;
   FinishGameListener _config;
@@ -51,22 +53,24 @@ class LevelFinish extends StatelessWidget {
       image: _config.image,
       undertext: '\n Stig!',
       appBarText: _config.appBarText,
+      cardcolor: _config.cardcolor,
     );
   }
 }
 
 class LevelFin extends StatelessWidget {
-  LevelFin({
-    @required this.stig,
-    this.image,
-    this.undertext,
-    this.appBarText,
-  });
+  LevelFin(
+      {@required this.stig,
+      this.image,
+      this.undertext,
+      this.appBarText,
+      this.cardcolor});
 
   double stig;
   String image;
   String undertext;
   String appBarText;
+  Color cardcolor;
 
   Widget button1(double stig, DatabaseBloc databaseBloc) {
     return SetScore(
@@ -131,7 +135,7 @@ class LevelFin extends StatelessWidget {
         button1(stig, databaseBloc),
         button2(stig, databaseBloc),
         button3(stig, databaseBloc),
-        cardColor,
+        cardcolor,
       );
     });
   }

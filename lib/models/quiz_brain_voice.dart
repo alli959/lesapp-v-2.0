@@ -40,7 +40,17 @@ class QuizBrainVoice {
   var prefVoice = PrefVoice.DORA;
 
   Future<AudioPlayer> playCorrect() async {
-    print("correct sound");
+    try {
+      await audioSessionService.setPlayerLocalUrl(correctSound, 70);
+      await Future.delayed(Duration(milliseconds: 1000));
+      audioSessionService.play();
+      // correctPlayer = await cache.play(correctSound, volume: 0.2);
+      // correctPlayer.stop();
+    } catch (err) {
+      print("there was an error playing correct sound $err");
+      return null;
+    }
+    return null;
   }
 
   Future<AudioPlayer> playIncorrect() async {

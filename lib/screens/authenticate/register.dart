@@ -65,7 +65,7 @@ class _RegisterState extends State<RegisterForm> {
         ? Loading()
         : Scaffold(
             appBar: AppBar(
-              title: Text('Nýskráning'),
+              title: Text('Nýskráning', style: TextStyle(color: Colors.black)),
               backgroundColor: Color(0xFFE0FF62),
               automaticallyImplyLeading: false,
               actions: <Widget>[
@@ -73,14 +73,21 @@ class _RegisterState extends State<RegisterForm> {
                     onPressed: () {
                       _onLoginViewButtonPressed();
                     },
-                    icon: Icon(Icons.face),
-                    label: Text('Skrá inn'))
+                    icon: Icon(Icons.face, size: 28),
+                    label: Text('Innskráning'),
+                    style: TextButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          side: BorderSide(color: Colors.grey, width: 0.5)),
+                    ))
               ],
             ),
             body: BlocListener<RegisterBloc, RegisterState>(
               listener: (context, state) {
                 if (state is RegisterFailure) {
                   print("oh no!");
+                  print("error: " + state.error);
+                  this.error = state.error;
                 }
               },
               child: BlocBuilder<RegisterBloc, RegisterState>(

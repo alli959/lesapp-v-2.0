@@ -24,7 +24,7 @@ class ProfileView extends StatelessWidget {
       appBar: AppBar(
         leading: null,
         actions: <Widget>[],
-        title: Text('Mínar síður'),
+        title: Text('Mínar síður', style: TextStyle(color: Colors.black)),
         backgroundColor: appBar,
       ),
       endDrawer: SideMenu(),
