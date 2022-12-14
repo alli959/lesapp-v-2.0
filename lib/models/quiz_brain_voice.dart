@@ -1,3 +1,4 @@
+import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
 import './question.dart';
@@ -18,7 +19,7 @@ class QuizBrainVoice {
   int stars = 0;
   double finalscore;
   AudioCache cache = AudioCache();
-  String correctSound = 'sound/correct_sound.mp3';
+  String correctSound = 'assets/sound/correct_sound.mp3';
   String incorrectSound = 'sound/incorrect_sound.mp3';
   AudioPlayer correctPlayer = AudioPlayer();
   AudioPlayer incorrectPlayer = AudioPlayer();
@@ -26,6 +27,8 @@ class QuizBrainVoice {
   String typeofgame;
   String typeofgamedifficulty;
   bool hasInitialized = false;
+  AudioSessionService audioSessionService;
+  List<Question> _questionBank = [];
 
   QuizBrain({String typeofgame, String typeofdifficulty, bool isCap = true}) {
     this.typeofgame = typeofgame;
@@ -41,13 +44,51 @@ class QuizBrainVoice {
   }
 
   Future<AudioPlayer> playIncorrect() async {
-    print("incorrect sound");
+    Question question = _questionBank[_question];
+    String file = question.file;
+    String file2 = question.file2;
+    prefVoice = question.prefVoice;
+
+    if (hasInitialized) {
+      if (prefVoice == PrefVoice.DORA) {
+        try {
+          await audioSessionService.setPlayerUrl(file);
+          audioSessionService.play();
+          return null;
+        } catch (err) {
+          print("there was an error playing sound ${file}");
+          return null;
+        }
+      } else {
+        try {
+          await audioSessionService.setPlayerUrl(file2);
+          audioSessionService.play();
+          return null;
+        } catch (err) {
+          print("there was an error playing sound ${file}");
+          return null;
+        }
+      }
+      // }
+      // try {
+      //   File file1 = await DefaultCacheManager().getSingleFile(sound1);
+      //   print("file is $file1");
+      //   Uint8List bytes = file1.readAsBytesSync();
+      //   print("length if bytes is ${bytes.length}");
+      //   print("bytes is $bytes");
+
+      //   await spilari.playBytes(bytes);
+      // } catch (err) {
+      //   print("there was an error playing sound $err");
+      //   return null;
+      // }
+    }
+    return null;
   }
 
-  List<Question> _questionBank = [];
-
-  void addData(
-      List<Question> questionbank, String typeofgame, String difficulty) {
+  void addData(List<Question> questionbank, String typeofgame,
+      String difficulty, AudioSessionService _audioSessionServiceParam) {
+    this.audioSessionService = _audioSessionServiceParam;
     print(
         "IN VOICE ADD DATA WITH (${questionbank.map((e) => e.questionText)})");
 

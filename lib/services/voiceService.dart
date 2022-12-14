@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:Lesaforrit/models/total_points.dart';
+import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbgrpc.dart'
@@ -51,9 +52,6 @@ class VoiceService {
   QuizBrainLvlThreeVoice quizBrainLvlThree = QuizBrainLvlThreeVoice();
   QuizBrainLvlTwoVoice quizBrainLvlTwo = QuizBrainLvlTwoVoice();
   QuizBrainLvlOneVoice quizBrainLvlOne = QuizBrainLvlOneVoice();
-
-  final RecorderStream _recorder = RecorderStream();
-  PlayerStream _player = PlayerStream();
   // Stream<StreamingRecognizeResponse> responseStream;
   bool recognizing = false;
   bool recognizeFinished = false;
@@ -65,37 +63,17 @@ class VoiceService {
   bool isSave = true;
   bool isCancel = false;
 
-  AudioSession session;
+  AudioSessionService session;
   VoiceService({@required this.speech, this.context});
 
   Future speechInit(Function statusListener, Function errorListener,
+      AudioSessionService _sessionparams,
       [bool isSave = false]) async {
-    config = _getConfig();
+    print("speech is init");
+    this.config = _getConfig();
     this.isSave = isSave;
-    try {
-      session = await AudioSession.instance;
-      await session.configure(AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-        avAudioSessionCategoryOptions:
-            AVAudioSessionCategoryOptions.allowBluetooth,
-        avAudioSessionMode: AVAudioSessionMode.spokenAudio,
-        avAudioSessionRouteSharingPolicy:
-            AVAudioSessionRouteSharingPolicy.defaultPolicy,
-        avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
-        androidAudioAttributes: const AndroidAudioAttributes(
-          contentType: AndroidAudioContentType.speech,
-          flags: AndroidAudioFlags.none,
-          usage: AndroidAudioUsage.voiceCommunication,
-        ),
-        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-        androidWillPauseWhenDucked: true,
-      ));
-      _recorder.initialize();
-      _player.initialize();
-      return true;
-    } catch (err) {
-      return false;
-    }
+    this.session = _sessionparams;
+    return true;
   }
 
   Future<String> getFilePath() async {
@@ -203,92 +181,24 @@ class VoiceService {
       languageCode: 'is-IS');
 
   Future speechListen(resultListener, Function doneListener) async {
-    session.devicesChangedEventStream.listen((event) {
-      print('Devices added:   ${event.devicesAdded}');
-      print('Devices removed: ${event.devicesRemoved}');
-    }, onDone: () {
-      print('Done!');
-    }, onError: (error) {
-      print('Error: $error');
-    });
-    session.interruptionEventStream.listen((event) {
-      if (event.begin) {
-        print("EVENT BEGIN!!!! WITH TYPE ${event.type}");
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            // Another app started playing audio and we should duck.
-            break;
-          case AudioInterruptionType.pause:
-          case AudioInterruptionType.unknown:
-            // Another app started playing audio and we should pause.
-            break;
-        }
-      } else {
-        print("EVENT NOT BEGIN!!!! WITH TYPE ${event.type}");
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            // The interruption ended and we should unduck.
-            break;
-          case AudioInterruptionType.pause:
-          // The interruption ended and we should resume.
-          case AudioInterruptionType.unknown:
-            // The interruption ended but we should not resume.
-            break;
-        }
-      }
-    });
-    print("we are at speech listen");
-    // Activate the audio session before playing audio.
-    if (await session.setActive(true)) {
-      // Now play audio.
-
-      _audioStream = BehaviorSubject<List<int>>();
-      _audioStreamSubscription = _recorder.audioStream.listen((event) {
-        if (!_audioStream.isClosed) {
-          _audioStream.add(event);
-          audioList.add(event);
-          _player.writeChunk(event);
-        } else {
-          print("audiostream is closed!!!!");
-        }
-      });
-      print("before recording start status is ${_recorder.status}");
-      await _recorder.start();
-      print("after recorder start status is ${_recorder.status}");
-      final responseStream = speech.streamingRecognize(
-          StreamingRecognitionConfig(config: config, interimResults: true),
-          _audioStream);
-      print("audiostream where isclosed is ${_audioStream.isClosed}");
-      recognizing = true;
-      try {
-        if (!_audioStream.isClosed) {
-          responseStream.listen(resultListener,
-              onDone: () => doneListener(
-                  file: saveFile(audioList, 16000), isCancel: isCancel));
-        }
-      } catch (err) {
-        print("THERE WAS AN ERROR ${err}");
-      }
-      this.isCancel = false;
-    } else {
-      print("audiosession not true");
+    print("speech listen called");
+    try {
+      await this
+          .session
+          .startRecording(resultListener, doneListener, config, this.speech);
+    } catch (err) {
+      print("there was an error at speechListener $err");
+      throw err;
     }
   }
 
-  Future stopRecording({bool isCancel = false}) async {
-    print("isCancel in stopeed Recording is ==> $isCancel");
-    print("audioList is => $audioList");
-    // await saveFile(audioList, 16000);
-    this.isCancel = isCancel;
-    if (isCancel || !isSave) {
-      audioList = [];
+  Future stopRecording({bool isCancel = false, bool isSave = true}) async {
+    try {
+      await this.session.stopRecording(isCancel, isSave);
+    } catch (err) {
+      print("there was an error at stopRecording $err");
+      throw err;
     }
-    print("recording stopped");
-    await _recorder?.stop();
-    await _player?.stop();
-    await _audioStreamSubscription?.cancel();
-    await _audioStream?.close();
-    recognizing = false;
   }
 
   Future reset() async {

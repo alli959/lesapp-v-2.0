@@ -18,6 +18,8 @@ import 'package:sound_stream/sound_stream.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
 import 'package:just_audio/just_audio.dart' as ja;
+import 'package:rxdart/rxdart.dart';
+import 'package:google_speech/google_speech.dart';
 
 import '../models/ModelProvider.dart';
 
@@ -32,6 +34,83 @@ class AudioSessionService {
   RecorderStream _recorder = RecorderStream();
   PlayerStream _playerStream = PlayerStream();
   AudioSessionService({this.uid});
+  StreamSubscription<List<int>> _audioStreamSubscription;
+  BehaviorSubject<List<int>> _audioStream;
+  List<Uint8List> audioList = [];
+  bool recognizing = false;
+  bool isCancel = false;
+  bool isSave = true;
+
+  Uint8List saveFile(List<Uint8List> contents, sampleRate) {
+    // File recordedFile = File(await getFilePath());
+    print("at savefile place");
+    print("contents are $contents");
+    // first stop recording
+    List<int> data = [];
+    for (var i = 0; i < contents.length; i++) {
+      print("i is $i");
+      try {
+        data.addAll(contents[i]);
+      } catch (err) {
+        print("there was an error $err");
+        throw err;
+      }
+    }
+
+    var channels = 1;
+
+    int byteRate = ((16 * sampleRate * channels) / 8).round();
+
+    var size = data.length;
+
+    var fileSize = size + 36;
+
+    Uint8List header = Uint8List.fromList([
+      // "RIFF"
+      82, 73, 70, 70,
+      fileSize & 0xff,
+      (fileSize >> 8) & 0xff,
+      (fileSize >> 16) & 0xff,
+      (fileSize >> 24) & 0xff,
+      // WAVE
+      87, 65, 86, 69,
+      // fmt
+      102, 109, 116, 32,
+      // fmt chunk size 16
+      16, 0, 0, 0,
+      // Type of format
+      1, 0,
+      // One channel
+      channels, 0,
+      // Sample rate
+      sampleRate & 0xff,
+      (sampleRate >> 8) & 0xff,
+      (sampleRate >> 16) & 0xff,
+      (sampleRate >> 24) & 0xff,
+      // Byte rate
+      byteRate & 0xff,
+      (byteRate >> 8) & 0xff,
+      (byteRate >> 16) & 0xff,
+      (byteRate >> 24) & 0xff,
+      // Uhm
+      ((16 * channels) / 8).round(), 0,
+      // bitsize
+      16, 0,
+      // "data"
+      100, 97, 116, 97,
+      size & 0xff,
+      (size >> 8) & 0xff,
+      (size >> 16) & 0xff,
+      (size >> 24) & 0xff,
+      ...data
+    ]);
+
+    // File deployFile = new File.fromRawPath(header);
+    audioList = [];
+    // await recordedFile.writeAsBytes(header, flush: true);
+
+    return header;
+  }
 
   Future init() async {
     AudioSession.instance.then((audioSession) async {
@@ -54,17 +133,65 @@ class AudioSessionService {
         androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
         androidWillPauseWhenDucked: true,
       ));
+
+      await _recorder.initialize();
+      await _playerStream.initialize();
       // Listen to audio interruptions and pause or duck as appropriate.
       _handleInterruptions(audioSession);
-      // Use another plugin to load audio to play
 
-      // await _recorder.initialize();
-      // await _playerStream.initialize();
+      // Use another plugin to load audio to play
     });
   }
 
-  Future startRecording() async {
-    await _recorder.start();
+  Future stopRecording(bool isCancelparams, bool isSaveParams) async {
+    this.isCancel = isCancelparams;
+    this.isSave = isSaveParams;
+    if (isCancel || !isSave) {
+      audioList = [];
+    }
+    await _recorder?.stop();
+    await _playerStream?.stop();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
+    recognizing = false;
+  }
+
+  Future startRecording(resultListener, Function doneListener,
+      RecognitionConfig config, SpeechToText speech) async {
+    _audioStream = BehaviorSubject<List<int>>();
+    _audioStreamSubscription = _recorder.audioStream.listen((event) {
+      if (!_audioStream.isClosed) {
+        _audioStream.add(event);
+        audioList.add(event);
+        _playerStream.writeChunk(event);
+      } else {
+        print("audiostream is closed!!!!");
+      }
+    });
+    print("at start recording place");
+    try {
+      await _recorder.start();
+    } catch (err) {
+      print("there was an error $err");
+      return false;
+    }
+    recognizing = true;
+    final responseStream = speech.streamingRecognize(
+        StreamingRecognitionConfig(config: config, interimResults: true),
+        _audioStream);
+    try {
+      if (!_audioStream.isClosed) {
+        responseStream.listen(resultListener,
+            onDone: () => doneListener(
+                file: saveFile(audioList, 16000), isCancel: isCancel));
+      } else {
+        print("audio stream is closed in startRecording method");
+      }
+    } catch (err) {
+      print("there was an error $err");
+      return false;
+    }
+    this.isCancel = false;
   }
 
   Future setPlayerUrl(String url) async {
@@ -80,61 +207,83 @@ class AudioSessionService {
     _player.play();
   }
 
-  void _handleInterruptions(AudioSession audioSession) {
-    print('WE ARE AT THE HANDLE INTERRUPTIONS GUY');
-    // just_audio can handle interruptions for us, but we have disabled that in
-    // order to demonstrate manual configuration.
-    bool playInterrupted = false;
-    audioSession.becomingNoisyEventStream.listen((_) {
-      print('PAUSE');
-      _player.pause();
-    });
-    _player.playingStream.listen((playing) {
-      print('playing!!!!!!!!!!!!!!!!!!!!!!!!!!!!: $playing');
-      playInterrupted = false;
-      if (playing) {
-        audioSession.setActive(true);
-      }
-    });
-    audioSession.interruptionEventStream.listen((event) {
-      print('interruption begin: ${event.begin}');
-      print('interruption type: ${event.type}');
-      if (event.begin) {
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            if (audioSession.androidAudioAttributes.usage ==
-                AndroidAudioUsage.game) {
-              print('Ducking not supported for game audio');
-            }
-            playInterrupted = false;
-            break;
-          case AudioInterruptionType.pause:
-          case AudioInterruptionType.unknown:
-            if (_player.playing) {
-              _player.pause();
-              playInterrupted = true;
-            }
-            break;
+  Future _handleInterruptions(AudioSession audioSession) async {
+    if (await audioSession.setActive(true)) {
+      bool playInterrupted = false;
+      audioSession.becomingNoisyEventStream.listen((_) {
+        print('PAUSE');
+        _player.pause();
+      });
+      _player.playingStream.listen((playing) {
+        playInterrupted = false;
+        if (playing) {
+          audioSession.setActive(true);
         }
-      } else {
-        switch (event.type) {
-          case AudioInterruptionType.duck:
-            _player.setVolume(min(1.0, _player.volume * 2));
-            playInterrupted = false;
-            break;
-          case AudioInterruptionType.pause:
-            if (playInterrupted) _player.play();
-            playInterrupted = false;
-            break;
-          case AudioInterruptionType.unknown:
-            playInterrupted = false;
-            break;
+      });
+      // _audioStream = BehaviorSubject<List<int>>();
+      // _audioStreamSubscription = _recorder.audioStream.listen((event) {
+      //   if (!_audioStream.isClosed) {
+      //     _audioStream.add(event);
+      //     audioList.add(event);
+      //     _playerStream.writeChunk(event);
+      //   } else {
+      //     print("audiostream is closed!!!!");
+      //   }
+      // });
+
+      audioSession.getDevices().then((value) {
+        print("devices: $value");
+      });
+
+      audioSession.interruptionEventStream.listen((event) {
+        print('interruption begin: ${event.begin}');
+        print('interruption type: ${event.type}');
+        if (event.begin) {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              print("AUDIO INTERUPTION DUCK UPPER");
+              if (audioSession.androidAudioAttributes.usage ==
+                  AndroidAudioUsage.game) {
+                print('Ducking not supported for game audio');
+              }
+              playInterrupted = false;
+              break;
+            case AudioInterruptionType.pause:
+              print("AUDIO INTERUPTION PAUSE UPPER");
+              break;
+            case AudioInterruptionType.unknown:
+              print("AUDIO INTERUPTION UNKNOWN UPPER");
+              if (_player.playing) {
+                _player.pause();
+                playInterrupted = true;
+              }
+              break;
+          }
+        } else {
+          switch (event.type) {
+            case AudioInterruptionType.duck:
+              print("AUDIO INTERUPTION DUCK LOWER");
+              _player.setVolume(min(1.0, _player.volume * 2));
+              playInterrupted = false;
+              break;
+            case AudioInterruptionType.pause:
+              print("AUDIO INTERUPTION PAUSE LOWER");
+              if (playInterrupted) _player.play();
+              playInterrupted = false;
+              break;
+            case AudioInterruptionType.unknown:
+              print("AUDIO INTERUPTION UNKNOWN LOWER");
+              playInterrupted = false;
+              break;
+          }
         }
-      }
-    });
-    audioSession.devicesChangedEventStream.listen((event) {
-      print('Devices added: ${event.devicesAdded}');
-      print('Devices removed: ${event.devicesRemoved}');
-    });
+      });
+      audioSession.devicesChangedEventStream.listen((event) {
+        print('Devices added: ${event.devicesAdded}');
+        print('Devices removed: ${event.devicesRemoved}');
+      });
+    } else {
+      print('Failed to activate audio session');
+    }
   }
 }

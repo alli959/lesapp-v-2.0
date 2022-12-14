@@ -70,7 +70,7 @@ void main() async {
           return SaveAudio("username", "Correct", "question", "answer", null);
         }),
         RepositoryProvider<AudioSessionService>(create: (context) {
-          return AudioSessionService();
+          return AudioSessionService()..init();
         })
       ],
       child: MultiBlocProvider(providers: [

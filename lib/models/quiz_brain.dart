@@ -79,7 +79,6 @@ class QuizBrain {
       String typeOfDifficultyParam,
       AudioSessionService _audioSessionServiceParam]) {
     this.audioSessionService = _audioSessionServiceParam;
-    this.audioSessionService.init();
 
     if (typeOfGameParam != null) {
       this.typeofgame = typeOfGameParam;

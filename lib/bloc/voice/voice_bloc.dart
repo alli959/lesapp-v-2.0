@@ -17,6 +17,8 @@ import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
+import '../../services/audio_session.dart';
+
 part 'voice_event.dart';
 part 'voice_state.dart';
 
@@ -26,6 +28,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   final String level;
   final SaveAudio audioSaver;
   final DatabaseService databaseService;
+  bool isSave = true;
   final dialog;
 
   VoiceBloc(VoiceService speech, String level, SaveAudio audioSaver,
@@ -104,10 +107,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   Stream<VoiceState> _mapUpdateInitalizeToState(
       VoiceInitializeEvent event) async* {
     yield VoiceLoading();
+
     try {
       // initialize the speech
-      var hasSpeech =
-          await _speech.speechInit(event.statusListener, event.errorListener);
+      var isSaveVoice = await databaseService.getIsSaveVoice();
+      this.isSave = isSaveVoice;
+      var hasSpeech = await _speech.speechInit(event.statusListener,
+          event.errorListener, event.audiosession, isSaveVoice);
       if (hasSpeech) {
         print("it has speech");
         yield VoiceHasInitialized();
@@ -129,7 +135,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield IsListeningState();
     } catch (err) {
       print("error = $err");
-      await _speech.stopRecording();
+      await _speech.stopRecording(isSave: this.isSave);
       yield VoiceFailure(error: err);
     }
     // yield NewVoiceQuestionState(question: _speech.question);

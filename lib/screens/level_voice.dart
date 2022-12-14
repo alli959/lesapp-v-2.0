@@ -47,6 +47,7 @@ import 'package:speech_to_text/speech_to_text_provider.dart';
 import '../bloc/serverless/serverless_bloc.dart';
 import '../components/arguments.dart';
 import '../models/quiz_brain_voice.dart';
+import '../services/audio_session.dart';
 import '../services/get_data.dart';
 import 'level_finish.dart';
 
@@ -152,6 +153,7 @@ class LevelVoice extends StatelessWidget {
     final _speech = RepositoryProvider.of<VoiceService>(context);
     final _audioSave = RepositoryProvider.of<SaveAudio>(context);
     final _databaseService = RepositoryProvider.of<DatabaseService>(context);
+    final _audiosession = RepositoryProvider.of<AudioSessionService>(context);
 
     return BlocProvider<ServerlessBloc>(
         create: (context) {
@@ -181,16 +183,18 @@ class LevelVoice extends StatelessWidget {
                   iconTheme: IconThemeData(size: 36, color: Colors.black),
                 ),
                 endDrawer: SideMenu(),
-                body: QuizPage(config: _levelVoiceConfig),
+                body: QuizPage(
+                    config: _levelVoiceConfig, audiosession: _audiosession),
               );
             })));
   }
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key, this.config}) : super(key: key);
+  QuizPage({Key key, this.config, this.audiosession}) : super(key: key);
 
   LevelVoiceListener config;
+  AudioSessionService audiosession;
   @override
   _QuizPageState createState() => _QuizPageState();
 }
@@ -327,6 +331,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
+
     LevelVoiceListener config = widget.config;
     listeningUpdate(String lWords, List<SpeechRecognitionAlternative> alter,
         bool isList, String quest) {
@@ -472,7 +477,9 @@ class _QuizPageState extends State<QuizPage> {
 
     if (!started) {
       _voiceBloc.add(VoiceInitializeEvent(
-          statusListener: statusListener, errorListener: errorListener));
+          statusListener: statusListener,
+          errorListener: errorListener,
+          audiosession: this.widget.audiosession));
     }
 
     return BlocBuilder<ServerlessBloc, ServerlessState>(
@@ -485,7 +492,7 @@ class _QuizPageState extends State<QuizPage> {
         print("state is serverlessfetch");
         if (!started) {
           quizBrain.addData(state.questionBank, widget.config.typeofgame,
-              widget.config.selecteddifficulty);
+              widget.config.selecteddifficulty, this.widget.audiosession);
         }
       }
       return Container(

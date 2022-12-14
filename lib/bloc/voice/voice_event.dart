@@ -10,14 +10,16 @@ abstract class VoiceEvent extends Equatable {
 class VoiceInitializeEvent extends VoiceEvent {
   final Function statusListener;
   final Function errorListener;
+  final AudioSessionService audiosession;
 
   VoiceInitializeEvent({
     this.statusListener,
     this.errorListener,
+    this.audiosession,
   });
 
   @override
-  List<Object> get props => [statusListener, errorListener];
+  List<Object> get props => [statusListener, errorListener, audiosession];
 }
 
 class VoiceStartedEvent extends VoiceEvent {
