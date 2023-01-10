@@ -227,8 +227,10 @@ Question Question(
     /* TODO  IF A WORD IS DUPLICATE */
     for (var i = 0; i < questionArr.length; i++) {
       if (mapAnswer.containsKey(questionArr[i].toLowerCase())) {
+        totalCorrect += 1;
         questionMap.add(true);
       } else {
+        totalIncorrect += 1;
         questionMap.add(false);
       }
     }
@@ -238,10 +240,8 @@ Question Question(
 
     for (var i = 0; i < answerArr.length; i++) {
       if (mapQuestion.containsKey(answerArr[i].toLowerCase())) {
-        totalCorrect += 1;
         answerMap.add(true);
       } else {
-        totalIncorrect += 1;
         answerMap.add(false);
       }
     }

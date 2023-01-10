@@ -362,6 +362,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = JZNG7Z55XD;
@@ -465,7 +466,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = v2.thuri.Lesaforrit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "lesapp-admin";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin-dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -593,7 +594,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = JZNG7Z55XD;
@@ -697,7 +698,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = v2.thuri.Lesaforrit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "lesapp-admin-dev";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin-dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -713,6 +714,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = JZNG7Z55XD;
@@ -816,7 +818,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = v2.thuri.Lesaforrit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "lesapp-admin";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "lesapp-admin-dev";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

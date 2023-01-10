@@ -226,6 +226,7 @@ class AudioSessionService {
     print("at set online player place");
     try {
       await _player.setUrl(url);
+      _player.setVolume(100.0);
     } catch (err) {
       print("there was an error setting online player url");
       print(err);
@@ -233,6 +234,7 @@ class AudioSessionService {
   }
 
   Future setPlayerLocalUrl(String url, [int startPosInMiliSec = 0]) async {
+    _player.setVolume(0.35);
     print("at Set local url place");
     try {
       await _player.setAsset(url,
