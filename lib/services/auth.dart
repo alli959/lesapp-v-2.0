@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:Lesaforrit/amplifyconfiguration.dart';
 import 'package:Lesaforrit/models/usr.dart';
@@ -8,6 +9,7 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
+import 'package:flutter/services.dart';
 
 import '../models/ModelProvider.dart';
 
@@ -140,16 +142,24 @@ class AuthService {
       String password,
       String name,
       String age,
-      String readingStage,
+      String school,
+      String classname,
+      bool agreement,
       double lvlOneCapsScore,
       double lvlOneScore,
       double lvlOneVoiceScore,
       double lvlThreeEasyScore,
       double lvlThreeMediumScore,
       double lvlThreeVoiceScore,
+      double lvlThreeVoiceMediumScore,
       double lvlTwoEasyScore,
       double lvlTwoMediumScore,
-      double lvlTwoVoiceScore) async {
+      double lvlTwoVoiceScore,
+      double lvlTwoVoiceMediumScore) async {
+    //printing all parameters with parameter name and value and new line between each
+    print(
+        "email: $email \n password: $password \n name: $name \n age: $age \n school: $school \n classname: $classname \n agreement: $agreement \n lvlOneCapsScore: $lvlOneCapsScore \n lvlOneScore: $lvlOneScore \n lvlOneVoiceScore: $lvlOneVoiceScore \n lvlThreeEasyScore: $lvlThreeEasyScore \n lvlThreeMediumScore: $lvlThreeMediumScore \n lvlThreeVoiceScore: $lvlThreeVoiceScore \n lvlThreeVoiceMediumScore: $lvlThreeVoiceMediumScore \n lvlTwoEasyScore: $lvlTwoEasyScore \n lvlTwoMediumScore: $lvlTwoMediumScore \n lvlTwoVoiceScore: $lvlTwoVoiceScore \n lvlTwoVoiceMediumScore: $lvlTwoVoiceMediumScore");
+
     try {
       SignUpResult result =
           await _auth.signUp(username: email, password: password);
@@ -160,21 +170,24 @@ class AuthService {
         await _auth.signIn(username: email, password: password);
 
         AuthUser user = await getCurrentUser();
-
         // create a new document for the user with the uid
         await DatabaseService(uid: user.userId).updateUserData(
           name,
           age,
-          readingStage,
+          school,
+          classname,
+          agreement,
           lvlOneCapsScore,
           lvlOneScore,
           lvlOneVoiceScore,
           lvlThreeEasyScore,
           lvlThreeMediumScore,
           lvlThreeVoiceScore,
+          lvlThreeVoiceMediumScore,
           lvlTwoEasyScore,
           lvlTwoMediumScore,
           lvlTwoVoiceScore,
+          lvlTwoVoiceMediumScore,
         );
 
         return _userFromCognitoUser(user);

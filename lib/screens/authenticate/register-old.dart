@@ -5,11 +5,9 @@ import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/loading.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -46,14 +44,13 @@ class _RegisterState extends State<RegisterForm> {
   List<Map<String, String>> schooljson = [
     {"school": "school"}
   ];
-  bool hideTopImage = false;
   String email;
   String password;
   String name;
   String age;
   String classname;
   String school;
-  bool agreement = true;
+  bool agreement;
   String selected;
   String error = '';
 
@@ -75,10 +72,6 @@ class _RegisterState extends State<RegisterForm> {
             school: school,
             classname: classname,
             aggreement: agreement));
-      } else {
-        setState(() {
-          hideTopImage = true;
-        });
       }
     }
 
@@ -113,7 +106,6 @@ class _RegisterState extends State<RegisterForm> {
                   print("oh no!");
                   print("error: " + state.error);
                   this.error = state.error;
-                  this.setState(() => {hideTopImage = true});
                 }
               },
               child: BlocBuilder<RegisterBloc, RegisterState>(
@@ -126,27 +118,21 @@ class _RegisterState extends State<RegisterForm> {
                   key: _formKey, // notum þennan formkey til að validata formið
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    //crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      // Expanded(
-                      // tag: 'logo',
-                      hideTopImage
-                          ? Container()
-                          : Container(
-                              alignment: Alignment.topCenter,
-                              height: 120.0,
-                              child:
-                                  Image.asset('assets/images/cat_noshadow.png'),
-                            ),
-
-                      // ),
+                      Expanded(
+                        child: Hero(
+                          tag: 'logo',
+                          child: Container(
+                            height: 60.0,
+                            child:
+                                Image.asset('assets/images/cat_noshadow.png'),
+                          ),
+                        ),
+                      ),
                       Container(
                         padding: EdgeInsets.all(6),
                         child: TextFormField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z]")),
-                          ],
                           keyboardType: TextInputType.name,
                           textAlign: TextAlign.center,
                           validator: (value) =>
@@ -166,7 +152,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? "Veldu aldur barns" : null,
+                              value.isEmpty ? 'Veldu aldur barns' : null,
                           onChanged: (value) {
                             setState(() {
                               age = value;
@@ -178,32 +164,23 @@ class _RegisterState extends State<RegisterForm> {
                       ),
                       Container(
                         padding: EdgeInsets.all(6),
-                        child: DropdownButtonFormField2(
+                        child: DropdownButtonFormField<String>(
                           isExpanded: true,
-                          hint: Text(
-                            //margin to be in the center of the container
-                            '      Veldu skóla barns',
-
-                            textAlign: TextAlign.center,
-
-                            style: TextStyle(
-                              fontSize: 16,
-                              // fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          validator: (value) =>
+                              value.isEmpty ? 'Veldu skóla barnsins' : null,
                           value: selected,
-                          // menuMaxHeight: 150,
+                          menuMaxHeight: 150,
                           alignment: Alignment.center,
                           enableFeedback: true,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 12,
-                            // fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w500,
                           ),
                           items:
                               // ["1. Byrjandi", "2. Þekkir stafina", "3. Les orð"]
                               schooljson
-                                  .map((label) => DropdownMenuItem<String>(
+                                  .map((label) => DropdownMenuItem(
                                         child: Text(
                                           label.keys.first,
                                           textAlign: TextAlign.center,
@@ -211,54 +188,20 @@ class _RegisterState extends State<RegisterForm> {
                                         value: label.keys.first,
                                       ))
                                   .toList(),
-                          validator: (value) =>
-                              value == null ? 'Veldu skóla barnsins' : null,
                           onChanged: (value) {
-                            print("value = $value");
                             setState(() {
                               school = value;
                             });
                           },
-                          onSaved: (value) {
-                            setState(() {
-                              selected = value;
-                            });
-                          },
                           decoration: kTextFieldDecoration.copyWith(
-                              hintText:
-                                  '                             Skóli barns'), //þetta er ba
-                        ),
-                      ),
-
-                      // I need a container for classname
-
-                      Container(
-                        padding: EdgeInsets.all(6),
-                        child: TextFormField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z0-9]")),
-                          ],
-                          keyboardType: TextInputType.name,
-                          textAlign: TextAlign.center,
-                          validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn nafn á bekk' : null,
-                          onChanged: (value) {
-                            setState(() {
-                              classname = value;
-                            });
-                          },
-                          decoration: kTextFieldDecoration.copyWith(
-                              hintText: 'Nafn á bekk'),
+                            hintText:
+                                '                             Skóli barns', //þetta er bara til að hafa textann í miðju
+                          ),
                         ),
                       ),
                       Container(
                         padding: EdgeInsets.all(6),
                         child: TextFormField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp("[a-zA-Z0-9.@]")),
-                          ],
                           keyboardType: TextInputType.emailAddress,
                           textAlign: TextAlign.center,
                           validator: (value) =>
@@ -289,75 +232,28 @@ class _RegisterState extends State<RegisterForm> {
                               hintText: 'Lykilorð'),
                         ),
                       ),
-                      // Create a checkbox that is checked initially, and a text to the right of it
-                      GridView.extent(
-                          shrinkWrap: true,
-                          maxCrossAxisExtent: 300,
-                          childAspectRatio: 2,
-
-                          // mainAxisSize: MainAxisSize.min,
-                          // crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(6),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Checkbox(
-                                    value: agreement,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        agreement = value;
-                                      });
-                                    },
-                                  ),
-                                  Flexible(
-                                    fit: FlexFit.loose,
-                                    flex: 1,
-                                    child: new Text(
-                                      // ' Ég samþykki að taka þátt í \n meistaraverkefni á vegum \n Háskóla Íslands og geyma \n stig og hljóðupptökur úr leikjum \n í lokuðum gagnagrunni á Íslandi.',
-                                      'Ég samþykki að taka þátt í meistaraverkefni á vegum  Háskóla Íslands sem felst í vistun á stigum og hljóðupptökum úr leikjum  í lokaðann gagnagrunn á Íslandi.',
-
-                                      textWidthBasis: TextWidthBasis.parent,
-                                      style: TextStyle(
-                                        fontSize: 8,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(20, 7, 20, 0),
-                              // button that NOT RoundedButton, is small and fits 50% of the screens with
-                              width: (MediaQuery.of(context).size.width * 0.5),
-
-                              child: RoundedButton(
-                                  title: 'Nýskráning',
-                                  colour: buttonColorBlue,
-                                  onPressed: state is RegisterLoading
-                                      ? () {}
-                                      : _onRegisterButtonPressed),
-                            ),
-                          ]),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(20, 7, 20, 0),
+                        child: RoundedButton(
+                            title: 'Nýskráning',
+                            colour: buttonColorBlue,
+                            onPressed: state is RegisterLoading
+                                ? () {}
+                                : _onRegisterButtonPressed),
+                      ),
                       Center(
                         child: Text(
                           error,
                           style: TextStyle(color: Colors.pink),
                         ),
                       ),
-
-                      hideTopImage
-                          ? Container()
-                          : Container(
-                              child: SizedBox(
-                                  height: 50.0,
-                                  width: double.infinity,
-                                  child: Image.asset(
-                                      'assets/images/bottomBar_ye.png',
-                                      fit: BoxFit.cover)),
-                            ),
+                      Container(
+                        child: SizedBox(
+                            height: 110.0,
+                            width: double.infinity,
+                            child: Image.asset('assets/images/bottomBar_ye.png',
+                                fit: BoxFit.cover)),
+                      ),
                     ],
                   ),
                 );

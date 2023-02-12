@@ -1,19 +1,19 @@
 export type AmplifyDependentResourcesAttributes = {
-    "auth": {
-        "lesappforma257feeb": {
-            "IdentityPoolId": "string",
-            "IdentityPoolName": "string",
-            "UserPoolId": "string",
-            "UserPoolArn": "string",
-            "UserPoolName": "string",
-            "AppClientIDWeb": "string",
-            "AppClientID": "string"
-        }
-    },
-    "api": {
-        "lesappform": {
-            "GraphQLAPIIdOutput": "string",
-            "GraphQLAPIEndpointOutput": "string"
-        }
+  "api": {
+    "lesappform": {
+      "GraphQLAPIEndpointOutput": "string",
+      "GraphQLAPIIdOutput": "string"
     }
+  },
+  "auth": {
+    "lesappforma257feeb": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  }
 }

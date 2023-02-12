@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/PrefVoice.dart';
+import '../../models/Schools.dart';
 import '../../models/UserData.dart';
 import '../../models/UserScore.dart';
 import '../../models/read.dart';
@@ -56,16 +60,20 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       dynamic userData = await _databaseService.updateUserData(
           event.name,
           event.age,
-          event.readingStage,
+          event.school,
+          event.classname,
+          event.agreement,
           event.lvlOneCapsScore,
           event.lvlOneScore,
           event.lvlOneVoiceScore,
           event.lvlThreeEasyScore,
           event.lvlThreeMediumScore,
           event.lvlThreeVoiceScore,
+          event.lvlThreeVoiceMediumScore,
           event.lvlTwoEasyScore,
           event.lvlTwoMediumScore,
-          event.lvlTwoVoiceScore);
+          event.lvlTwoVoiceScore,
+          event.lvlTwoVoiceMediumScore);
 
       if (userData != null) {
         yield UserDataUpdate(userData: userData);
@@ -111,8 +119,16 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     try {
       UserData userData = await _databaseService.getUserData();
       UserScore userScore = await _databaseService.getUserScores();
+      var schools = await rootBundle.loadString('assets/Schools.json');
+      Map<String, dynamic> schoolsList = json.decode(schools);
 
-      yield UserDataState(userdata: userData, userscore: userScore);
+      String schoolID = userData.school.name;
+
+      String school = schoolsList[schoolID];
+      print("school is => $school");
+
+      yield UserDataState(
+          userdata: userData, userscore: userScore, school: school);
     } catch (e) {
       yield DatabaseFailure();
     }
@@ -135,9 +151,21 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       PrefVoice prefVoice = data["prefVoice"];
       bool saveRecord = data["saveRecord"];
       bool manualFix = data["manualFix"];
+      bool agreement = data["agreement"];
+      Schools school = data["school"];
+      String classname = data["classname"];
+      String name = data["name"];
+      String age = data["age"];
 
       yield SpecialDataState(
-          prefVoice: prefVoice, saveRecord: saveRecord, manualFix: manualFix);
+          prefVoice: prefVoice,
+          saveRecord: saveRecord,
+          manualFix: manualFix,
+          agreement: agreement,
+          school: school,
+          classname: classname,
+          name: name,
+          age: age);
     } catch (err) {
       print("there was an error in the database $err");
     }
@@ -146,7 +174,14 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
   Stream<DatabaseState> _mapSaveSpecialData(SaveSpecialData event) async* {
     try {
       await _databaseService.saveSpecialData(
-          event.prefVoice, event.saveRecord, event.manualFix);
+          event.prefVoice,
+          event.saveRecord,
+          event.manualFix,
+          event.classname,
+          event.school,
+          event.agreement,
+          event.name,
+          event.age);
     } catch (err) {
       print("there was an error saving special data $err");
     }
@@ -157,6 +192,11 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     yield ActionPerformedState(
         prefVoice: event.prefVoice,
         saveRecord: event.saveRecord,
-        manualFix: event.manualFix);
+        manualFix: event.manualFix,
+        agreement: event.agreement,
+        school: event.school,
+        classname: event.classname,
+        name: event.name,
+        age: event.age);
   }
 }

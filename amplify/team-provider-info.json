@@ -20,6 +20,9 @@
           "bucketName": "lesapp-data",
           "region": "eu-west-1"
         }
+      },
+      "api": {
+        "lesappform": {}
       }
     }
   }

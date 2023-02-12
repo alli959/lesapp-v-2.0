@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
@@ -110,7 +113,35 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapRegisterScreenState(
       RegisterScreenToggle event) async* {
-    yield RegisterScreen();
+    // I want to import the school json file here and pass it down to the register screen
+
+    // first I will import the json file and parse it to a list of maps where each map is a school
+    // then I will pass the list of maps to the register screen
+
+    yield AuthenticationLoading();
+
+    var schools =
+        await rootBundle.loadString('assets/Schools-reverse-arr.json');
+    Map<String, dynamic> schoolsList = json.decode(schools);
+
+    // The key value of the map is 'reverse-arr' and the value is a list of maps
+    // each map is a school
+
+    List<Map<String, String>> schoolsListmap = [];
+    List<dynamic> temp = schoolsList['reverse-arr'];
+
+    for (var i = 0; i < temp.length; i++) {
+      Map<String, dynamic> tempMap = temp[i];
+      tempMap.entries.forEach((element) {
+        Map<String, String> tempMap2 = {element.key: element.value.toString()};
+        schoolsListmap.add(tempMap2);
+      });
+    }
+
+    // List<Map<String, String>>
+
+    print(schoolsListmap);
+    yield RegisterScreen(schools: schoolsListmap);
   }
 
   Stream<AuthenticationState> _mapGetUidToState(GetUid event) async* {

@@ -127,7 +127,9 @@ class lesApp extends StatelessWidget {
             LvlThreeChoose.id: (context) => LvlThreeChoose(),
             LevelTemplate.id: (context) => LevelTemplate(),
             SignIn.id: (context) => SignIn(),
-            Register.id: (context) => Register(),
+            Register.id: (context) => Register([
+                  {"school": "school"}
+                ]),
             Wrapper.id: (context) => Wrapper(),
             ProfileView.id: (context) => ProfileView(),
             MyProfile.id: (context) => MyProfile(),

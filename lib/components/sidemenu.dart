@@ -10,6 +10,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/settings.dart';
+import 'update_info.dart';
 
 class SideMenu extends StatelessWidget {
   @override
@@ -46,11 +47,26 @@ class SideMenu extends StatelessWidget {
                         ),
                         Expanded(
                           child: Tile(
-                            title: 'Stigatafla',
-                            icons: Icons.people,
-                            navigation: ScoreChart(),
+                            title: 'Stillingar',
+                            icons: Icons.settings,
+                            navigation: Settings(),
                           ),
                         ),
+                        Expanded(
+                            child: Stack(children: <Widget>[
+                          Tile(
+                            title: 'Notanda Stillingar',
+                            icons: Icons.account_box,
+                            navigation: Settings(specialScreen: false),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            widthFactor: 3.9,
+                            heightFactor: 5,
+                            child: Icon(Icons.settings,
+                                size: 27, color: Colors.grey[700]),
+                          ),
+                        ])),
                         Div(bottom: 0, top: 0),
                         Row(
                           children: [
@@ -108,18 +124,6 @@ class SideMenu extends StatelessWidget {
                             },
                           ),
                         ),
-                        Expanded(
-                          child: RoundIconButton(
-                            color: Colors.transparent,
-                            icon: Icons.settings,
-                            iconSize: 35,
-                            circleSize: 35,
-                            onPressed: () {
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  Settings.id, (Route<dynamic> route) => false);
-                            },
-                          ),
-                        )
                       ],
                     ),
                   ),

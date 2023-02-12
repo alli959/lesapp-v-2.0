@@ -17,7 +17,14 @@ class UsrState extends AuthenticationState {
 
 class LoginScreen extends AuthenticationState {}
 
-class RegisterScreen extends AuthenticationState {}
+class RegisterScreen extends AuthenticationState {
+  List<Map<String, String>> schools;
+
+  RegisterScreen({@required this.schools});
+
+  @override
+  List<Object> get props => [schools];
+}
 
 class AuthenticationInitialized extends AuthenticationState {}
 

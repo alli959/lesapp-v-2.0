@@ -32,7 +32,8 @@ class Authenticate extends StatelessWidget {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       if (state is RegisterScreen) {
-        return Register();
+        print("we are passing the register state here: ${state.schools}");
+        return Register(state.schools);
       }
       return SignIn();
     });

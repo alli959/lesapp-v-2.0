@@ -1,68 +1,86 @@
 {
-  "auth": {
-    "lesappforma257feeb": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false,
-      "frontendAuthConfig": {
-        "socialProviders": [],
-        "usernameAttributes": [
-          "EMAIL"
-        ],
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
-        },
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      }
-    }
-  },
-  "storage": {
-    "lesappform3bd03779": {
-      "service": "S3",
-      "serviceType": "imported",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": []
-    }
-  },
   "api": {
     "lesappform": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "lesappforma257feeb",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "lesappforma257feeb"
         }
       ],
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
               "userPoolId": "authlesappforma257feeb"
             }
-          },
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ]
+          }
         }
-      }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "lesappforma257feeb": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_storage_lesappform3bd03779_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "lesappform3bd03779"
+        }
+      ]
+    },
+    "AMPLIFY_storage_lesappform3bd03779_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "lesappform3bd03779"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "lesappform3bd03779": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
     }
   }
 }

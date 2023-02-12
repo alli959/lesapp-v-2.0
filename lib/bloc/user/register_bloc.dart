@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:bloc/bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
@@ -5,6 +7,7 @@ import 'package:Lesaforrit/exceptions/authentication_exception.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 part 'register_event.dart';
@@ -29,6 +32,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
   Stream<RegisterState> _mapRegisterWithEmailToState(
       RegisterWithEmailButtonPressed event) async* {
+    var schools = await rootBundle.loadString('assets/Schools-reverse.json');
+    Map<String, dynamic> schoolsList = json.decode(schools);
+
+    print("schoolsList: " + schoolsList.toString() + "");
+
+    // get the key for the school by school name from schoolsList
+
+    String schoolID = schoolsList[event.school];
+    print("schoolID: " + schoolID.toString() + "");
+
     yield RegisterLoading();
     try {
       dynamic usr = await _authService.registerWithEmailAndPassword(
@@ -36,16 +49,20 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           event.password,
           event.name,
           event.age,
-          event.readingStage,
+          schoolID,
+          event.classname,
+          event.aggreement,
           event.lvlOneCapsScore,
           event.lvlOneScore,
           event.lvlOneVoiceScore,
           event.lvlThreeEasyScore,
           event.lvlThreeMediumScore,
           event.lvlThreeVoiceScore,
+          event.lvlThreeVoiceMediumScore,
           event.lvlTwoEasyScore,
           event.lvlTwoMediumScore,
-          event.lvlTwoVoiceScore);
+          event.lvlTwoVoiceScore,
+          event.lvlTwoVoiceMediumScore);
 
       if (usr != null) {
         _authenticationBloc.add(UserRegister(usr: usr));

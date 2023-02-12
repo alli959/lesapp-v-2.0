@@ -33,10 +33,12 @@ class UserScore extends Model {
   final double lvlOneVoiceScore;
   final double lvlThreeMediumScore;
   final double lvlThreeVoiceScore;
+  final double lvlThreeVoiceMediumScore;
   final double lvlTwoEasyScore;
   final double lvlTwoMediumScore;
   final double lvlThreeEasyScore;
   final double lvlTwoVoiceScore;
+  final double lvlTwoVoiceMediumScore;
   final TemporalDateTime createdAt;
   final TemporalDateTime updatedAt;
 
@@ -56,10 +58,12 @@ class UserScore extends Model {
       this.lvlOneVoiceScore,
       this.lvlThreeMediumScore,
       this.lvlThreeVoiceScore,
+      this.lvlThreeVoiceMediumScore,
       this.lvlTwoEasyScore,
       this.lvlTwoMediumScore,
       this.lvlThreeEasyScore,
       this.lvlTwoVoiceScore,
+      this.lvlTwoVoiceMediumScore,
       this.createdAt,
       this.updatedAt});
 
@@ -71,10 +75,12 @@ class UserScore extends Model {
       double lvlOneVoiceScore,
       double lvlThreeMediumScore,
       double lvlThreeVoiceScore,
+      double lvlThreeVoiceMediumScore,
       double lvlTwoEasyScore,
       double lvlTwoMediumScore,
       double lvlThreeEasyScore,
-      double lvlTwoVoiceScore}) {
+      double lvlTwoVoiceScore,
+      double lvlTwoVoiceMediumScore}) {
     return UserScore._internal(
         id: id == null ? UUID.getUUID() : id,
         userdataID: userdataID,
@@ -83,10 +89,12 @@ class UserScore extends Model {
         lvlOneVoiceScore: lvlOneVoiceScore,
         lvlThreeMediumScore: lvlThreeMediumScore,
         lvlThreeVoiceScore: lvlThreeVoiceScore,
+        lvlThreeVoiceMediumScore: lvlThreeVoiceMediumScore,
         lvlTwoEasyScore: lvlTwoEasyScore,
         lvlTwoMediumScore: lvlTwoMediumScore,
         lvlThreeEasyScore: lvlThreeEasyScore,
-        lvlTwoVoiceScore: lvlTwoVoiceScore);
+        lvlTwoVoiceScore: lvlTwoVoiceScore,
+        lvlTwoVoiceMediumScore: lvlTwoVoiceMediumScore);
   }
 
   bool equals(Object other) {
@@ -104,10 +112,12 @@ class UserScore extends Model {
         lvlOneVoiceScore == other.lvlOneVoiceScore &&
         lvlThreeMediumScore == other.lvlThreeMediumScore &&
         lvlThreeVoiceScore == other.lvlThreeVoiceScore &&
+        lvlThreeVoiceMediumScore == other.lvlThreeVoiceMediumScore &&
         lvlTwoEasyScore == other.lvlTwoEasyScore &&
         lvlTwoMediumScore == other.lvlTwoMediumScore &&
         lvlThreeEasyScore == other.lvlThreeEasyScore &&
-        lvlTwoVoiceScore == other.lvlTwoVoiceScore;
+        lvlTwoVoiceScore == other.lvlTwoVoiceScore &&
+        lvlTwoVoiceMediumScore == other.lvlTwoVoiceMediumScore;
   }
 
   @override
@@ -137,6 +147,11 @@ class UserScore extends Model {
     buffer.write("lvlThreeVoiceScore=" +
         (lvlThreeVoiceScore != null ? lvlThreeVoiceScore.toString() : "null") +
         ", ");
+    buffer.write("lvlThreeVoiceMediumScore=" +
+        (lvlThreeVoiceMediumScore != null
+            ? lvlThreeVoiceMediumScore.toString()
+            : "null") +
+        ", ");
     buffer.write("lvlTwoEasyScore=" +
         (lvlTwoEasyScore != null ? lvlTwoEasyScore.toString() : "null") +
         ", ");
@@ -148,6 +163,11 @@ class UserScore extends Model {
         ", ");
     buffer.write("lvlTwoVoiceScore=" +
         (lvlTwoVoiceScore != null ? lvlTwoVoiceScore.toString() : "null") +
+        ", ");
+    buffer.write("lvlTwoVoiceMediumScore=" +
+        (lvlTwoVoiceMediumScore != null
+            ? lvlTwoVoiceMediumScore.toString()
+            : "null") +
         ", ");
     buffer.write("createdAt=" +
         (createdAt != null ? createdAt.format() : "null") +
@@ -167,10 +187,12 @@ class UserScore extends Model {
       double lvlOneVoiceScore,
       double lvlThreeMediumScore,
       double lvlThreeVoiceScore,
+      double lvlThreeVoiceMediumScore,
       double lvlTwoEasyScore,
       double lvlTwoMediumScore,
       double lvlThreeEasyScore,
-      double lvlTwoVoiceScore}) {
+      double lvlTwoVoiceScore,
+      double lvlTwoVoiceMediumScore}) {
     return UserScore._internal(
         id: id ?? this.id,
         userdataID: userdataID ?? this.userdataID,
@@ -179,10 +201,14 @@ class UserScore extends Model {
         lvlOneVoiceScore: lvlOneVoiceScore ?? this.lvlOneVoiceScore,
         lvlThreeMediumScore: lvlThreeMediumScore ?? this.lvlThreeMediumScore,
         lvlThreeVoiceScore: lvlThreeVoiceScore ?? this.lvlThreeVoiceScore,
+        lvlThreeVoiceMediumScore:
+            lvlThreeVoiceMediumScore ?? this.lvlThreeVoiceMediumScore,
         lvlTwoEasyScore: lvlTwoEasyScore ?? this.lvlTwoEasyScore,
         lvlTwoMediumScore: lvlTwoMediumScore ?? this.lvlTwoMediumScore,
         lvlThreeEasyScore: lvlThreeEasyScore ?? this.lvlThreeEasyScore,
-        lvlTwoVoiceScore: lvlTwoVoiceScore ?? this.lvlTwoVoiceScore);
+        lvlTwoVoiceScore: lvlTwoVoiceScore ?? this.lvlTwoVoiceScore,
+        lvlTwoVoiceMediumScore:
+            lvlTwoVoiceMediumScore ?? this.lvlTwoVoiceMediumScore);
   }
 
   UserScore.fromJson(Map<String, dynamic> json)
@@ -193,10 +219,14 @@ class UserScore extends Model {
         lvlOneVoiceScore = (json['lvlOneVoiceScore'] as num)?.toDouble(),
         lvlThreeMediumScore = (json['lvlThreeMediumScore'] as num)?.toDouble(),
         lvlThreeVoiceScore = (json['lvlThreeVoiceScore'] as num)?.toDouble(),
+        lvlThreeVoiceMediumScore =
+            (json['lvlThreeVoiceMediumScore'] as num)?.toDouble(),
         lvlTwoEasyScore = (json['lvlTwoEasyScore'] as num)?.toDouble(),
         lvlTwoMediumScore = (json['lvlTwoMediumScore'] as num)?.toDouble(),
         lvlThreeEasyScore = (json['lvlThreeEasyScore'] as num)?.toDouble(),
         lvlTwoVoiceScore = (json['lvlTwoVoiceScore'] as num)?.toDouble(),
+        lvlTwoVoiceMediumScore =
+            (json['lvlTwoVoiceMediumScore'] as num)?.toDouble(),
         createdAt = json['createdAt'] != null
             ? TemporalDateTime.fromString(json['createdAt'])
             : null,
@@ -212,15 +242,35 @@ class UserScore extends Model {
         'lvlOneVoiceScore': lvlOneVoiceScore,
         'lvlThreeMediumScore': lvlThreeMediumScore,
         'lvlThreeVoiceScore': lvlThreeVoiceScore,
+        'lvlThreeVoiceMediumScore': lvlThreeVoiceMediumScore,
         'lvlTwoEasyScore': lvlTwoEasyScore,
         'lvlTwoMediumScore': lvlTwoMediumScore,
         'lvlThreeEasyScore': lvlThreeEasyScore,
         'lvlTwoVoiceScore': lvlTwoVoiceScore,
+        'lvlTwoVoiceMediumScore': lvlTwoVoiceMediumScore,
         'createdAt': createdAt?.format(),
         'updatedAt': updatedAt?.format()
       };
 
-  static final QueryField ID = QueryField(fieldName: "userScore.id");
+  Map<String, Object> toMap() => {
+        'id': id,
+        'userdataID': userdataID,
+        'lvlOneCapsScore': lvlOneCapsScore,
+        'lvlOneScore': lvlOneScore,
+        'lvlOneVoiceScore': lvlOneVoiceScore,
+        'lvlThreeMediumScore': lvlThreeMediumScore,
+        'lvlThreeVoiceScore': lvlThreeVoiceScore,
+        'lvlThreeVoiceMediumScore': lvlThreeVoiceMediumScore,
+        'lvlTwoEasyScore': lvlTwoEasyScore,
+        'lvlTwoMediumScore': lvlTwoMediumScore,
+        'lvlThreeEasyScore': lvlThreeEasyScore,
+        'lvlTwoVoiceScore': lvlTwoVoiceScore,
+        'lvlTwoVoiceMediumScore': lvlTwoVoiceMediumScore,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt
+      };
+
+  static final QueryField ID = QueryField(fieldName: "id");
   static final QueryField USERDATAID = QueryField(fieldName: "userdataID");
   static final QueryField LVLONECAPSSCORE =
       QueryField(fieldName: "lvlOneCapsScore");
@@ -231,6 +281,8 @@ class UserScore extends Model {
       QueryField(fieldName: "lvlThreeMediumScore");
   static final QueryField LVLTHREEVOICESCORE =
       QueryField(fieldName: "lvlThreeVoiceScore");
+  static final QueryField LVLTHREEVOICEMEDIUMSCORE =
+      QueryField(fieldName: "lvlThreeVoiceMediumScore");
   static final QueryField LVLTWOEASYSCORE =
       QueryField(fieldName: "lvlTwoEasyScore");
   static final QueryField LVLTWOMEDIUMSCORE =
@@ -239,6 +291,8 @@ class UserScore extends Model {
       QueryField(fieldName: "lvlThreeEasyScore");
   static final QueryField LVLTWOVOICESCORE =
       QueryField(fieldName: "lvlTwoVoiceScore");
+  static final QueryField LVLTWOVOICEMEDIUMSCORE =
+      QueryField(fieldName: "lvlTwoVoiceMediumScore");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "UserScore";
@@ -251,6 +305,10 @@ class UserScore extends Model {
         ModelOperation.DELETE,
         ModelOperation.READ
       ])
+    ];
+
+    modelSchemaDefinition.indexes = [
+      ModelIndex(fields: const ["userdataID"], name: "byUserData")
     ];
 
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
@@ -286,6 +344,11 @@ class UserScore extends Model {
         ofType: ModelFieldType(ModelFieldTypeEnum.double)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserScore.LVLTHREEVOICEMEDIUMSCORE,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: UserScore.LVLTWOEASYSCORE,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.double)));
@@ -302,6 +365,11 @@ class UserScore extends Model {
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: UserScore.LVLTWOVOICESCORE,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.double)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserScore.LVLTWOVOICEMEDIUMSCORE,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.double)));
 
@@ -325,5 +393,10 @@ class _UserScoreModelType extends ModelType<UserScore> {
   @override
   UserScore fromJson(Map<String, dynamic> jsonData) {
     return UserScore.fromJson(jsonData);
+  }
+
+  @override
+  String modelName() {
+    return 'UserScore';
   }
 }

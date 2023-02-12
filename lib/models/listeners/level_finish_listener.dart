@@ -266,7 +266,7 @@ class VoiceWordsMediumConfig implements FinishGameListener {
     this.gametype = FinishGameType.voiceWordsMedium;
     this.image = 'assets/images/fish_skuggi-04.png';
     this.stig = 0;
-    this.typeofkey = 'lvlTwoVoiceScore'; // TODO: CHANGE TO CORRECT KEY
+    this.typeofkey = 'lvlTwoVoiceMediumScore'; // TODO: CHANGE TO CORRECT KEY
   }
 }
 
@@ -387,6 +387,6 @@ class VoiceSentencesMediumConfig implements FinishGameListener {
     this.gametype = FinishGameType.voiceSentencesMedium;
     this.image = 'assets/images/bear_shadow.png';
     this.stig = 0;
-    this.typeofkey = 'lvlThreeVoiceScore'; // TODO: CHANGE TO CORRECT KEY
+    this.typeofkey = 'lvlThreeVoiceMediumScore'; // TODO: CHANGE TO CORRECT KEY
   }
 }

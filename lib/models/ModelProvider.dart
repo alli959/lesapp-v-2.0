@@ -24,12 +24,13 @@ import 'UserData.dart';
 import 'UserScore.dart';
 
 export 'PrefVoice.dart';
+export 'Schools.dart';
 export 'UserData.dart';
 export 'UserScore.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "7e76f1f6cffbeef2e5b8c544153317d0";
+  String version = "48e6febdfa10363644dde40501affccc";
   @override
   List<ModelSchema> modelSchemas = [UserData.schema, UserScore.schema];
   static final ModelProvider _instance = ModelProvider();

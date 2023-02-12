@@ -110,15 +110,41 @@ class _MyProfileState extends State<MyProfile> {
                                   ),
                                 ],
                               ),
+                              // Row(
+                              //   mainAxisAlignment: MainAxisAlignment.center,
+                              //   children: [
+                              //     Text(
+                              //       'Lestrarstig: ',
+                              //       style: myPages,
+                              //     ),
+                              //     Text(
+                              //       state.userdata.readingStage,
+                              //       style: myPages,
+                              //     ),
+                              //   ],
+                              // ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Lestrarstig: ',
+                                    'Skóli: ',
                                     style: myPages,
                                   ),
                                   Text(
-                                    state.userdata.readingStage,
+                                    state.school,
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Bekkur: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    state.userdata.classname,
                                     style: myPages,
                                   ),
                                 ],
@@ -215,12 +241,26 @@ class _MyProfileState extends State<MyProfile> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Upplestur orða: ',
+                                    'Upplestur stuttra orða: ',
                                     style: myPages,
                                   ),
                                   Text(
                                     // userData.lvlTwoVoiceScore
                                     "${state.userscore.lvlTwoVoiceScore.toInt()}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upplestur lengri orða: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlTwoVoiceScore
+                                    "${state.userscore.lvlTwoVoiceMediumScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],
@@ -257,12 +297,26 @@ class _MyProfileState extends State<MyProfile> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Upplestur setninga: ',
+                                    'Upplestur stuttra setninga: ',
                                     style: myPages,
                                   ),
                                   Text(
                                     // userData.lvlThreeVoiceScore
                                     "${state.userscore.lvlThreeVoiceScore.toInt()}",
+                                    style: myPages,
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Upplestur lengri setninga: ',
+                                    style: myPages,
+                                  ),
+                                  Text(
+                                    // userData.lvlThreeVoiceScore
+                                    "${state.userscore.lvlThreeVoiceMediumScore.toInt()}",
                                     style: myPages,
                                   ),
                                 ],

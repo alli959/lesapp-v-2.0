@@ -23,6 +23,9 @@ const letterColor = Colors.black;
 const buttonColor = Colors.black;
 const buttonColorBlue = Color(0xFF009df4);
 const wrong = Color(0xFFfa2545);
+const settingsBackground = Color.fromARGB(255, 160, 198, 215);
+const settingsBackgroundCards = Color.fromARGB(255, 152, 192, 195);
+const settingsBorderColor = Color.fromARGB(255, 173, 205, 207);
 
 const kLargeButtonTextStyle = TextStyle(
   fontSize: 25.0,

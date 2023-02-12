@@ -31,6 +31,9 @@ class UserData extends Model {
   final String id;
   final String name;
   final String age;
+  final Schools school;
+  final String classname;
+  final bool agreement;
   final String readingStage;
   final PrefVoice prefVoice;
   final bool saveRecord;
@@ -51,6 +54,9 @@ class UserData extends Model {
       {@required this.id,
       @required this.name,
       this.age,
+      this.school,
+      this.classname,
+      this.agreement,
       this.readingStage,
       this.prefVoice,
       this.saveRecord,
@@ -63,6 +69,9 @@ class UserData extends Model {
       {String id,
       @required String name,
       String age,
+      Schools school,
+      String classname,
+      bool agreement,
       String readingStage,
       PrefVoice prefVoice,
       bool saveRecord,
@@ -72,6 +81,9 @@ class UserData extends Model {
         id: id == null ? UUID.getUUID() : id,
         name: name,
         age: age,
+        school: school,
+        classname: classname,
+        agreement: agreement,
         readingStage: readingStage,
         prefVoice: prefVoice,
         saveRecord: saveRecord,
@@ -92,6 +104,9 @@ class UserData extends Model {
         id == other.id &&
         name == other.name &&
         age == other.age &&
+        school == other.school &&
+        classname == other.classname &&
+        agreement == other.agreement &&
         readingStage == other.readingStage &&
         prefVoice == other.prefVoice &&
         saveRecord == other.saveRecord &&
@@ -110,6 +125,12 @@ class UserData extends Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$name" + ", ");
     buffer.write("age=" + "$age" + ", ");
+    buffer.write(
+        "school=" + (school != null ? enumToString(school) : "null") + ", ");
+    buffer.write("classname=" + "$classname" + ", ");
+    buffer.write("agreement=" +
+        (agreement != null ? agreement.toString() : "null") +
+        ", ");
     buffer.write("readingStage=" + "$readingStage" + ", ");
     buffer.write("prefVoice=" +
         (prefVoice != null ? enumToString(prefVoice) : "null") +
@@ -134,6 +155,9 @@ class UserData extends Model {
       {String id,
       String name,
       String age,
+      Schools school,
+      String classname,
+      bool agreement,
       String readingStage,
       PrefVoice prefVoice,
       bool saveRecord,
@@ -143,6 +167,9 @@ class UserData extends Model {
         id: id ?? this.id,
         name: name ?? this.name,
         age: age ?? this.age,
+        school: school ?? this.school,
+        classname: classname ?? this.classname,
+        agreement: agreement ?? this.agreement,
         readingStage: readingStage ?? this.readingStage,
         prefVoice: prefVoice ?? this.prefVoice,
         saveRecord: saveRecord ?? this.saveRecord,
@@ -154,6 +181,9 @@ class UserData extends Model {
       : id = json['id'],
         name = json['name'],
         age = json['age'],
+        school = enumFromString<Schools>(json['school'], Schools.values),
+        classname = json['classname'],
+        agreement = json['agreement'],
         readingStage = json['readingStage'],
         prefVoice =
             enumFromString<PrefVoice>(json['prefVoice'], PrefVoice.values),
@@ -176,6 +206,9 @@ class UserData extends Model {
         'id': id,
         'name': name,
         'age': age,
+        'school': enumToString(school),
+        'classname': classname,
+        'agreement': agreement,
         'readingStage': readingStage,
         'prefVoice': enumToString(prefVoice),
         'saveRecord': saveRecord,
@@ -185,17 +218,36 @@ class UserData extends Model {
         'updatedAt': updatedAt?.format()
       };
 
-  static final QueryField ID = QueryField(fieldName: "userData.id");
+  Map<String, Object> toMap() => {
+        'id': id,
+        'name': name,
+        'age': age,
+        'school': school,
+        'classname': classname,
+        'agreement': agreement,
+        'readingStage': readingStage,
+        'prefVoice': prefVoice,
+        'saveRecord': saveRecord,
+        'manualFix': manualFix,
+        'UserScores': UserScores,
+        'createdAt': createdAt,
+        'updatedAt': updatedAt
+      };
+
+  static final QueryField ID = QueryField(fieldName: "id");
   static final QueryField NAME = QueryField(fieldName: "name");
   static final QueryField AGE = QueryField(fieldName: "age");
+  static final QueryField SCHOOL = QueryField(fieldName: "school");
+  static final QueryField CLASSNAME = QueryField(fieldName: "classname");
+  static final QueryField AGREEMENT = QueryField(fieldName: "agreement");
   static final QueryField READINGSTAGE = QueryField(fieldName: "readingStage");
   static final QueryField PREFVOICE = QueryField(fieldName: "prefVoice");
   static final QueryField SAVERECORD = QueryField(fieldName: "saveRecord");
   static final QueryField MANUALFIX = QueryField(fieldName: "manualFix");
   static final QueryField USERSCORES = QueryField(
       fieldName: "UserScores",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (UserScore).toString()));
+      fieldType:
+          ModelFieldType(ModelFieldTypeEnum.model, ofModelName: 'UserScore'));
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "UserData";
@@ -230,6 +282,21 @@ class UserData extends Model {
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserData.SCHOOL,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserData.CLASSNAME,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserData.AGREEMENT,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.bool)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: UserData.READINGSTAGE,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
@@ -252,7 +319,7 @@ class UserData extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
         key: UserData.USERSCORES,
         isRequired: false,
-        ofModelName: (UserScore).toString(),
+        ofModelName: 'UserScore',
         associatedKey: UserScore.USERDATAID));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -275,5 +342,10 @@ class _UserDataModelType extends ModelType<UserData> {
   @override
   UserData fromJson(Map<String, dynamic> jsonData) {
     return UserData.fromJson(jsonData);
+  }
+
+  @override
+  String modelName() {
+    return 'UserData';
   }
 }
