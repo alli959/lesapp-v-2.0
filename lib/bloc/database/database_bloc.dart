@@ -152,33 +152,41 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       bool saveRecord = data["saveRecord"];
       bool manualFix = data["manualFix"];
       bool agreement = data["agreement"];
-      Schools school = data["school"];
       String classname = data["classname"];
       String name = data["name"];
       String age = data["age"];
 
+      String schoolname =
+          await _databaseService.getSchoolNameFromID(data["school"]);
+      List<String> schoolnamelist = await _databaseService.getAllSchoolNames();
       yield SpecialDataState(
           prefVoice: prefVoice,
           saveRecord: saveRecord,
           manualFix: manualFix,
           agreement: agreement,
-          school: school,
+          schoolname: schoolname,
           classname: classname,
           name: name,
-          age: age);
+          age: age,
+          schoolnamelist: schoolnamelist);
     } catch (err) {
       print("there was an error in the database $err");
     }
   }
 
   Stream<DatabaseState> _mapSaveSpecialData(SaveSpecialData event) async* {
+    print("SCHOOL NAME IS => ${event.schoolname}");
+    Schools schoolID =
+        await _databaseService.getSchoolIDFromName(event.schoolname);
+
+    print("Schoolid is ${schoolID.toString()}");
     try {
       await _databaseService.saveSpecialData(
           event.prefVoice,
           event.saveRecord,
           event.manualFix,
           event.classname,
-          event.school,
+          schoolID,
           event.agreement,
           event.name,
           event.age);
@@ -194,7 +202,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
         saveRecord: event.saveRecord,
         manualFix: event.manualFix,
         agreement: event.agreement,
-        school: event.school,
+        schoolname: event.schoolname,
         classname: event.classname,
         name: event.name,
         age: event.age);

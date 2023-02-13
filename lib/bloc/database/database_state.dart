@@ -56,19 +56,21 @@ class SpecialDataState extends DatabaseState {
   final bool saveRecord;
   final bool manualFix;
   final bool agreement;
-  final Schools school;
+  final String schoolname;
   final String classname;
   final String name;
   final String age;
+  final List<String> schoolnamelist;
   SpecialDataState(
       {@required this.prefVoice,
       @required this.saveRecord,
       @required this.manualFix,
       @required this.agreement,
-      @required this.school,
+      @required this.schoolname,
       @required this.classname,
       @required this.name,
-      @required this.age});
+      @required this.age,
+      @required this.schoolnamelist});
 
   @override
   List<Object> get props => [
@@ -76,10 +78,11 @@ class SpecialDataState extends DatabaseState {
         saveRecord,
         manualFix,
         agreement,
-        school,
+        schoolname,
         classname,
         name,
-        age
+        age,
+        schoolnamelist
       ];
 }
 
@@ -88,7 +91,7 @@ class ActionPerformedState extends DatabaseState {
   final bool saveRecord;
   final bool manualFix;
   final bool agreement;
-  final Schools school;
+  final String schoolname;
   final String classname;
   final String name;
   final String age;
@@ -97,7 +100,7 @@ class ActionPerformedState extends DatabaseState {
       this.saveRecord,
       this.manualFix,
       this.agreement,
-      this.school,
+      this.schoolname,
       this.classname,
       this.name,
       this.age});
@@ -108,7 +111,7 @@ class ActionPerformedState extends DatabaseState {
         saveRecord,
         manualFix,
         agreement,
-        school,
+        schoolname,
         classname,
         name,
         age

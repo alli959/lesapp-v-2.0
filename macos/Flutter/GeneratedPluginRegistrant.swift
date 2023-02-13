@@ -9,7 +9,7 @@ import audio_session
 import audioplayers
 import connectivity_plus_macos
 import just_audio
-import path_provider_macos
+import path_provider_foundation
 import speech_to_text_macos
 import sqflite
 

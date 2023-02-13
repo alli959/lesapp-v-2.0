@@ -95,7 +95,7 @@ class SaveSpecialData extends DatabaseEvent {
   final bool saveRecord;
   final bool manualFix;
   final bool agreement;
-  final Schools school;
+  final String schoolname;
   final String classname;
   final String name;
   final String age;
@@ -104,7 +104,7 @@ class SaveSpecialData extends DatabaseEvent {
       this.saveRecord,
       this.manualFix,
       this.agreement,
-      this.school,
+      this.schoolname,
       this.classname,
       this.name,
       this.age});
@@ -115,7 +115,7 @@ class SaveSpecialData extends DatabaseEvent {
         saveRecord,
         manualFix,
         agreement,
-        school,
+        schoolname,
         classname,
         name,
         age
@@ -127,7 +127,7 @@ class ActionPerformedEvent extends DatabaseEvent {
   final bool saveRecord;
   final bool manualFix;
   final bool agreement;
-  final Schools school;
+  final String schoolname;
   final String classname;
   final String name;
   final String age;
@@ -136,7 +136,7 @@ class ActionPerformedEvent extends DatabaseEvent {
       this.saveRecord,
       this.manualFix,
       this.agreement,
-      this.school,
+      this.schoolname,
       this.classname,
       this.name,
       this.age});
@@ -147,7 +147,7 @@ class ActionPerformedEvent extends DatabaseEvent {
         saveRecord,
         manualFix,
         agreement,
-        school,
+        schoolname,
         classname,
         name,
         age

@@ -322,6 +322,7 @@ class DatabaseService {
         "name": oldUserData[0].name,
         "age": oldUserData[0].age,
       };
+      String tempSchoolName = await getSchoolNameFromID(oldUserData[0].school);
       return returner;
     } catch (err) {
       print("there was an error getting user data ====> $err");
@@ -405,6 +406,21 @@ class DatabaseService {
     }
   }
 
+  Future<List<String>> getAllSchoolNames() async {
+    try {
+      var schoolJson = await rootBundle.loadString('assets/Schools.json');
+      Map<String, dynamic> schoolMap = json.decode(schoolJson);
+      List<String> schoolNames = [];
+      schoolMap.forEach((key, value) {
+        schoolNames.add(value);
+      });
+      return schoolNames;
+    } catch (err) {
+      print("there was an error getting user data ====> $err");
+      return ["Utan Skóla"];
+    }
+  }
+
   Future<String> getSchoolName() async {
     try {
       List<UserData> oldUserData = (await lesaCollection
@@ -437,7 +453,8 @@ class DatabaseService {
       var schoolJson =
           await rootBundle.loadString('assets/Schools-reverse.json');
       Map<String, dynamic> schoolMap = json.decode(schoolJson);
-      var schoolID = schoolMap[schoolName];
+      print("schoolMap is $schoolMap");
+      Schools schoolID = Schools.values.byName(schoolMap[schoolName]);
       return schoolID;
     } catch (err) {
       print("there was an error getting user data ====> $err");
@@ -450,7 +467,7 @@ class DatabaseService {
       bool saveRecord,
       bool manualFix,
       String classname,
-      Schools school,
+      Schools schoolID,
       bool agreement,
       String name,
       String age) async {
@@ -466,7 +483,7 @@ class DatabaseService {
           saveRecord: saveRecord,
           manualFix: manualFix,
           classname: classname,
-          school: school,
+          school: schoolID,
           agreement: agreement,
           name: name,
           age: age);
