@@ -52,7 +52,7 @@ void main() async {
           return AuthService();
         }),
         RepositoryProvider(create: (context) {
-          return DatabaseService();
+          return DatabaseService(uid: '');
         }),
         RepositoryProvider<VoiceService>(create: (context) {
           return VoiceService(speech: speech, context: context);
@@ -64,7 +64,7 @@ void main() async {
           return SaveAudio("username", "Correct", "question", "answer", null);
         }),
         RepositoryProvider<AudioSessionService>(create: (context) {
-          return AudioSessionService()..init();
+          return AudioSessionService(uid: '')..init();
         })
       ],
       child: MultiBlocProvider(providers: [
@@ -88,7 +88,7 @@ class lesApp extends StatelessWidget {
   final AppRouter appRouter;
 
   const lesApp({
-    Key key,
+    Key? key,
     required this.appRouter,
   }) : super(key: key);
   @override
@@ -101,7 +101,7 @@ class lesApp extends StatelessWidget {
         builder: (context, state) {
       if (state is UserUid) {
         print("state is userUID !!!!!!! => ${state.uid}");
-        databaseRepo.setUid(state.uid);
+        databaseRepo.setUid(state.uid ?? '');
       }
       return MaterialApp(
           theme: ThemeData(

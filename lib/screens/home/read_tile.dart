@@ -4,7 +4,7 @@ import 'package:Lesaforrit/models/read.dart';
 class ReadTile extends StatelessWidget {
   final Read read;
   int rank;
-  ReadTile({this.read, this.rank});
+  ReadTile({required this.read, required this.rank});
 
   String concat() {
     double zero = read.lvlOneScore;

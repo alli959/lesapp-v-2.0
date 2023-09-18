@@ -27,7 +27,7 @@ class Register extends StatelessWidget {
 }
 
 class RegisterForm extends StatefulWidget {
-  RegisterForm({this.schools});
+  RegisterForm({required this.schools});
 
   final List<Map<String, String>> schools;
 
@@ -42,14 +42,14 @@ class _RegisterState extends State<RegisterForm> {
     {"school": "school"}
   ];
   bool hideTopImage = false;
-  String email;
-  String password;
-  String name;
-  String age;
-  String classname;
-  String school;
+  late String email;
+  late String password;
+  late String name;
+  late String age;
+  late String classname;
+  late String school;
   bool agreement = true;
-  String selected;
+  late String selected;
   String error = '';
 
   @override
@@ -61,7 +61,7 @@ class _RegisterState extends State<RegisterForm> {
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     _onRegisterButtonPressed() {
-      if (_formKey.currentState.validate()) {
+      if (_formKey.currentState!.validate()) {
         _registerBloc.add(RegisterWithEmailButtonPressed(
             email: email,
             password: password,
@@ -145,7 +145,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.name,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn nafn barns' : null,
+                              value!.isEmpty ? 'Sláðu inn nafn barns' : null,
                           onChanged: (value) {
                             setState(() {
                               name = value;
@@ -161,7 +161,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? "Veldu aldur barns" : null,
+                              value!.isEmpty ? "Veldu aldur barns" : null,
                           onChanged: (value) {
                             setState(() {
                               age = value;
@@ -211,12 +211,12 @@ class _RegisterState extends State<RegisterForm> {
                           onChanged: (value) {
                             print("value = $value");
                             setState(() {
-                              school = value;
+                              school = value as String;
                             });
                           },
                           onSaved: (value) {
                             setState(() {
-                              selected = value;
+                              selected = value as String;
                             });
                           },
                           decoration: kTextFieldDecoration.copyWith(
@@ -237,7 +237,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.name,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn nafn á bekk' : null,
+                              value!.isEmpty ? 'Sláðu inn nafn á bekk' : null,
                           onChanged: (value) {
                             setState(() {
                               classname = value;
@@ -257,7 +257,7 @@ class _RegisterState extends State<RegisterForm> {
                           keyboardType: TextInputType.emailAddress,
                           textAlign: TextAlign.center,
                           validator: (value) =>
-                              value.isEmpty ? 'Sláðu inn netfang' : null,
+                              value!.isEmpty ? 'Sláðu inn netfang' : null,
                           onChanged: (value) {
                             setState(() {
                               email = value;
@@ -272,7 +272,7 @@ class _RegisterState extends State<RegisterForm> {
                         child: TextFormField(
                           obscureText: true, //stjörnur í stað texta
                           textAlign: TextAlign.center,
-                          validator: (value) => value.length < 8
+                          validator: (value) => value!.length < 8
                               ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                               : null,
                           onChanged: (value) {
@@ -300,9 +300,9 @@ class _RegisterState extends State<RegisterForm> {
                                 children: <Widget>[
                                   Checkbox(
                                     value: agreement,
-                                    onChanged: (bool value) {
+                                    onChanged: (bool? value) {
                                       setState(() {
-                                        agreement = value;
+                                        agreement = value ?? false;
                                       });
                                     },
                                   ),

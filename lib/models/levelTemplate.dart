@@ -7,13 +7,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 
 class LevelTemplate extends StatelessWidget {
   static const String id = 'level_template';
-  double soundCircleSize;
-  double soundPad;
-  double soundPadBottom;
-  double soundIconSize;
-  bool enabled;
-  String upperLetterImage;
-  String lowerLetterImage;
+
+  final double soundCircleSize;
+  final double soundPad;
+  final double soundPadBottom;
+  final double soundIconSize;
+  final bool enabled;
+  final String upperLetterImage;
+  final String lowerLetterImage;
   String letterOne;
   String letterTwo;
   void Function()? onPressed;
@@ -21,46 +22,47 @@ class LevelTemplate extends StatelessWidget {
   void Function()? onPress;
   void Function()? onPress2;
   void Function()? onPlay;
-  List<Icon> scoreKeeper;
-  String trys;
-  String correct;
-  String stig;
-  Color cardColor;
-  Color stigColor;
-  double fontSize;
-  Widget bottomBar;
-  int shadowLevel;
+  final List<Icon> scoreKeeper;
+  final String trys;
+  final String correct;
+  final String stig;
+  final Color cardColor;
+  final Color stigColor;
+  final double fontSize;
+  final Widget bottomBar;
+  final int shadowLevel;
 
-  LevelTemplate(
-      {required this.soundCircleSize,
-      required this.soundPad,
-      required this.soundPadBottom,
-      required this.soundIconSize,
-      required this.enabled,
-      required this.upperLetterImage,
-      required this.lowerLetterImage,
-      required this.letterOne,
-      required this.letterTwo,
-      required this.onPressed,
-      required this.onPressed2,
-      required this.onPress,
-      required this.onPress2,
-      required this.onPlay,
-      required this.scoreKeeper,
-      required this.trys,
-      required this.correct,
-      required this.stig,
-      required this.cardColor,
-      required this.stigColor,
-      required this.fontSize,
-      required this.bottomBar,
-      required this.shadowLevel});
+  LevelTemplate({
+    this.soundCircleSize = 100,
+    this.soundPad = 0.0,
+    this.soundPadBottom = 10,
+    this.soundIconSize = 35,
+    this.enabled = true,
+    this.upperLetterImage = 'assets/images/empty.png',
+    this.lowerLetterImage = 'assets/images/empty.png',
+    this.letterOne = '',
+    this.letterTwo = '',
+    this.onPressed,
+    this.onPressed2,
+    this.onPress,
+    this.onPress2,
+    this.onPlay,
+    this.scoreKeeper = const [],
+    this.trys = '',
+    this.correct = '',
+    this.stig = '',
+    this.cardColor = Colors.white,
+    this.stigColor = Colors.white,
+    this.fontSize = 0,
+    this.bottomBar = const SizedBox.shrink(),
+    this.shadowLevel = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
     //Making sure that the first letter of every letter/word/sentence is large
 
-    this.letterOne = this.letterOne.length > 1
+    this.letterOne = this.letterOne!.length > 1
         ? this.letterOne[0].toUpperCase() + this.letterOne.substring(1)
         : this.letterOne;
     this.letterTwo = this.letterTwo.length > 1

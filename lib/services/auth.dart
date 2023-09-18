@@ -9,6 +9,8 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 
+import 'package:Lesaforrit/models/UserData.dart' as UserDataType;
+
 import '../models/ModelProvider.dart';
 
 class AuthService {
@@ -47,9 +49,9 @@ class AuthService {
     }
   }
 
-  Future<String?> getCurrentUserID() async {
+  Future<String> getCurrentUserID() async {
     final user = await getCurrentUser();
-    return user?.userId;
+    return user!.userId;
   }
 
   // SIGN IN w. email and password
@@ -97,24 +99,40 @@ class AuthService {
       if (result.isSignUpComplete) {
         await _auth.signIn(username: email, password: password);
         AuthUser? user = await getCurrentUser();
-        await DatabaseService(uid: user!.userId).updateUserData(
-          name,
-          age,
-          school,
-          classname,
-          agreement,
-          lvlOneCapsScore,
-          lvlOneScore,
-          lvlOneVoiceScore,
-          lvlThreeEasyScore,
-          lvlThreeMediumScore,
-          lvlThreeVoiceScore,
-          lvlThreeVoiceMediumScore,
-          lvlTwoEasyScore,
-          lvlTwoMediumScore,
-          lvlTwoVoiceScore,
-          lvlTwoVoiceMediumScore,
+
+        // Create instances of UserData and UserScore
+        UserDataType.UserData userData = UserDataType.UserData(
+          id: user!.userId,
+          name: name,
+          age: age,
+          school: enumFromString(
+              school,
+              Schools
+                  .values), // Assuming you have a function to convert string to enum
+          classname: classname,
+          agreement: agreement,
+          // Add other fields if necessary
         );
+
+        UserScore userScore = UserScore(
+          userdataID: user.userId,
+          lvlOneCapsScore: lvlOneCapsScore,
+          lvlOneScore: lvlOneScore,
+          lvlOneVoiceScore: lvlOneVoiceScore,
+          lvlThreeEasyScore: lvlThreeEasyScore,
+          lvlThreeMediumScore: lvlThreeMediumScore,
+          lvlThreeVoiceScore: lvlThreeVoiceScore,
+          lvlThreeVoiceMediumScore: lvlThreeVoiceMediumScore,
+          lvlTwoEasyScore: lvlTwoEasyScore,
+          lvlTwoMediumScore: lvlTwoMediumScore,
+          lvlTwoVoiceScore: lvlTwoVoiceScore,
+          lvlTwoVoiceMediumScore: lvlTwoVoiceMediumScore,
+          // Add other fields if necessary
+        );
+
+        // Update the user data
+        await DatabaseService(uid: user.userId)
+            .updateUserData(userData, userScore);
 
         return _userFromCognitoUser(user);
       }

@@ -53,7 +53,7 @@ class AuthenticationFailure extends AuthenticationState {
 }
 
 class UserUid extends AuthenticationState {
-  final String? uid;
+  final String uid;
 
   UserUid({required this.uid});
 

@@ -8,29 +8,31 @@ import 'package:flutter/material.dart';
 import 'quiz_brain.dart';
 
 class SetScore extends StatelessWidget {
-  String currentScore;
-  String currentScoreCaps;
-  String currentScoreVoice;
-  String currentScoreTwo;
-  String currentScoreTwoLong;
-  String currentScoreTwoVoice;
-  String currentScoreThree;
-  String currentScoreThreeLong;
-  String currentScoreThreeVoice;
-  String level;
-  String text;
-  SetScore(
-      {required this.currentScore,
-      required this.currentScoreCaps,
-      required this.currentScoreVoice,
-      required this.currentScoreTwo,
-      required this.currentScoreTwoLong,
-      required this.currentScoreTwoVoice,
-      required this.currentScoreThree,
-      required this.currentScoreThreeLong,
-      required this.currentScoreThreeVoice,
-      required this.level,
-      required this.text});
+  final String currentScore;
+  final String currentScoreCaps;
+  final String currentScoreVoice;
+  final String currentScoreTwo;
+  final String currentScoreTwoLong;
+  final String currentScoreTwoVoice;
+  final String currentScoreThree;
+  final String currentScoreThreeLong;
+  final String currentScoreThreeVoice;
+  final String level;
+  final String text;
+
+  SetScore({
+    this.currentScore = '',
+    this.currentScoreCaps = '',
+    this.currentScoreVoice = '',
+    this.currentScoreTwo = '',
+    this.currentScoreTwoLong = '',
+    this.currentScoreTwoVoice = '',
+    this.currentScoreThree = '',
+    this.currentScoreThreeLong = '',
+    this.currentScoreThreeVoice = '',
+    this.level = '',
+    this.text = '',
+  });
 
   static const String id = 'SetScore';
   final _formKey = GlobalKey<FormState>();

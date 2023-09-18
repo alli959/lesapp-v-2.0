@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
   final Function toggleView;
-  SignIn({this.toggleView});
+  SignIn({required this.toggleView});
 
   Widget build(BuildContext context) {
     final authService = RepositoryProvider.of<AuthService>(context);
@@ -36,33 +36,16 @@ class _SignInState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
-  String email;
-  String password;
+  late String email;
+  late String password;
   String error = '';
 
   @override
   Widget build(BuildContext context) {
     final _loginBloc = BlocProvider.of<LoginBloc>(context);
 
-// () async {
-//         if (_formKey.currentState.validate()) {
-//           setState(() {
-//             loading = true;
-//           });
-//           dynamic result = await _auth
-//               .signInWithEmailAndPassword(email, password);
-
-//           if (result == null) {
-//             setState(() {
-//               error =
-//                   'Gat ekki skráð notanda inn með þessum gögnum';
-//               loading = false;
-//             });
-//           }
-//         }
-//       },
     _onLoginButtonPressed() async {
-      if (_formKey.currentState.validate()) {
+      if (_formKey.currentState!.validate()) {
         setState(() {
           loading = true;
         });
@@ -120,7 +103,7 @@ class _SignInState extends State<SignInForm> {
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     validator: (value) =>
-                        value.isEmpty ? 'Sláðu inn netfang' : null,
+                        value!.isEmpty ? 'Sláðu inn netfang' : null,
                     onChanged: (value) {
                       setState(() {
                         email = value;
@@ -135,7 +118,7 @@ class _SignInState extends State<SignInForm> {
                   child: TextFormField(
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 8
+                    validator: (value) => value!.length < 8
                         ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                         : null,
                     onChanged: (value) {
@@ -152,9 +135,8 @@ class _SignInState extends State<SignInForm> {
                   child: RoundedButton(
                     title: 'Skrá inn',
                     colour: Color(0xFF009df4),
-                    onPressed: state is LoginLoading
-                        ? Loading()
-                        : _onLoginButtonPressed,
+                    onPressed:
+                        state is LoginLoading ? null : _onLoginButtonPressed,
                   ),
                 ),
                 Center(
@@ -185,20 +167,3 @@ class _SignInState extends State<SignInForm> {
     ));
   }
 }
-
-
-/*
-            child: RoundedButton(
-              title: 'Skrá inn',
-              colour: Color(0xFF009df4),
-              onPressed: () async {
-                dynamic result = await _auth.signInAnon();
-                if (result == null) {
-                  print('error signing in');
-                } else {
-                  print('signed in');
-                  print(result.uid);
-                }
-              },
-            ),
- */

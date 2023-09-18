@@ -14,9 +14,8 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthService _authService;
-  final DatabaseBloc _databaseBloc;
-  AuthenticationBloc(AuthService authService,
-      {required DatabaseBloc databaseBloc})
+  DatabaseBloc? _databaseBloc;
+  AuthenticationBloc(AuthService authService, {DatabaseBloc? databaseBloc})
       : _authService = authService,
         _databaseBloc = databaseBloc,
         super(AuthenticationInitialized());

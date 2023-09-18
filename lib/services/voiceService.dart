@@ -50,15 +50,15 @@ class VoiceService {
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
-  StreamSubscription<List<int>> _audioStreamSubscription;
-  BehaviorSubject<List<int>> _audioStream;
-  RecognitionConfig config;
+  late StreamSubscription<List<int>> _audioStreamSubscription;
+  late BehaviorSubject<List<int>> _audioStream;
+  late RecognitionConfig config;
 
   bool isSave = true;
   bool isCancel = false;
 
-  AudioSessionService session;
-  VoiceService({required this.speech, this.context});
+  late AudioSessionService session;
+  VoiceService({required this.speech, required this.context});
 
   Future speechInit(Function statusListener, Function errorListener,
       AudioSessionService _sessionparams,
@@ -71,9 +71,9 @@ class VoiceService {
   }
 
   Future<String> getFilePath() async {
-    Directory appDocumentsDirectory = await getExternalStorageDirectory(); // 1
+    Directory? appDocumentsDirectory = await getExternalStorageDirectory(); // 1
     print("appDocumentsDirectory is $appDocumentsDirectory");
-    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String appDocumentsPath = appDocumentsDirectory!.path; // 2
     String filePath = '$appDocumentsPath/demoaudiofile.wav'; // 3
 
     return filePath;

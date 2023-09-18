@@ -7,108 +7,134 @@ import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
 import '../models/ModelProvider.dart';
 
-// Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
+// Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Amplify database.
+/// Service class for interacting with the Firestore database.
 class DatabaseService {
   String uid;
   final lesaCollection = Amplify.DataStore;
+
   DatabaseService({required this.uid});
 
   StreamSubscription hubSubscription = Amplify.Hub.listen(
       [HubChannel.DataStore] as HubChannel<dynamic, HubEvent<Object?>>,
       (hubEvent) async {});
 
-  Future<void> updateUserData(UserData userData, UserScore userScore) async {
-    print("we are at updateUserData");
+  /// Updates user data in the database.
+  Future<void> updateUserData(UserData userData, UserScore? userScore) async {
     try {
       await lesaCollection.save(userData);
-      await lesaCollection.save(userScore);
+      if (userScore != null) {
+        await lesaCollection.save(userScore);
+      }
     } catch (err) {
       print("Error updating user data: $err");
     }
   }
 
+  /// Sets the user ID.
   void setUid(String uid) {
-    print("setUID: $uid");
     this.uid = uid;
   }
 
-  //document er í auth
+  /// Updates user score in the database.
   Future<void> updateUserScore(UserScore userScore) async {
-    print("IN update user score position");
     await lesaCollection.save(userScore);
   }
 
   // read list from snapshot
   List<Read> _readListFromSnapshot(QuerySnapshot<UserData> snapshot) {
-    double lvlOneCapsScore;
-    double lvlOneScore;
-    double lvlOneVoiceScore;
-    double lvlThreeMediumScore;
-    double lvlThreeVoiceScore;
-    double lvlThreeVoiceMediumScore;
-    double lvlTwoEasyScore;
-    double lvlTwoMediumScore;
-    double lvlThreeEasyScore;
-    double lvlTwoVoiceScore;
-    double lvlTwoVoiceMediumScore;
+    double? lvlOneCapsScore;
+    double? lvlOneScore;
+    double? lvlOneVoiceScore;
+    double? lvlThreeMediumScore;
+    double? lvlThreeVoiceScore;
+    double? lvlThreeVoiceMediumScore;
+    double? lvlTwoEasyScore;
+    double? lvlTwoMediumScore;
+    double? lvlThreeEasyScore;
+    double? lvlTwoVoiceScore;
+    double? lvlTwoVoiceMediumScore;
     print("IN _readListFromSnapshot user score position");
     print(snapshot.items.last);
     // print("snapshot test")
 
     return snapshot.items.map((document) {
       print("snapshot test => ${document.UserScores}");
-      double totalpoints = 0.0;
+      double? totalpoints = 0.0;
       var userID = document.id;
       var userScores = userScoreStream(
           userID,
           (QuerySnapshot<UserScore> usrscores) => {
                 print("we are at query snapshot guy"),
                 print("we are at query snapshot guy ${usrscores.items}"),
-                lvlOneCapsScore = usrscores.items
-                    .map((e) => e.lvlOneCapsScore)
-                    .reduce(math.max),
-                lvlOneScore =
-                    usrscores.items.map((e) => e.lvlOneScore).reduce(math.max),
-                lvlOneVoiceScore = usrscores.items
-                    .map((e) => e.lvlOneVoiceScore)
-                    .reduce(math.max),
-                lvlThreeEasyScore = usrscores.items
-                    .map((e) => e.lvlThreeEasyScore)
-                    .reduce(math.max),
-                lvlThreeMediumScore = usrscores.items
-                    .map((e) => e.lvlThreeMediumScore)
-                    .reduce(math.max),
-                lvlThreeVoiceScore = usrscores.items
-                    .map((e) => e.lvlThreeVoiceScore)
-                    .reduce(math.max),
-                lvlThreeVoiceMediumScore = usrscores.items
-                    .map((e) => e.lvlThreeVoiceMediumScore)
-                    .reduce(math.max),
-                lvlTwoEasyScore = usrscores.items
-                    .map((e) => e.lvlTwoEasyScore)
-                    .reduce(math.max),
-                lvlTwoMediumScore = usrscores.items
-                    .map((e) => e.lvlTwoMediumScore)
-                    .reduce(math.max),
-                lvlTwoVoiceScore = usrscores.items
-                    .map((e) => e.lvlTwoVoiceScore)
-                    .reduce(math.max),
-                lvlTwoVoiceMediumScore = usrscores.items
-                    .map((e) => e.lvlTwoVoiceMediumScore)
-                    .reduce(math.max),
+                lvlOneCapsScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlOneScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlOneScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlOneScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlOneVoiceScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlOneVoiceScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlThreeEasyScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlThreeEasyScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlThreeMediumScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlThreeMediumScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlThreeVoiceScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlThreeVoiceScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlThreeVoiceMediumScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlThreeVoiceMediumScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlTwoEasyScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlTwoEasyScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlTwoMediumScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlTwoMediumScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlTwoVoiceScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlTwoVoiceScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
+                lvlTwoVoiceMediumScore = math.max(
+                    usrscores.items
+                        .map((e) => e.lvlTwoVoiceMediumScore ?? 0.0)
+                        .reduce(math.max),
+                    0.0),
 
                 // get max points by user
-                totalpoints = lvlOneCapsScore +
-                    lvlOneScore +
-                    lvlOneVoiceScore +
-                    lvlThreeEasyScore +
-                    lvlThreeMediumScore +
-                    lvlThreeVoiceScore +
-                    lvlThreeVoiceMediumScore +
-                    lvlTwoEasyScore +
-                    lvlTwoMediumScore +
-                    lvlTwoVoiceScore +
-                    lvlTwoVoiceMediumScore
+                totalpoints = lvlOneCapsScore! +
+                    lvlOneScore! +
+                    lvlOneVoiceScore! +
+                    lvlThreeEasyScore! +
+                    lvlThreeMediumScore! +
+                    lvlThreeVoiceScore! +
+                    lvlThreeVoiceMediumScore! +
+                    lvlTwoEasyScore! +
+                    lvlTwoMediumScore! +
+                    lvlTwoVoiceScore! +
+                    lvlTwoVoiceMediumScore!
               });
       // StreamProvider<UserScore>.value(
       //     value: state.users,
@@ -151,7 +177,7 @@ class DatabaseService {
         lvlTwoVoiceMediumScore: lvlTwoVoiceMediumScore ??
             // document.UserScores.map((e) => e.lvlTwoVoiceMediumScore).reduce(math.max) ??
             0.0,
-        totalpoints: totalpoints ?? totalpoints,
+        totalpoints: totalpoints ?? 0.0,
       );
     }).toList();
   }
@@ -166,11 +192,12 @@ class DatabaseService {
 
   UserData _userDataFromSnapshot(SubscriptionEvent snapshot) {
     return UserData(
-        id: snapshot.item.getId(),
-        name: snapshot.item.toJson()['name'],
-        age: snapshot.item.toJson()['age'],
-        school: snapshot.item.toJson()['school'],
-        classname: snapshot.item.toJson()['class']);
+      id: snapshot.item.getId(),
+      name: (snapshot.item.toJson()['name'] as String?) ?? '',
+      age: (snapshot.item.toJson()['age'] as String?) ?? '',
+      school: (snapshot.item.toJson()['school'] as Schools?) ?? Schools.School1,
+      classname: (snapshot.item.toJson()['class'] as String?) ?? '',
+    );
   }
 
   UserScore _userScoreFromSnapshot(SubscriptionEvent snapshot) {
@@ -180,18 +207,29 @@ class DatabaseService {
     return UserScore(
       id: uuid,
       userdataID: uid,
-      lvlOneCapsScore: snapshot.item.toJson()['lvlOneCapsScore'],
-      lvlOneScore: snapshot.item.toJson()['lvlOneScore'],
-      lvlOneVoiceScore: snapshot.item.toJson()['lvlOneVoiceScore'],
-      lvlThreeEasyScore: snapshot.item.toJson()['lvlThreeEasyScore'],
-      lvlThreeMediumScore: snapshot.item.toJson()['lvlThreeMediumScore'],
-      lvlThreeVoiceScore: snapshot.item.toJson()['lvlThreeVoiceScore'],
+      lvlOneCapsScore:
+          (snapshot.item.toJson()['lvlOneCapsScore'] as num?)?.toDouble(),
+      lvlOneScore: (snapshot.item.toJson()['lvlOneScore'] as num?)?.toDouble(),
+      lvlOneVoiceScore:
+          (snapshot.item.toJson()['lvlOneVoiceScore'] as num?)?.toDouble(),
+      lvlThreeEasyScore:
+          (snapshot.item.toJson()['lvlThreeEasyScore'] as num?)?.toDouble(),
+      lvlThreeMediumScore:
+          (snapshot.item.toJson()['lvlThreeMediumScore'] as num?)?.toDouble(),
+      lvlThreeVoiceScore:
+          (snapshot.item.toJson()['lvlThreeVoiceScore'] as num?)?.toDouble(),
       lvlThreeVoiceMediumScore:
-          snapshot.item.toJson()['lvlThreeVoiceMediumScore'],
-      lvlTwoEasyScore: snapshot.item.toJson()['lvlTwoEasyScore'],
-      lvlTwoMediumScore: snapshot.item.toJson()['lvlTwoMediumScore'],
-      lvlTwoVoiceScore: snapshot.item.toJson()['lvlTwoVoiceScore'],
-      lvlTwoVoiceMediumScore: snapshot.item.toJson()['lvlTwoVoiceMediumScore'],
+          (snapshot.item.toJson()['lvlThreeVoiceMediumScore'] as num?)
+              ?.toDouble(),
+      lvlTwoEasyScore:
+          (snapshot.item.toJson()['lvlTwoEasyScore'] as num?)?.toDouble(),
+      lvlTwoMediumScore:
+          (snapshot.item.toJson()['lvlTwoMediumScore'] as num?)?.toDouble(),
+      lvlTwoVoiceScore:
+          (snapshot.item.toJson()['lvlTwoVoiceScore'] as num?)?.toDouble(),
+      lvlTwoVoiceMediumScore:
+          (snapshot.item.toJson()['lvlTwoVoiceMediumScore'] as num?)
+              ?.toDouble(),
     );
   }
 
@@ -222,7 +260,7 @@ class DatabaseService {
     print("we are at GetSpecialData");
 
     try {
-      var user = await Amplify.Auth.getCurrentUser();
+      AuthUser user = await Amplify.Auth.getCurrentUser();
       print("userID IS ${user.userId}");
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(user.userId)));
@@ -236,10 +274,19 @@ class DatabaseService {
         "name": oldUserData[0].name,
         "age": oldUserData[0].age,
       };
-      String tempSchoolName = await getSchoolNameFromID(oldUserData[0].school);
       return returner;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return {
+        "prefVoice": PrefVoice.DORA,
+        "saveRecord": false,
+        "manualFix": false,
+        "classname": "",
+        "school": Schools.School1,
+        "agreement": false,
+        "name": "",
+        "age": "",
+      };
     }
   }
 
@@ -249,9 +296,10 @@ class DatabaseService {
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
       var prefVoice = oldUserData[0].prefVoice;
       print("prefVoice is $prefVoice");
-      return prefVoice;
+      return prefVoice ?? PrefVoice.DORA;
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return PrefVoice.DORA;
     }
   }
 
@@ -261,7 +309,7 @@ class DatabaseService {
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
       var isSaveVoice = oldUserData[0].saveRecord;
       print("prefVoice is $isSaveVoice");
-      return isSaveVoice;
+      return isSaveVoice ?? false;
     } catch (err) {
       print("there was an error getting user data ====> $err");
       return false;
@@ -274,7 +322,7 @@ class DatabaseService {
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
       var isManualFix = oldUserData[0].manualFix;
       print("manualFix is $isManualFix");
-      return isManualFix;
+      return isManualFix ?? false;
     } catch (err) {
       print("there was an error getting user data ====> $err");
       return false;
@@ -287,7 +335,7 @@ class DatabaseService {
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
       var isAgreement = oldUserData[0].agreement;
       print("agreement is $isAgreement");
-      return isAgreement;
+      return isAgreement ?? false;
     } catch (err) {
       print("there was an error getting user data ====> $err");
       return false;
@@ -298,9 +346,8 @@ class DatabaseService {
     try {
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
-      var classname = oldUserData[0].classname;
-      print("classname is $classname");
-      return classname;
+      String? classname = oldUserData[0].classname;
+      return classname ?? "";
     } catch (err) {
       print("there was an error getting user data ====> $err");
       return "";
@@ -311,9 +358,9 @@ class DatabaseService {
     try {
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
-      var school = oldUserData[0].school;
+      Schools? school = oldUserData[0].school;
       print("school is $school");
-      return school;
+      return school ?? Schools.School1;
     } catch (err) {
       print("there was an error getting user data ====> $err");
       return Schools.School1;
@@ -339,10 +386,10 @@ class DatabaseService {
     try {
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
-      var school = oldUserData[0].school;
-      var schoolJson = await rootBundle.loadString('assets/Schools.json');
+      Schools? school = oldUserData[0].school;
+      String schoolJson = await rootBundle.loadString('assets/Schools.json');
       Map<String, dynamic> schoolMap = json.decode(schoolJson);
-      String schoolName = schoolMap[school.name];
+      String schoolName = schoolMap[school?.name];
       return schoolName;
     } catch (err) {
       print("there was an error getting user data ====> $err");
@@ -385,6 +432,7 @@ class DatabaseService {
     }
   }
 
+  /// Helper method to fetch max specific value from the database.
   Future<double> getMaxSpecificValue(String label) async {
     try {
       List<UserScore> oldUserScore = (await lesaCollection.query(
@@ -394,13 +442,10 @@ class DatabaseService {
             QuerySortBy(field: label, order: QuerySortOrder.descending)
           ]));
 
-      double highScore = oldUserScore[0].toJson()[label];
-
-      print("we are at the specific value place with highscore = $highScore");
-
-      return highScore;
+      return oldUserScore[0].toJson()[label];
     } catch (err) {
-      print("there was an error getting max value $err");
+      print("Error getting max value: $err");
+      return 0.0; // Default value
     }
   }
 
@@ -475,6 +520,17 @@ class DatabaseService {
       return oldUserData[0];
     } catch (err) {
       print("there was an error getting user data ====> $err");
+      return UserData(
+        id: "",
+        name: "",
+        age: "",
+        school: Schools.School1,
+        classname: "",
+        prefVoice: PrefVoice.DORA,
+        saveRecord: false,
+        manualFix: false,
+        agreement: false,
+      );
     }
   }
 }
