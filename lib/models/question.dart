@@ -4,31 +4,26 @@ class Question {
   String questionText;
   bool questionAnswer;
   String file;
-  String file2;
-  PrefVoice prefVoice = PrefVoice.DORA;
+  String? file2;
+  PrefVoice prefVoice;
 
-  Question(this.questionText, this.questionAnswer, this.file,
-      [this.file2, this.prefVoice]);
+  Question(
+    this.questionText,
+    this.questionAnswer,
+    this.file, {
+    this.file2,
+    this.prefVoice = PrefVoice.DORA, // Set the default value here
+  });
 
-  String getQuestionText() {
-    return questionText;
-  }
+  String getQuestionText() => questionText;
 
-  bool getQuestionAnswer() {
-    return questionAnswer;
-  }
+  bool getQuestionAnswer() => questionAnswer;
 
-  String getFile() {
-    return file;
-  }
+  String getFile() => file;
 
-  String getFile2() {
-    return file2;
-  }
+  String? getFile2() => file2;
 
-  PrefVoice getPrefVoice() {
-    return prefVoice;
-  }
+  PrefVoice getPrefVoice() => prefVoice;
 
   void setPrefVoice(PrefVoice prefVoice) {
     this.prefVoice = prefVoice;

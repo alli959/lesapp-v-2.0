@@ -1,21 +1,13 @@
-import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/components/img_button.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
-import 'package:Lesaforrit/models/usr.dart';
-import 'package:Lesaforrit/screens/authenticate/authenticate.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
 import 'package:Lesaforrit/screens/lvlThree_choose.dart';
 import 'package:Lesaforrit/screens/lvlTwo_choose.dart';
-import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:Lesaforrit/services/auth.dart';
-import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:Lesaforrit/models/read.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:imagebutton/imagebutton.dart';
 
 class Welcome extends StatelessWidget {

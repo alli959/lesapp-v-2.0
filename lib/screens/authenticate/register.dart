@@ -1,18 +1,13 @@
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/bloc/user/register_bloc.dart';
-import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/services/auth.dart';
-import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:convert';
-import 'dart:io';
 
 class Register extends StatelessWidget {
   static const String id = 'register';
@@ -113,7 +108,7 @@ class _RegisterState extends State<RegisterForm> {
                   print("oh no!");
                   print("error: " + state.error);
                   this.error = state.error;
-                  this.setState(() => {hideTopImage = true});
+                  this.setState(() => hideTopImage = true);
                 }
               },
               child: BlocBuilder<RegisterBloc, RegisterState>(

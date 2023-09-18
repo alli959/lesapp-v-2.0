@@ -1,17 +1,10 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
-import 'package:Lesaforrit/screens/level_voice.dart';
 import 'package:Lesaforrit/screens/settings.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/services.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
@@ -30,9 +23,7 @@ import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/google_speech.dart';
-import 'models/ModelProvider.dart';
 import 'models/levelTemplate.dart';
-import 'amplifyconfiguration.dart';
 import 'shared/constants.dart';
 
 // void main() async {
@@ -98,7 +89,7 @@ class lesApp extends StatelessWidget {
 
   const lesApp({
     Key key,
-    @required this.appRouter,
+    required this.appRouter,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {

@@ -6,10 +6,7 @@ import 'package:Lesaforrit/services/auth.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../models/read.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -18,9 +15,9 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthService _authService;
   final DatabaseBloc _databaseBloc;
-  AuthenticationBloc(AuthService authService, {DatabaseBloc databaseBloc})
-      : assert(authService != null),
-        _authService = authService,
+  AuthenticationBloc(AuthService authService,
+      {required DatabaseBloc databaseBloc})
+      : _authService = authService,
         _databaseBloc = databaseBloc,
         super(AuthenticationInitialized());
 

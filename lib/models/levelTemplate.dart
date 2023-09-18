@@ -1,11 +1,9 @@
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:imagebutton/imagebutton.dart';
 
 class LevelTemplate extends StatelessWidget {
   static const String id = 'level_template';
@@ -18,11 +16,11 @@ class LevelTemplate extends StatelessWidget {
   String lowerLetterImage;
   String letterOne;
   String letterTwo;
-  Function onPressed;
-  Function onPressed2;
-  Function onPress;
-  Function onPress2;
-  Function onPlay;
+  void Function()? onPressed;
+  void Function()? onPressed2;
+  void Function()? onPress;
+  void Function()? onPress2;
+  void Function()? onPlay;
   List<Icon> scoreKeeper;
   String trys;
   String correct;
@@ -34,29 +32,29 @@ class LevelTemplate extends StatelessWidget {
   int shadowLevel;
 
   LevelTemplate(
-      {this.soundCircleSize,
-      this.soundPad,
-      this.soundPadBottom,
-      this.soundIconSize,
-      this.enabled,
-      this.upperLetterImage,
-      this.lowerLetterImage,
-      this.letterOne,
-      this.letterTwo,
-      this.onPressed,
-      this.onPressed2,
-      this.onPress,
-      this.onPress2,
-      this.onPlay,
-      this.scoreKeeper,
-      this.trys,
-      this.correct,
-      this.stig,
-      this.cardColor,
-      this.stigColor,
-      this.fontSize,
-      this.bottomBar,
-      this.shadowLevel});
+      {required this.soundCircleSize,
+      required this.soundPad,
+      required this.soundPadBottom,
+      required this.soundIconSize,
+      required this.enabled,
+      required this.upperLetterImage,
+      required this.lowerLetterImage,
+      required this.letterOne,
+      required this.letterTwo,
+      required this.onPressed,
+      required this.onPressed2,
+      required this.onPress,
+      required this.onPress2,
+      required this.onPlay,
+      required this.scoreKeeper,
+      required this.trys,
+      required this.correct,
+      required this.stig,
+      required this.cardColor,
+      required this.stigColor,
+      required this.fontSize,
+      required this.bottomBar,
+      required this.shadowLevel});
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +99,7 @@ class LevelTemplate extends StatelessWidget {
                             iconSize: soundIconSize,
                             circleSize: soundCircleSize,
                             onPressed: onPlay,
+                            color: Colors.white,
                           ),
                           Padding(
                               padding: EdgeInsets.only(top: 20),
@@ -123,33 +122,30 @@ class LevelTemplate extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(20))),
                           child: Stack(children: <Widget>[
                             Center(
-                                child: Padding(
-                              // H O M E
-                              padding: const EdgeInsets.fromLTRB(0, 0, 140, 0),
-                              child: ImageButton(
-                                children: <Widget>[],
-                                unpressedImage: Image.asset(
-                                    'assets/icons/woman_speaking.png'),
-                                pressedImage: Image.asset(
-                                    'assets/icons/woman_speaking.png'),
-                                width: 75,
-                                height: 75,
-                                onTap: onPressed,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 0, 140, 0),
+                                child: InkWell(
+                                  onTap: onPressed,
+                                  child: Image.asset(
+                                    'assets/icons/woman_speaking.png',
+                                    width: 75,
+                                    height: 75,
+                                  ),
+                                ),
                               ),
-                            )),
+                            ),
                             Center(
                               child: Padding(
                                 padding:
                                     const EdgeInsets.fromLTRB(140, 0, 0, 0),
-                                child: ImageButton(
-                                  children: <Widget>[],
-                                  unpressedImage: Image.asset(
-                                      'assets/icons/man_speaking.png'),
-                                  pressedImage: Image.asset(
-                                      'assets/icons/man_speaking.png'),
-                                  width: 75,
-                                  height: 75,
+                                child: InkWell(
                                   onTap: onPressed2,
+                                  child: Image.asset(
+                                    'assets/icons/man_speaking.png',
+                                    width: 75,
+                                    height: 75,
+                                  ),
                                 ),
                               ),
                             )
@@ -239,6 +235,7 @@ class LevelTemplate extends StatelessWidget {
                       child: ReusableCard(
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
+                        width: 100,
                         cardChild: Text(
                           'RÉTT :  ' + correct + ' af ' + trys,
                           style: correctTrys,
@@ -254,6 +251,7 @@ class LevelTemplate extends StatelessWidget {
                       child: ReusableCard(
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
+                        width: 100,
                         cardChild: Text(stig, style: points),
                       ),
                     ),
@@ -276,6 +274,8 @@ class LevelTemplate extends StatelessWidget {
                               child: Container(
                                 child: ReusableCard(
                                   colour: Colors.white,
+                                  height: 35,
+                                  width: 100,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: scoreKeeper,

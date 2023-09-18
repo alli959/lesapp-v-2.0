@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../components/custom_painter.dart';
 
@@ -11,8 +10,8 @@ class TimerWidget extends StatelessWidget {
   final Function onTimeCancel;
 
   TimerWidget(
-      {@required this.time,
-      @required this.backgroundcolor,
+      {required this.time,
+      required this.backgroundcolor,
       this.onTimeStop,
       this.onTimeCancel});
   Widget build(BuildContext context) {
@@ -32,8 +31,8 @@ class CountDownTimer extends StatefulWidget {
   final Function onTimeCancel;
 
   CountDownTimer(
-      {@required this.time,
-      @required this.backgroundcolor,
+      {required this.time,
+      required this.backgroundcolor,
       this.onTimeStop,
       this.onTimeCancel});
 
@@ -53,8 +52,8 @@ class _CountDownTimerState extends State<CountDownTimer>
   final Function onTimeStop;
   final Function onTimeCancel;
   _CountDownTimerState(
-      {@required this.time,
-      @required this.backgroundcolor,
+      {required this.time,
+      required this.backgroundcolor,
       this.onTimeStop,
       this.onTimeCancel});
   String get timerString {

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/shared/constants.dart';
-import 'package:random_color/random_color.dart';
 
 class ReadTile extends StatelessWidget {
   final Read read;

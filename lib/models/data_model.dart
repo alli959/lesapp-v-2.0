@@ -1,7 +1,7 @@
 class DataModel {
   final Object model;
 
-  const DataModel({this.model});
+  const DataModel({required this.model});
 
   factory DataModel.fromJson(Map<String, dynamic> json) {
     return DataModel(

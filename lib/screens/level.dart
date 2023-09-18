@@ -3,9 +3,7 @@ import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/screens/level_finish.dart';
 
-import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/models/total_points.dart';

@@ -2,8 +2,6 @@ import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
-import 'package:Lesaforrit/shared/loading.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -15,8 +13,8 @@ class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
 
   bool isListening = false;
-  Function listeningUpdate;
-  Function checkAnswer;
+  void Function() listeningUpdate;
+  void Function() checkAnswer;
   String question;
   String lastWords;
   List<Icon> scoreKeeper;
@@ -30,8 +28,8 @@ class LevelTemplateVoice extends StatelessWidget {
   int shadowLevel;
   bool isLetters = false;
 
-  Function ondoneListener;
-  Function resultListener;
+  void Function() ondoneListener;
+  void Function() resultListener;
   List<bool> questionMap = [];
   List<bool> answerMap = [];
   List<String> questionArr = [];
@@ -40,29 +38,29 @@ class LevelTemplateVoice extends StatelessWidget {
   int questionTime = 10;
 
   LevelTemplateVoice(
-      {this.isListening,
-      this.questionMap,
-      this.answerMap,
-      this.questionArr,
-      this.answerArr,
-      this.listeningUpdate,
-      this.checkAnswer,
-      this.question,
-      this.lastWords,
-      this.scoreKeeper,
-      this.trys,
-      this.correct,
-      this.stig,
-      this.cardColor,
-      this.stigColor,
-      this.fontSize,
-      this.bottomBar,
-      this.shadowLevel,
-      this.isLetters,
-      this.resultListener,
-      this.ondoneListener,
-      this.isShowResult,
-      this.questionTime});
+      {required this.isListening,
+      required this.questionMap,
+      required this.answerMap,
+      required this.questionArr,
+      required this.answerArr,
+      required this.listeningUpdate,
+      required this.checkAnswer,
+      required this.question,
+      required this.lastWords,
+      required this.scoreKeeper,
+      required this.trys,
+      required this.correct,
+      required this.stig,
+      required this.cardColor,
+      required this.stigColor,
+      required this.fontSize,
+      required this.bottomBar,
+      required this.shadowLevel,
+      required this.isLetters,
+      required this.resultListener,
+      required this.ondoneListener,
+      required this.isShowResult,
+      required this.questionTime});
 
   List<TextSpan> getResultText(List<String> arr, List<bool> map) {
     List<TextSpan> resultTextMap = [];
@@ -249,8 +247,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  children: (answerArr.length == 0 ||
-                                          answerMap.length == null
+                                  children: (answerArr.length == 0
                                       ? _onCancelButtonPressed()
                                       : getResultText(answerArr, answerMap))),
                             ),
@@ -287,6 +284,7 @@ class LevelTemplateVoice extends StatelessWidget {
                           left: 25, right: 17, bottom: 15, top: 0),
                       child: ReusableCard(
                         height: 35,
+                        width: 100,
                         colour: stigColor, // - - - * * - - -//
                         cardChild: isLetters == true
                             ? Text(
@@ -315,6 +313,7 @@ class LevelTemplateVoice extends StatelessWidget {
                         height: 35,
                         colour: stigColor, // - - - * * - - -//
                         cardChild: Text(stig, style: points),
+                        width: 100,
                       ),
                     ),
                   ),
@@ -335,7 +334,9 @@ class LevelTemplateVoice extends StatelessWidget {
                               height: 35,
                               child: Container(
                                 child: ReusableCard(
+                                  height: 35,
                                   colour: Colors.white,
+                                  width: 100,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: scoreKeeper,

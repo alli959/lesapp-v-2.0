@@ -1,21 +1,14 @@
-import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:Lesaforrit/models/total_points.dart';
-import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
-import 'package:meta/meta.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
 import '../../services/audio_session.dart';
 
@@ -66,10 +59,6 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
       yield* _mapVoiceStartedEvent(event);
     }
 
-    if (event is NewVoiceQuestionEvent) {
-      yield* _mapNewQuestionEvent(event);
-    }
-
     if (event is UpdateEvent) {
       yield* _mapLastWordsEvent(event);
     }
@@ -118,9 +107,12 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
         print("it has speech");
         yield VoiceHasInitialized();
       }
-    } catch (e) {
-      print("error initializing speech");
-      yield VoiceFailure(error: e);
+    } catch (err) {
+      if (err is FormatException) {
+        yield VoiceFailure(error: err.message);
+      } else {
+        yield VoiceFailure(error: 'An unknown error occurred');
+      }
     }
   }
 
@@ -136,13 +128,13 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     } catch (err) {
       print("error = $err");
       await _speech.stopRecording(isSave: this.isSave);
-      yield VoiceFailure(error: err);
+      if (err is FormatException) {
+        yield VoiceFailure(error: err.message);
+      } else {
+        yield VoiceFailure(error: 'An unknown error occurred');
+      }
     }
     // yield NewVoiceQuestionState(question: _speech.question);
-  }
-
-  Stream<VoiceState> _mapNewQuestionEvent(NewVoiceQuestionEvent event) async* {
-    yield NewVoiceQuestionState();
   }
 
   Stream<VoiceState> _mapLastWordsEvent(UpdateEvent event) async* {
@@ -179,67 +171,66 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
     int correct = event.correct;
     // Getting the results ready
     yield IsNotListeningState();
+
     yield ShowResultState();
 
     var isSaveVoice = await databaseService.getIsSaveVoice();
     var isManualFix = await databaseService.getIsManualFix();
     await Future.delayed(Duration(milliseconds: 3000));
 
-    if (event.answer != null && event.audio != null) {
-      print("We are adding score");
+    print("We are adding score");
 
-      bool manualAnswer;
+    bool manualAnswer = false;
 
-      void callBackFunc(setAnswer) {
-        manualAnswer = setAnswer;
-        if (setAnswer) {
-          if (typeOfFile == "Incorrect") {
-            correct = trys;
-            typeOfFile = "Manual_Correct";
-            fivePoints = true;
-            fourPoints = false;
-            threePoints = false;
-            twoPoints = false;
-            onePoint = false;
-          }
-        }
-        if (!setAnswer) {
-          if (typeOfFile == "Correct") {
-            typeOfFile = "Manual_Incorrect";
-            correct = 0;
-            fivePoints = false;
-            fourPoints = false;
-            threePoints = false;
-            twoPoints = false;
-            onePoint = true;
-          }
+    void callBackFunc(setAnswer) {
+      manualAnswer = setAnswer;
+      if (setAnswer) {
+        if (typeOfFile == "Incorrect") {
+          correct = trys;
+          typeOfFile = "Manual_Correct";
+          fivePoints = true;
+          fourPoints = false;
+          threePoints = false;
+          twoPoints = false;
+          onePoint = false;
         }
       }
-
-      if (isManualFix) {
-        await dialog(callBackFunc);
-      }
-      print("manualAnswer is $manualAnswer");
-
-      if (fivePoints) {
-        // check if user has disabled save feature
-        if (isSaveVoice) {
-          audioSaver.setData('testName', "$level/$typeOfFile", event.question,
-              event.answer, event.audio);
-        }
-      } else {
-        // check if user has disabled save feature
-        if (isSaveVoice) {
-          audioSaver.setData('testName', '$level/$typeOfFile', event.question,
-              event.answer, event.audio);
+      if (!setAnswer) {
+        if (typeOfFile == "Correct") {
+          typeOfFile = "Manual_Incorrect";
+          correct = 0;
+          fivePoints = false;
+          fourPoints = false;
+          threePoints = false;
+          twoPoints = false;
+          onePoint = true;
         }
       }
+    }
 
-      try {
-        await audioSaver.saveData();
-      } catch (err) {
-        print("there was an error saving data from bloc => $err");
+    if (isManualFix) {
+      await dialog(callBackFunc);
+    }
+    print("manualAnswer is $manualAnswer");
+
+    if (fivePoints) {
+      // check if user has disabled save feature
+      if (isSaveVoice) {
+        audioSaver.setData('testName', "$level/$typeOfFile", event.question,
+            event.answer, event.audio);
       }
+    } else {
+      // check if user has disabled save feature
+      if (isSaveVoice) {
+        audioSaver.setData('testName', '$level/$typeOfFile', event.question,
+            event.answer, event.audio);
+      }
+    }
+
+    try {
+      await audioSaver.saveData();
+    } catch (err) {
+      print("there was an error saving data from bloc => $err");
     }
 
     print("Now new Question State should be yielded");
@@ -255,11 +246,7 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
   }
 
   Stream<VoiceState> _mapFindBestLastWordEvent(
-      FindBestLastWordEvent event) async* {
-    String lastWords = event.lastWords;
-    List<SpeechRecognitionWords> alternates = event.alternates;
-    String question = event.question;
-  }
+      FindBestLastWordEvent event) async* {}
 
   Stream<VoiceState> _mapResetEventToState(ResetEvent event) async* {
     yield VoiceLoading();

@@ -7,13 +7,9 @@ import 'package:Lesaforrit/services/auth.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/file.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 // import 'package:simple_s3/simple_s3.dart';
 
-import '../models/data.dart';
 import 'dart:convert' show utf8;
 import 'package:uuid/uuid.dart';
 

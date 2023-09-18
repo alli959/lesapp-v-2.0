@@ -5,7 +5,6 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
@@ -182,7 +181,7 @@ class _SignInState extends State<SignInForm> {
   void _showError(String error) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(error),
-      backgroundColor: Theme.of(context).errorColor,
+      backgroundColor: Theme.of(context).colorScheme.error,
     ));
   }
 }

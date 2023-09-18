@@ -1,21 +1,15 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbgrpc.dart'
-    hide RecognitionConfig, StreamingRecognitionConfig;
 import 'dart:async';
 
 import 'package:google_speech/google_speech.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:sound_stream/sound_stream.dart';
-import 'package:audio_session/audio_session.dart';
 
 import '../models/voices/quiz_brain_lvlOne_voice.dart';
 import '../models/voices/quiz_brain_lvlThree_voice.dart';
@@ -64,7 +58,7 @@ class VoiceService {
   bool isCancel = false;
 
   AudioSessionService session;
-  VoiceService({@required this.speech, this.context});
+  VoiceService({required this.speech, this.context});
 
   Future speechInit(Function statusListener, Function errorListener,
       AudioSessionService _sessionparams,

@@ -1,126 +1,41 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/models/usr.dart' as usr;
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:math' as math;
-
 import '../models/ModelProvider.dart';
 
 // Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
 class DatabaseService {
   String uid;
-  DatabaseService({this.uid});
-
-// // Tilvísun í collection í database
-//   final CollectionReference lesaCollection =
-//       FirebaseFirestore.instance.collection('Notendur');
-
   final lesaCollection = Amplify.DataStore;
+  DatabaseService({required this.uid});
 
-  StreamSubscription hubSubscription =
-      Amplify.Hub.listen([HubChannel.DataStore], (hubEvent) async {
-    // print("EVENT NAME IS ===============> ${hubEvent.eventName}");
-    // print("EVENT PAYLOAD IS ===============> ${hubEvent.payload}");
-  });
+  StreamSubscription hubSubscription = Amplify.Hub.listen(
+      [HubChannel.DataStore] as HubChannel<dynamic, HubEvent<Object?>>,
+      (hubEvent) async {});
 
-  Future updateUserData(
-      String name,
-      String age,
-      String school,
-      String classname,
-      bool agreement,
-      double lvlOneCapsScore,
-      double lvlOneScore,
-      double lvlOneVoiceScore,
-      double lvlThreeEasyScore,
-      double lvlThreeMediumScore,
-      double lvlThreeVoiceScore,
-      double lvlThreeVoiceMediumScore,
-      double lvlTwoEasyScore,
-      double lvlTwoMediumScore,
-      double lvlTwoVoiceScore,
-      double lvlTwoVoiceMediumScore) async {
+  Future<void> updateUserData(UserData userData, UserScore userScore) async {
     print("we are at updateUserData");
-
     try {
-      // List<UserData> oldUserData = (await lesaCollection
-      //     .query(UserData.classType, where: UserData.UID.eq(this.uid)));
-      // print("oldUserData is $oldUserData");
-      var uuid = Uuid().v1();
-      // if (oldUserData.length == 0) {
-      UserData userData = UserData(
-          id: this.uid,
-          name: name,
-          age: age,
-          school: enumFromString(school, Schools.values),
-          classname: classname,
-          prefVoice: PrefVoice.DORA,
-          agreement: agreement,
-          saveRecord: agreement,
-          manualFix: false);
-
-      UserScore userScore = UserScore(
-        id: uuid,
-        userdataID: uid,
-        lvlOneCapsScore: lvlOneCapsScore,
-        lvlOneScore: lvlOneScore,
-        lvlOneVoiceScore: lvlOneVoiceScore,
-        lvlThreeMediumScore: lvlThreeMediumScore,
-        lvlThreeVoiceScore: lvlThreeVoiceScore,
-        lvlThreeVoiceMediumScore: lvlThreeVoiceMediumScore,
-        lvlTwoEasyScore: lvlTwoEasyScore,
-        lvlTwoMediumScore: lvlTwoMediumScore,
-        lvlThreeEasyScore: lvlThreeEasyScore,
-        lvlTwoVoiceScore: lvlTwoVoiceScore,
-        lvlTwoVoiceMediumScore: lvlTwoVoiceMediumScore,
-      );
       await lesaCollection.save(userData);
-      return await lesaCollection.save(userScore);
+      await lesaCollection.save(userScore);
     } catch (err) {
-      print("there was an error updating user data ====> $err");
+      print("Error updating user data: $err");
     }
   }
 
   void setUid(String uid) {
-    print("setUID going on ====> $uid");
+    print("setUID: $uid");
     this.uid = uid;
   }
 
   //document er í auth
-  Future updateUserScore(double score, String typeof) async {
+  Future<void> updateUserScore(UserScore userScore) async {
     print("IN update user score position");
-
-    List<UserScore> oldUserDataTemp = (await lesaCollection
-        .query(UserScore.classType, where: UserScore.USERDATAID.eq(uid)));
-
-    print("length of old user data temp = ${oldUserDataTemp.length}");
-
-    UserScore oldUserData = oldUserDataTemp[0];
-    var uuid = Uuid().v1();
-    UserScore userScore = oldUserData.copyWith(
-        id: uuid,
-        lvlOneCapsScore: typeof == "lvlOneCapsScore" ? score : null,
-        lvlOneScore: typeof == "lvlOneScore" ? score : null,
-        lvlOneVoiceScore: typeof == "lvlOneVoiceScore" ? score : null,
-        lvlThreeEasyScore: typeof == "lvlThreeEasyScore" ? score : null,
-        lvlThreeMediumScore: typeof == "lvlThreeMediumScore" ? score : null,
-        lvlThreeVoiceScore: typeof == "lvlThreeVoiceScore" ? score : null,
-        lvlThreeVoiceMediumScore:
-            typeof == "lvlThreeVoiceMediumScore" ? score : null,
-        lvlTwoEasyScore: typeof == "lvlTwoEasyScore" ? score : null,
-        lvlTwoMediumScore: typeof == "lvlTwoMediumScore" ? score : null,
-        lvlTwoVoiceScore: typeof == "lvlTwoVoiceScore" ? score : null,
-        lvlTwoVoiceMediumScore:
-            typeof == "lvlTwoVoiceMediumScore" ? score : null);
-    return await lesaCollection.save(userScore);
+    await lesaCollection.save(userScore);
   }
 
   // read list from snapshot
@@ -244,9 +159,9 @@ class DatabaseService {
   // Get data from firestore to our app.
 // Get stream from lesaCollection
   Stream<List<Read>> get users {
-    Stream<QuerySnapshot<UserData>> stream =
-        lesaCollection.observeQuery(UserData.classType);
-    return stream.map(_readListFromSnapshot);
+    return lesaCollection
+        .observeQuery(UserData.classType)
+        .map(_readListFromSnapshot);
   }
 
   UserData _userDataFromSnapshot(SubscriptionEvent snapshot) {
@@ -283,25 +198,24 @@ class DatabaseService {
   // Get user document
   Future<Stream<UserData>> get userData async {
     var user = await Amplify.Auth.getCurrentUser();
-    Stream<SubscriptionEvent<UserData>> stream = lesaCollection
-        .observe(UserData.classType, where: UserData.ID.eq(user.userId));
-    return stream.map(_userDataFromSnapshot);
+    return lesaCollection
+        .observe(UserData.classType, where: UserData.ID.eq(user.userId))
+        .map(_userDataFromSnapshot);
   }
 
   Future<Stream<UserScore>> get userScore async {
     var user = await Amplify.Auth.getCurrentUser();
-
-    Stream<SubscriptionEvent<UserScore>> stream = lesaCollection.observe(
-        UserScore.classType,
-        where: UserScore.USERDATAID.eq(user.userId));
-    return stream.map(_userScoreFromSnapshot);
+    return lesaCollection
+        .observe(UserScore.classType,
+            where: UserScore.USERDATAID.eq(user.userId))
+        .map(_userScoreFromSnapshot);
   }
 
   Stream<SubscriptionEvent<UserScore>> userScoreStream(
       String userID, callback) {
-    Stream<SubscriptionEvent<UserScore>> stream = lesaCollection
-        .observe(UserScore.classType, where: UserScore.USERDATAID.eq(userID));
-    return stream.map(callback);
+    return lesaCollection
+        .observe(UserScore.classType, where: UserScore.USERDATAID.eq(userID))
+        .map(callback);
   }
 
   Future<Map<String, dynamic>> GetSpecialData() async {
@@ -462,35 +376,12 @@ class DatabaseService {
     }
   }
 
-  Future<void> saveSpecialData(
-      PrefVoice prefVoice,
-      bool saveRecord,
-      bool manualFix,
-      String classname,
-      Schools schoolID,
-      bool agreement,
-      String name,
-      String age) async {
+  Future<void> saveSpecialData(UserData userData) async {
     print("we are at updateUserData");
-
     try {
-      print("userID IS ${this.uid}");
-      List<UserData> oldUserData = (await lesaCollection
-          .query(UserData.classType, where: UserData.ID.eq(this.uid)));
-      UserData userData = oldUserData[0].copyWith(
-          id: this.uid,
-          prefVoice: prefVoice,
-          saveRecord: saveRecord,
-          manualFix: manualFix,
-          classname: classname,
-          school: schoolID,
-          agreement: agreement,
-          name: name,
-          age: age);
-
-      return await lesaCollection.save(userData);
+      await lesaCollection.save(userData);
     } catch (err) {
-      print("there was an error setting user data ====> $err");
+      print("Error setting user data: $err");
     }
   }
 

@@ -2,12 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 // import 'package:projectPath/model/product.dart';
-import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/data.dart';
-import 'dart:convert' show utf8;
 
 class GetData {
   String typeofgame;
@@ -50,7 +48,7 @@ class GetData {
 
           return temp;
         }
-        if (statusCode < 200 || statusCode > 400 || json == null) {
+        if (statusCode < 200 || statusCode > 400) {
           throw new Exception("Error while fetching data");
         }
         return null;

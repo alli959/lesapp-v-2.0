@@ -1,12 +1,9 @@
 import 'dart:convert';
 
-import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 import '../../models/PrefVoice.dart';
 import '../../models/Schools.dart';
@@ -20,8 +17,7 @@ part 'database_state.dart';
 class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
   final DatabaseService _databaseService;
   DatabaseBloc(DatabaseService databaseService)
-      : assert(databaseService != null),
-        _databaseService = databaseService,
+      : _databaseService = databaseService,
         super(DatabaseInitial());
 
   @override
@@ -122,7 +118,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       var schools = await rootBundle.loadString('assets/Schools.json');
       Map<String, dynamic> schoolsList = json.decode(schools);
 
-      String schoolID = userData.school.name;
+      String schoolID = userData.school!.name;
 
       String school = schoolsList[schoolID];
       print("school is => $school");

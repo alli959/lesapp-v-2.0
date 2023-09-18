@@ -6,18 +6,18 @@ abstract class VoiceState extends Equatable {
 }
 
 class VoiceInitial extends VoiceState {
-  bool hasSpeech;
-  bool logEvents;
-  bool isListening;
-  double level;
-  double minSoundLevel;
-  double maxSoundLevel;
-  String lastWords;
-  List<SpeechRecognitionWords> alternates;
-  String lastError;
-  String lastStatus;
-  String currentLocaleId;
-  List<LocaleName> localeNames;
+  bool hasSpeech = false;
+  bool logEvents = true;
+  bool isListening = false;
+  double level = 50;
+  double minSoundLevel = 10;
+  double maxSoundLevel = 100;
+  String lastWords = "";
+  List<SpeechRecognitionWords> alternates = [];
+  String lastError = "";
+  String lastStatus = "";
+  String currentLocaleId = "";
+  List<LocaleName> localeNames = [];
 
   VoiceInitial(
       {hasSpeech,
@@ -53,7 +53,7 @@ class VoiceInitial extends VoiceState {
 class VoiceLanguage extends VoiceState {
   final String currentLocaleId;
 
-  VoiceLanguage({@required this.currentLocaleId});
+  VoiceLanguage({required this.currentLocaleId});
 
   @override
   List<Object> get props => [currentLocaleId];
@@ -68,7 +68,7 @@ class VoiceHasInitialized extends VoiceState {}
 class VoiceStart extends VoiceState {
   final bool isListening;
 
-  VoiceStart({@required this.isListening});
+  VoiceStart({required this.isListening});
 
   @override
   List<Object> get props => [isListening];
@@ -77,7 +77,7 @@ class VoiceStart extends VoiceState {
 class VoiceStop extends VoiceState {
   final bool isCancel;
 
-  VoiceStop({@required this.isCancel});
+  VoiceStop({required this.isCancel});
 
   @override
   List<Object> get props => [isCancel];
@@ -92,7 +92,10 @@ class UpdateState extends VoiceState {
   final bool isListening;
 
   UpdateState(
-      {this.lastWords, this.alternates, this.question, this.isListening});
+      {required this.lastWords,
+      required this.alternates,
+      required this.question,
+      required this.isListening});
   @override
   List<Object> get props => [lastWords, alternates, question, isListening];
 }
@@ -100,7 +103,7 @@ class UpdateState extends VoiceState {
 class VoiceFailure extends VoiceState {
   final String error;
 
-  VoiceFailure({@required this.error});
+  VoiceFailure({required this.error});
 
   @override
   List<Object> get props => [error];
@@ -111,7 +114,7 @@ class DisplayText extends VoiceState {}
 class VoiceStatusState extends VoiceState {
   final String lastStatus;
 
-  VoiceStatusState({@required this.lastStatus});
+  VoiceStatusState({required this.lastStatus});
 
   @override
   List<Object> get props => [lastStatus];
@@ -120,7 +123,7 @@ class VoiceStatusState extends VoiceState {
 class SoundLevelState extends VoiceState {
   final double level;
 
-  SoundLevelState({@required this.level});
+  SoundLevelState({required this.level});
 
   @override
   List<Object> get props => [level];
@@ -136,13 +139,13 @@ class NewVoiceQuestionState extends VoiceState {
   final int correct;
 
   NewVoiceQuestionState(
-      {this.onePoint,
-      this.twoPoints,
-      this.threePoints,
-      this.fourPoints,
-      this.fivePoints,
-      this.trys,
-      this.correct});
+      {required this.onePoint,
+      required this.twoPoints,
+      required this.threePoints,
+      required this.fourPoints,
+      required this.fivePoints,
+      required this.trys,
+      required this.correct});
 
   @override
   List<Object> get props =>
@@ -150,16 +153,10 @@ class NewVoiceQuestionState extends VoiceState {
 }
 
 class ShowResultState extends VoiceState {
-  final List<String> questionArr;
-  final List<String> answerArr;
-  final List<bool> questionMap;
-  final List<bool> answerMap;
-
-  ShowResultState(
-      {this.questionArr, this.answerArr, this.questionMap, this.answerMap});
+  ShowResultState();
 
   @override
-  List<Object> get props => [questionArr, answerArr, questionMap, answerMap];
+  List<Object> get props => [];
 }
 
 class ScoreKeeper extends VoiceState {
@@ -170,11 +167,11 @@ class ScoreKeeper extends VoiceState {
   final bool fivePoints;
 
   ScoreKeeper(
-      {this.onePoint,
-      this.twoPoints,
-      this.threePoints,
-      this.fourPoints,
-      this.fivePoints});
+      {required this.onePoint,
+      required this.twoPoints,
+      required this.threePoints,
+      required this.fourPoints,
+      required this.fivePoints});
 
   @override
   List<Object> get props =>
@@ -184,7 +181,7 @@ class ScoreKeeper extends VoiceState {
 class CorrectAnimation extends VoiceState {
   final List<Widget> animation;
 
-  CorrectAnimation({this.animation});
+  CorrectAnimation({required this.animation});
 
   @override
   List<Object> get props => [animation];

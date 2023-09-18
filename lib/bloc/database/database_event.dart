@@ -25,22 +25,22 @@ class UpdateUserData extends DatabaseEvent {
   final double lvlTwoVoiceScore;
   final double lvlTwoVoiceMediumScore;
   UpdateUserData(
-      {@required this.name,
-      @required this.age,
-      @required this.school,
-      @required this.classname,
-      @required this.agreement,
-      @required this.lvlOneCapsScore,
-      @required this.lvlOneScore,
-      @required this.lvlOneVoiceScore,
-      @required this.lvlThreeEasyScore,
-      @required this.lvlThreeMediumScore,
-      @required this.lvlThreeVoiceScore,
-      @required this.lvlThreeVoiceMediumScore,
-      @required this.lvlTwoEasyScore,
-      @required this.lvlTwoMediumScore,
-      @required this.lvlTwoVoiceScore,
-      @required this.lvlTwoVoiceMediumScore});
+      {required this.name,
+      required this.age,
+      required this.school,
+      required this.classname,
+      required this.agreement,
+      required this.lvlOneCapsScore,
+      required this.lvlOneScore,
+      required this.lvlOneVoiceScore,
+      required this.lvlThreeEasyScore,
+      required this.lvlThreeMediumScore,
+      required this.lvlThreeVoiceScore,
+      required this.lvlThreeVoiceMediumScore,
+      required this.lvlTwoEasyScore,
+      required this.lvlTwoMediumScore,
+      required this.lvlTwoVoiceScore,
+      required this.lvlTwoVoiceMediumScore});
 
   @override
   List<Object> get props => [
@@ -67,7 +67,7 @@ class SetUserID extends DatabaseEvent {
   final String Uid;
 
   SetUserID({
-    @required this.Uid,
+    required this.Uid,
   });
 
   @override
@@ -78,7 +78,7 @@ class UpdateUserScore extends DatabaseEvent {
   final double score;
   final String typeof;
 
-  UpdateUserScore({@required this.score, @required this.typeof});
+  UpdateUserScore({required this.score, required this.typeof});
 
   @override
   List<Object> get props => [score, typeof];
@@ -100,14 +100,14 @@ class SaveSpecialData extends DatabaseEvent {
   final String name;
   final String age;
   SaveSpecialData(
-      {this.prefVoice,
-      this.saveRecord,
-      this.manualFix,
-      this.agreement,
-      this.schoolname,
-      this.classname,
-      this.name,
-      this.age});
+      {required this.prefVoice,
+      required this.saveRecord,
+      required this.manualFix,
+      required this.agreement,
+      required this.schoolname,
+      required this.classname,
+      required this.name,
+      required this.age});
 
   @override
   List<Object> get props => [
@@ -132,14 +132,14 @@ class ActionPerformedEvent extends DatabaseEvent {
   final String name;
   final String age;
   ActionPerformedEvent(
-      {this.prefVoice,
-      this.saveRecord,
-      this.manualFix,
-      this.agreement,
-      this.schoolname,
-      this.classname,
-      this.name,
-      this.age});
+      {required this.prefVoice,
+      required this.saveRecord,
+      required this.manualFix,
+      required this.agreement,
+      required this.schoolname,
+      required this.classname,
+      required this.name,
+      required this.age});
 
   @override
   List<Object> get props => [

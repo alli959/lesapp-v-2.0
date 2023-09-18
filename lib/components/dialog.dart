@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class DialogDifficulty extends StatelessWidget {
-  Function callback;
-  Widget child;
-  bool hasChosenDifficulty;
-  DialogDifficulty(
-      {Function callback, Widget child, bool hasChosenDifficulty}) {
-    this.callback = callback;
-    this.child = child;
-    this.hasChosenDifficulty = hasChosenDifficulty;
-  }
+  final Function callback;
+  final Widget child;
+  final bool hasChosenDifficulty;
+
+  DialogDifficulty({
+    required this.callback,
+    required this.child,
+    required this.hasChosenDifficulty,
+  });
+
   @override
   Widget build(BuildContext context) {
     return this.hasChosenDifficulty

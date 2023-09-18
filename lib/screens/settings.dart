@@ -1,21 +1,15 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
-import 'package:Lesaforrit/components/QuestionCard.dart';
-import 'package:Lesaforrit/components/reusable_card.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagebutton/imagebutton.dart';
 
-import '../components/bottom_bar.dart';
 import '../components/bottom_settings.dart';
 import '../components/colored_tab_bar.dart';
 import '../components/sidemenu.dart';
-import '../components/update_info.dart';
 import '../models/ModelProvider.dart';
 import '../shared/loading.dart';
 

@@ -5,10 +5,7 @@ import 'package:Lesaforrit/models/question.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:meta/meta.dart';
 
-import '../../components/dialog.dart';
 import '../../models/PrefVoice.dart';
 
 part 'serverless_event.dart';
@@ -19,8 +16,7 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
   final String _typeofgame;
   String _typeofdifficulty;
   ServerlessBloc(GetData data, String typeofgame, String typeofdifficulty)
-      : assert(data != null),
-        _data = data,
+      : _data = data,
         _typeofgame = typeofgame,
         _typeofdifficulty = typeofdifficulty,
         super(ServerlessInitial());
@@ -41,11 +37,9 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
   Stream<ServerlessState> _mapFetchData(FetchEvent event) async* {
     print("at fetchdata guy");
     yield ServerlessLoading();
-    if (event.difficulty != null) {
-      print("ERR EVENT DIFFICULTY IS NOT NULL");
-      await event.difficulty(
-          (String difficulty) => {this._typeofdifficulty = difficulty});
-    }
+    print("ERR EVENT DIFFICULTY IS NOT NULL");
+    await event.difficulty(
+        (String difficulty) => {this._typeofdifficulty = difficulty});
     yield DifficultySet();
     yield ServerlessLoading();
     print(
@@ -65,8 +59,8 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
       String textDecode = utf8.decode(textEncode);
       var voiceType = await event.prefvoice;
       print("voiceType is =============> $voiceType");
-      Question question =
-          Question(textDecode, true, value.Dora, value.Karl, voiceType);
+      Question question = Question(textDecode, true, value.Dora,
+          file2: value.Karl, prefVoice: voiceType);
       questionBank.add(question);
     }
     yield ServerlessFetch(questionBank: questionBank);

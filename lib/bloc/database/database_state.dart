@@ -10,7 +10,7 @@ class DatabaseInitial extends DatabaseState {}
 class UserDataUpdate extends DatabaseState {
   final UserData userData;
 
-  UserDataUpdate({@required this.userData});
+  UserDataUpdate({required this.userData});
 
   @override
   List<Object> get props => [userData];
@@ -19,7 +19,7 @@ class UserDataUpdate extends DatabaseState {
 class UserScoreUpdate extends DatabaseState {
   final Stream<UserData> userData;
 
-  UserScoreUpdate({@required this.userData});
+  UserScoreUpdate({required this.userData});
 
   @override
   List<Object> get props => [userData];
@@ -36,7 +36,8 @@ class UserDataState extends DatabaseState {
   final UserScore userscore;
   final String school;
 
-  UserDataState({@required this.userdata, this.userscore, this.school});
+  UserDataState(
+      {required this.userdata, required this.userscore, required this.school});
 
   @override
   List<Object> get props => [userdata, userscore, school];
@@ -45,7 +46,7 @@ class UserDataState extends DatabaseState {
 class UsersState extends DatabaseState {
   final Stream<List<Read>> users;
 
-  UsersState({@required this.users});
+  UsersState({required this.users});
 
   @override
   List<Object> get props => [users];
@@ -62,15 +63,15 @@ class SpecialDataState extends DatabaseState {
   final String age;
   final List<String> schoolnamelist;
   SpecialDataState(
-      {@required this.prefVoice,
-      @required this.saveRecord,
-      @required this.manualFix,
-      @required this.agreement,
-      @required this.schoolname,
-      @required this.classname,
-      @required this.name,
-      @required this.age,
-      @required this.schoolnamelist});
+      {required this.prefVoice,
+      required this.saveRecord,
+      required this.manualFix,
+      required this.agreement,
+      required this.schoolname,
+      required this.classname,
+      required this.name,
+      required this.age,
+      required this.schoolnamelist});
 
   @override
   List<Object> get props => [
@@ -96,14 +97,14 @@ class ActionPerformedState extends DatabaseState {
   final String name;
   final String age;
   ActionPerformedState(
-      {this.prefVoice,
-      this.saveRecord,
-      this.manualFix,
-      this.agreement,
-      this.schoolname,
-      this.classname,
-      this.name,
-      this.age});
+      {required this.prefVoice,
+      required this.saveRecord,
+      required this.manualFix,
+      required this.agreement,
+      required this.schoolname,
+      required this.classname,
+      required this.name,
+      required this.age});
 
   @override
   List<Object> get props => [
@@ -121,7 +122,7 @@ class ActionPerformedState extends DatabaseState {
 class IsNewRecord extends DatabaseState {
   final bool newRecord;
   final double record;
-  IsNewRecord({@required this.newRecord, this.record});
+  IsNewRecord({required this.newRecord, required this.record});
 
   @override
   List<Object> get props => [newRecord];

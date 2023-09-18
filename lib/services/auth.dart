@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:Lesaforrit/amplifyconfiguration.dart';
 import 'package:Lesaforrit/models/usr.dart';
@@ -9,61 +8,22 @@ import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:amplify_storage_s3/amplify_storage_s3.dart';
-import 'package:flutter/services.dart';
 
 import '../models/ModelProvider.dart';
 
 class AuthService {
-  Future init() async {
-    try {
-      // Add the following line to add Auth plugin to your app.
-      AmplifyDataStore datastorePlugin =
-          AmplifyDataStore(modelProvider: ModelProvider.instance);
-      await Amplify.addPlugin(AmplifyAuthCognito());
-      await Amplify.addPlugin(AmplifyStorageS3());
-      await Amplify.addPlugin(datastorePlugin);
-      await Amplify.addPlugin(AmplifyAPI());
-
-      await Amplify.configure(amplifyconfig);
-      // call Amplify.configure to use the initialized categories in your app
-    } on Exception catch (e) {
-      print('An error occurred configuring Amplify: $e');
-    }
-  }
-
   // All of the authentication goes inside this class
   final _auth = Amplify.Auth;
 
-  // create user object based on Firebase-user
-  Usr _userFromCognitoUser(AuthUser user) {
-    return user != null ? Usr(uid: user.userId) : null;
-  }
+  StreamSubscription hubSubscription = _configureHubSubscription();
 
-  StreamSubscription hubSubscription =
-      Amplify.Hub.listen([HubChannel.Auth], (hubEvent) async {
-    switch (hubEvent.eventName) {
-      case 'SIGNED_IN':
-        print('USER IS SIGNED IN');
-        break;
-      case 'SIGNED_OUT':
-        print('USER IS SIGNED OUT');
-        try {
-          await Amplify.DataStore.clear();
-          print('DataStore is cleared.');
-        } on DataStoreException catch (e) {
-          print('Failed to clear DataStore: $e');
-        }
-        break;
-      case 'SESSION_EXPIRED':
-        print('SESSION HAS EXPIRED');
-        break;
-      case 'USER_DELETED':
-        print('USER HAS BEEN DELETED');
-        break;
-      default:
-        print("other hub activity is =>  ${hubEvent.eventName}");
+  Future<void> init() async {
+    try {
+      await _configureAmplify();
+    } catch (e) {
+      print('An error occurred configuring Amplify: $e');
     }
-  });
+  }
 
   Future<bool> isLoggedIn() async {
     var authSession = await _auth.fetchAuthSession(
@@ -73,53 +33,27 @@ class AuthService {
 
   // Everytime a Usr signs in or signs out we get a signal from the stream.
   // A null value if the user signs out but a Usr object if the user signs in.
-  Stream<Usr> get user {
-    print("usr get stuff called");
-    var authUser = getCurrentUser();
-    if (authUser == null) {
-      return null;
-    }
-    return authUser.asStream().map(_userFromCognitoUser);
+  Stream<Usr?> get user {
+    return getCurrentUser().asStream().map(_userFromCognitoUser);
   }
 
   // GET CURRENT USER
-  Future<AuthUser> getCurrentUser() async {
+  Future<AuthUser?> getCurrentUser() async {
     try {
-      var currentUser = await _auth.getCurrentUser();
-
-      return currentUser;
+      return await _auth.getCurrentUser();
     } catch (err) {
-      print("user is logged out");
+      print("User is logged out");
       return null;
     }
   }
 
-  Future<String> getCurrentUserID() async {
+  Future<String?> getCurrentUserID() async {
     final user = await getCurrentUser();
-    if (user == null) {
-      return null;
-    }
-    return user.userId;
+    return user?.userId;
   }
-
-  // Future<String> getCurrentUserToken() async {
-  //   return await _auth.currentUser.getIdToken();
-  // }
-
-  // // sign in with email and password
-  // Future signInAnon() async {
-  //   try {
-  //     UserCredential result = await _auth.signInAnonymously();
-  //     User user = result.user;
-  //     return _userFromFirebaseUser(user);
-  //   } catch (e) {
-  //     print('Villan er: ' + e.toString());
-  //     return null;
-  //   }
-  // }
 
   // SIGN IN w. email and password
-  Future signInWithEmailAndPassword(String email, String password) async {
+  Future<Usr?> signInWithEmailAndPassword(String email, String password) async {
     try {
       SignInResult res =
           await _auth.signIn(username: email, password: password);
@@ -127,12 +61,9 @@ class AuthService {
         return _userFromCognitoUser(await getCurrentUser());
       }
     } catch (e) {
-      print("what is going on...");
       print(e.toString());
       return null;
     }
-
-    print("we should not be here");
     return null;
   }
 
@@ -164,14 +95,9 @@ class AuthService {
       SignUpResult result =
           await _auth.signUp(username: email, password: password);
       if (result.isSignUpComplete) {
-        print("Sign up is complete");
-        print(
-            " code delivery details => ${result.nextStep.codeDeliveryDetails}");
         await _auth.signIn(username: email, password: password);
-
-        AuthUser user = await getCurrentUser();
-        // create a new document for the user with the uid
-        await DatabaseService(uid: user.userId).updateUserData(
+        AuthUser? user = await getCurrentUser();
+        await DatabaseService(uid: user!.userId).updateUserData(
           name,
           age,
           school,
@@ -203,9 +129,55 @@ class AuthService {
   // signout
   Future<void> logOut() async {
     try {
-      return await _auth.signOut(options: SignOutOptions(globalSignOut: true));
+      await _auth.signOut(options: SignOutOptions(globalSignOut: true));
     } on AmplifyException catch (e) {
-      print("exception loggin out => ${e.message}");
+      print("Exception logging out => ${e.message}");
     }
+  }
+
+  /** PRIVATE METHODS: */
+
+  Usr? _userFromCognitoUser(AuthUser? user) {
+    return user != null ? Usr(uid: user.userId) : null;
+  }
+
+  Future<void> _configureAmplify() async {
+    AmplifyDataStore datastorePlugin =
+        AmplifyDataStore(modelProvider: ModelProvider.instance);
+    await Amplify.addPlugin(AmplifyAuthCognito());
+    await Amplify.addPlugin(AmplifyStorageS3());
+    await Amplify.addPlugin(datastorePlugin);
+    await Amplify.addPlugin(AmplifyAPI());
+    await Amplify.configure(amplifyconfig);
+  }
+
+  static StreamSubscription _configureHubSubscription() {
+    return Amplify.Hub.listen(
+        [HubChannel.Auth] as HubChannel<dynamic, HubEvent<Object?>>,
+        (hubEvent) async {
+      /** The argument type 'List<HubChannel<AuthUser, AuthHubEvent>>' can't be assigned to the parameter type 'HubChannel<dynamic, HubEvent<Object?>>'.dartargument_type_not_assignable*/
+      switch (hubEvent.eventName) {
+        case 'SIGNED_IN':
+          print('USER IS SIGNED IN');
+          break;
+        case 'SIGNED_OUT':
+          print('USER IS SIGNED OUT');
+          try {
+            await Amplify.DataStore.clear();
+            print('DataStore is cleared.');
+          } on DataStoreException catch (e) {
+            print('Failed to clear DataStore: $e');
+          }
+          break;
+        case 'SESSION_EXPIRED':
+          print('SESSION HAS EXPIRED');
+          break;
+        case 'USER_DELETED':
+          print('USER HAS BEEN DELETED');
+          break;
+        default:
+          print("Other hub activity is =>  ${hubEvent.eventName}");
+      }
+    });
   }
 }

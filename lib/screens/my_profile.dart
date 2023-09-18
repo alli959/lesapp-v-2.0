@@ -1,18 +1,14 @@
 import 'package:Lesaforrit/components/bottom_bar.dart';
-import 'package:Lesaforrit/components/reusable_card.dart';
-import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../bloc/database/database_bloc.dart';
 import '../bloc/user/authentication_bloc.dart';
 import '../models/UserData.dart';
-import '../models/UserScore.dart';
 
 class MyProfile extends StatefulWidget {
   static const String id = 'my_profile';

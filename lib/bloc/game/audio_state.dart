@@ -10,7 +10,7 @@ abstract class AudioState extends Equatable {
 class InitState extends AudioState {
   final VoiceGameType gameType;
 
-  InitState({@required this.gameType});
+  InitState({required this.gameType});
 
   @override
   List<Object> get props => [gameType];

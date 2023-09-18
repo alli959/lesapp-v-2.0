@@ -1,7 +1,7 @@
 class TotalPoints {
   //double score = 1;
-  double _points;
-  double finalPoints;
+  double _points = 0;
+  double finalPoints = 0;
 
   int correct = 0;
   int trys = 0;

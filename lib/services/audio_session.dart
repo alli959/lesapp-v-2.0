@@ -1,37 +1,20 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayers/audioplayers.dart' hide AVAudioSessionCategory;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:async';
-
-import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/models/usr.dart' as usr;
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:flutter_cache_manager/file.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:provider/provider.dart';
-import 'package:sound_stream/sound_stream.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:math' as math;
+import 'package:google_speech/google_speech.dart';
 import 'package:just_audio/just_audio.dart' as ja;
 import 'package:rxdart/rxdart.dart';
-import 'package:google_speech/google_speech.dart';
+import 'package:sound_stream/sound_stream.dart';
 
-import '../models/ModelProvider.dart';
-
-// Feed your own stream of bytes into the player
 class MyCustomSource extends ja.StreamAudioSource {
   final List<int> bytes;
   MyCustomSource(this.bytes);
 
   @override
-  Future<ja.StreamAudioResponse> request([int start, int end]) async {
+  Future<ja.StreamAudioResponse> request([int? start, int? end]) async {
     start ??= 0;
     end ??= bytes.length;
     return ja.StreamAudioResponse(
@@ -47,21 +30,25 @@ class MyCustomSource extends ja.StreamAudioSource {
 // Klasi sem inniheldur allar aðferðir og eiginleika sem interacta við Firestore database.
 class AudioSessionService {
   String uid;
-  ja.AudioPlayer _player = ja.AudioPlayer(
-    handleInterruptions: false,
-    androidApplyAudioAttributes: false,
-    handleAudioSessionActivation: false,
-  );
-  RecorderStream _recorder = RecorderStream();
-  PlayerStream _playerStream = PlayerStream();
-  AudioSessionService({this.uid});
-  StreamSubscription<List<int>> _audioStreamSubscription;
-  BehaviorSubject<List<int>> _audioStream;
+  ja.AudioPlayer _player;
+  RecorderStream _recorder;
+  PlayerStream _playerStream;
+  late StreamSubscription<List<int>> _audioStreamSubscription;
+  late BehaviorSubject<List<int>> _audioStream;
   List<Uint8List> audioList = [];
   bool recognizing = false;
   bool isCancel = false;
   bool isSave = true;
-  AudioSession _audioSession;
+  late AudioSession _audioSession;
+
+  AudioSessionService({required this.uid})
+      : _player = ja.AudioPlayer(
+          handleInterruptions: false,
+          androidApplyAudioAttributes: false,
+          handleAudioSessionActivation: false,
+        ),
+        _recorder = RecorderStream(),
+        _playerStream = PlayerStream();
 
   Uint8List saveFile(List<Uint8List> contents, sampleRate) {
     // File recordedFile = File(await getFilePath());
@@ -135,55 +122,35 @@ class AudioSessionService {
   }
 
   Future init() async {
-    AudioSession.instance.then((audioSession) async {
-      // This line configures the app's audio session, indicating to the OS the
-      // type of audio we intend to play. Using the "speech" recipe rather than
-      // "music" since we are playing a podcast.
-      await audioSession.configure(AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-        avAudioSessionCategoryOptions:
-            AVAudioSessionCategoryOptions.allowBluetooth,
-        avAudioSessionMode: AVAudioSessionMode.spokenAudio,
-        avAudioSessionRouteSharingPolicy:
-            AVAudioSessionRouteSharingPolicy.defaultPolicy,
-        avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
-        androidAudioAttributes: const AndroidAudioAttributes(
-          contentType: AndroidAudioContentType.speech,
-          flags: AndroidAudioFlags.none,
-          usage: AndroidAudioUsage.voiceCommunication,
-        ),
-        androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-        androidWillPauseWhenDucked: true,
-      ));
-
-      await _recorder.initialize();
-      await _playerStream.initialize();
-      this._audioSession = audioSession;
-      // Listen to audio interruptions and pause or duck as appropriate.
-      _handleInterruptions(this._audioSession);
-
-      // Use another plugin to load audio to play
-    });
+    await _configureAudioSession();
+    await _recorder.initialize();
+    await _playerStream.initialize();
+    _handleInterruptions(_audioSession);
   }
 
-  Future stopRecording(bool isCancelparams, bool isSaveParams) async {
-    this.isCancel = isCancelparams;
-    this.isSave = isSaveParams;
-    if (isCancel || !isSave) {
-      audioList = [];
-    }
-    await _recorder?.stop();
-    await _playerStream?.stop();
-    await _audioStreamSubscription?.cancel();
-    await _audioStream?.close();
-    recognizing = false;
-    _player = ja.AudioPlayer(
-      handleInterruptions: false,
-      androidApplyAudioAttributes: false,
-      handleAudioSessionActivation: false,
-    );
+  Future _configureAudioSession() async {
+    _audioSession = await AudioSession.instance;
+    await _audioSession.configure(AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+      /**The name 'AVAudioSessionCategory' is defined in the libraries 'package:audio_session/src/darwin.dart (via package:audio_session/audio_session.dart)' and 'package:audioplayers_platform_interface/src/api/audio_context.dart (via package:audioplayers/audioplayers.dart)'.
+Try using 'as prefix' for one of the import directives, or hiding the name from all but one of the imports.dartambiguous_import */
+      avAudioSessionCategoryOptions:
+          AVAudioSessionCategoryOptions.allowBluetooth,
+      avAudioSessionMode: AVAudioSessionMode.spokenAudio,
+      avAudioSessionRouteSharingPolicy:
+          AVAudioSessionRouteSharingPolicy.defaultPolicy,
+      avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+      androidAudioAttributes: const AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.speech,
+        flags: AndroidAudioFlags.none,
+        usage: AndroidAudioUsage.voiceCommunication,
+      ),
+      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+      androidWillPauseWhenDucked: true,
+    ));
   }
 
+  // Recording
   Future startRecording(resultListener, Function doneListener,
       RecognitionConfig config, SpeechToText speech) async {
     _audioStream = BehaviorSubject<List<int>>();
@@ -192,67 +159,55 @@ class AudioSessionService {
         _audioStream.add(event);
         audioList.add(event);
         _playerStream.writeChunk(event);
-      } else {
-        print("audiostream is closed!!!!");
       }
     });
-    print("at start recording place");
-    try {
-      await _recorder.start();
-    } catch (err) {
-      print("there was an error $err");
-      return false;
-    }
+
+    await _recorder.start();
     recognizing = true;
+
     final responseStream = speech.streamingRecognize(
-        StreamingRecognitionConfig(config: config, interimResults: true),
-        _audioStream);
-    try {
-      if (!_audioStream.isClosed) {
-        responseStream.listen(resultListener,
-            onDone: () => doneListener(
-                file: saveFile(audioList, 16000), isCancel: isCancel));
-      } else {
-        print("audio stream is closed in startRecording method");
-      }
-    } catch (err) {
-      print("there was an error $err");
-      return false;
-    }
+      StreamingRecognitionConfig(config: config, interimResults: true),
+      _audioStream,
+    );
+
+    responseStream.listen(resultListener,
+        onDone: () =>
+            doneListener(file: saveFile(audioList, 16000), isCancel: isCancel));
     this.isCancel = false;
   }
 
-  Future setPlayerUrl(String url) async {
-    print("at set online player place");
-    try {
-      await _player.setUrl(url);
-      _player.setVolume(100.0);
-    } catch (err) {
-      print("there was an error setting online player url");
-      print(err);
+  Future stopRecording(bool isCancelparams, bool isSaveParams) async {
+    this.isCancel = isCancelparams;
+    this.isSave = isSaveParams;
+    if (isCancel || !isSave) {
+      audioList = [];
     }
+    await _recorder.stop();
+    await _playerStream.stop();
+    await _audioStreamSubscription.cancel();
+    await _audioStream.close();
+    recognizing = false;
+    _player = ja.AudioPlayer(
+      handleInterruptions: false,
+      androidApplyAudioAttributes: false,
+      handleAudioSessionActivation: false,
+    );
+  }
+
+  // Playback
+  Future setPlayerUrl(String url) async {
+    await _player.setUrl(url);
+    _player.setVolume(100.0);
   }
 
   Future setPlayerLocalUrl(String url, [int startPosInMiliSec = 0]) async {
     _player.setVolume(0.35);
-    print("at Set local url place");
-    try {
-      await _player.setAsset(url,
-          initialPosition: Duration(milliseconds: startPosInMiliSec));
-    } catch (err) {
-      print("there was an error setting local url");
-      print(err);
-    }
+    await _player.setAsset(url,
+        initialPosition: Duration(milliseconds: startPosInMiliSec));
   }
 
   Future play() async {
-    print("player is going to play");
-    try {
-      await _player.play();
-    } catch (err) {
-      print("there was an error playing sound");
-      print(err);
-    }
+    await _player.play();
   }
 
   Future _handleInterruptions(AudioSession audioSession) async {
@@ -268,16 +223,6 @@ class AudioSessionService {
           audioSession.setActive(true);
         }
       });
-      // _audioStream = BehaviorSubject<List<int>>();
-      // _audioStreamSubscription = _recorder.audioStream.listen((event) {
-      //   if (!_audioStream.isClosed) {
-      //     _audioStream.add(event);
-      //     audioList.add(event);
-      //     _playerStream.writeChunk(event);
-      //   } else {
-      //     print("audiostream is closed!!!!");
-      //   }
-      // });
 
       audioSession.getDevices().then((value) {
         print("devices: $value");
@@ -290,7 +235,7 @@ class AudioSessionService {
           switch (event.type) {
             case AudioInterruptionType.duck:
               print("AUDIO INTERUPTION DUCK UPPER");
-              if (audioSession.androidAudioAttributes.usage ==
+              if (audioSession.androidAudioAttributes?.usage ==
                   AndroidAudioUsage.game) {
                 print('Ducking not supported for game audio');
               }

@@ -21,11 +21,9 @@ import 'dart:typed_data';
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/components/my_flutter_app_icons.dart';
-import 'package:Lesaforrit/components/scorekeeper.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
-import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
@@ -36,11 +34,8 @@ import 'package:Lesaforrit/shared/timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:speech_to_text/speech_to_text_provider.dart';
 

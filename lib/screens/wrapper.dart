@@ -1,11 +1,6 @@
-import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
-import 'package:Lesaforrit/screens/authenticate/sign_in.dart';
-import 'package:Lesaforrit/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:Lesaforrit/models/usr.dart';
 import 'authenticate/authenticate.dart';
 import 'home/welcome.dart';
 

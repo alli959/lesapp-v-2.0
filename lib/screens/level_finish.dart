@@ -2,26 +2,14 @@ import 'package:Lesaforrit/components/arguments.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
 import 'package:Lesaforrit/models/quiz_brain_voice.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
-import 'package:Lesaforrit/screens/wrapper.dart';
-import 'package:Lesaforrit/shared/constants.dart';
-import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/database/database_bloc.dart';
-import '../bloc/user/authentication_bloc.dart';
 
 import '../models/listeners/level_finish_listener.dart';
 import '../models/quiz_brain.dart';
 import '../models/set_score.dart';
-import '../models/voices/quiz_brain_lvlOne_voice.dart';
-import '../models/voices/quiz_brain_lvlThree_voice.dart';
-import '../models/voices/quiz_brain_lvlTwo_voice.dart';
-import '../services/auth.dart';
-import 'home/welcome.dart';
 
-import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:provider/provider.dart';
-import 'package:Lesaforrit/models/usr.dart';
 import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
@@ -60,7 +48,7 @@ class LevelFinish extends StatelessWidget {
 
 class LevelFin extends StatelessWidget {
   LevelFin(
-      {@required this.stig,
+      {required this.stig,
       this.image,
       this.undertext,
       this.appBarText,

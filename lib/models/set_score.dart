@@ -1,18 +1,9 @@
-import 'dart:async';
-
-import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
-import 'package:Lesaforrit/models/UserData.dart';
-import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlThree_voice.dart';
 import 'package:Lesaforrit/models/voices/quiz_brain_lvlTwo_voice.dart';
-import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import 'quiz_brain.dart';
 
@@ -29,17 +20,17 @@ class SetScore extends StatelessWidget {
   String level;
   String text;
   SetScore(
-      {this.currentScore,
-      this.currentScoreCaps,
-      this.currentScoreVoice,
-      this.currentScoreTwo,
-      this.currentScoreTwoLong,
-      this.currentScoreTwoVoice,
-      this.currentScoreThree,
-      this.currentScoreThreeLong,
-      this.currentScoreThreeVoice,
-      this.level,
-      this.text});
+      {required this.currentScore,
+      required this.currentScoreCaps,
+      required this.currentScoreVoice,
+      required this.currentScoreTwo,
+      required this.currentScoreTwoLong,
+      required this.currentScoreTwoVoice,
+      required this.currentScoreThree,
+      required this.currentScoreThreeLong,
+      required this.currentScoreThreeVoice,
+      required this.level,
+      required this.text});
 
   static const String id = 'SetScore';
   final _formKey = GlobalKey<FormState>();
@@ -47,10 +38,6 @@ class SetScore extends StatelessWidget {
   QuizBrainLvlOneVoice quizBrainLvlOneVoice = QuizBrainLvlOneVoice();
   QuizBrainLvlTwoVoice quizBrainLvlTwoVoice = QuizBrainLvlTwoVoice();
   QuizBrainLvlThreeVoice quizBrainLvlThreeVoice = QuizBrainLvlThreeVoice();
-
-  String _currentName;
-  String _currentAge;
-  String _currentReadingStage;
 
   @override
   Widget build(BuildContext context) {

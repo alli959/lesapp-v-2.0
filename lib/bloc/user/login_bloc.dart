@@ -3,7 +3,6 @@ import 'package:Lesaforrit/exceptions/authentication_exception.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -12,9 +11,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthenticationBloc _authenticationBloc;
   final AuthService _authService;
   LoginBloc(AuthenticationBloc authenticationBloc, AuthService authService)
-      : assert(authenticationBloc != null),
-        assert(authService != null),
-        _authenticationBloc = authenticationBloc,
+      : _authenticationBloc = authenticationBloc,
         _authService = authService,
         super(LoginInitial());
 
@@ -41,7 +38,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } on AuthenticationException catch (e) {
       yield LoginFailure(error: e.message);
     } catch (err) {
-      yield LoginFailure(error: err.message ?? 'An unknown error occured');
+      if (err is FormatException) {
+        yield LoginFailure(error: err.message);
+      } else {
+        yield LoginFailure(error: 'An unknown error occurred');
+      }
     }
   }
 }

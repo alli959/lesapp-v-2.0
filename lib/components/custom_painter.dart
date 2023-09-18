@@ -3,9 +3,9 @@ import 'dart:math' as math;
 
 class CustomTimerPainter extends CustomPainter {
   CustomTimerPainter({
-    this.animation,
-    this.backgroundColor,
-    this.color,
+    required this.animation,
+    required this.backgroundColor,
+    required this.color,
   }) : super(repaint: animation);
 
   final Animation<double> animation;
