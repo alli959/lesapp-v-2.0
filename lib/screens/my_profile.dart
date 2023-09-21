@@ -20,10 +20,10 @@ class _MyProfileState extends State<MyProfile> {
   final _formKey = GlobalKey<FormState>();
 
   // form values
-  String currentName;
-  String currentScore;
-  String currentAge;
-  String currentReadingStage;
+  late String currentName;
+  late String currentScore;
+  late String currentAge;
+  late String currentReadingStage;
 
   UserData userData =
       UserData(name: 'name', age: 'age', readingStage: 'readingState');

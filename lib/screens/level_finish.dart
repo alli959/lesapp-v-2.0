@@ -16,9 +16,9 @@ import 'lvlTwo_choose.dart';
 class LevelFinish extends StatelessWidget {
   static const String id = 'LevelFinish';
 
-  double stig;
-  FinishGameType gameType;
-  FinishGameListener _config;
+  late double stig;
+  late FinishGameType gameType;
+  late FinishGameListener _config;
 
   LevelFinish(LevelFinishArguments args) {
     this.stig = args.score;
@@ -49,10 +49,10 @@ class LevelFinish extends StatelessWidget {
 class LevelFin extends StatelessWidget {
   LevelFin(
       {required this.stig,
-      this.image,
-      this.undertext,
-      this.appBarText,
-      this.cardcolor});
+      required this.image,
+      required this.undertext,
+      required this.appBarText,
+      required this.cardcolor});
 
   double stig;
   String image;

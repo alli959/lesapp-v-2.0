@@ -13,9 +13,6 @@ import '../bloc/user/authentication_bloc.dart';
 class ProfileView extends StatelessWidget {
   static const String id = 'profile view';
   final AuthService _auth = AuthService();
-  final DatabaseService data = DatabaseService();
-  final UserData user = UserData();
-  final Read read = Read();
   @override
   Widget build(BuildContext context) {
     //final users = Provider.of<List<Read>>(context) ?? []; // fæ villu
