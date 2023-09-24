@@ -13,28 +13,33 @@ class LvlTwoChoose extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Choose(
-        buttonOne: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.wordsEasy));
-          // Navigator.pushNamed(context, LevelTwoShort.id);  // þessi hreinsar ekki routes en efri gerir það
-        },
-        buttonTwo: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.wordsMedium));
-          // Navigator.pushNamed(context, LevelTwo.id);
-        },
-        buttonThree: () {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-              LevelVoice.id, (Route<dynamic> route) => false,
-              arguments: LevelVoiceArguments(VoiceGameType.words));
-        },
-        buttonTextOne: 'Stutt orð',
-        buttonTextTwo: 'Lengri orð',
-        buttonTextThree: 'Talgreining',
-        appBarColor: cardColorLvlTwo,
-        appBarText: 'Orð',
-        image: 'assets/images/level_buttons-2.png');
+      buttonOne: () {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(Level.id, (Route<dynamic> route) => false,
+                arguments: LevelArguments(
+                  GameType.wordsEasy,
+                  "easy",
+                  true,
+                ));
+        // Navigator.pushNamed(context, LevelTwoShort.id);  // þessi hreinsar ekki routes en efri gerir það
+      },
+      buttonTwo: () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            Level.id, (Route<dynamic> route) => false,
+            arguments: LevelArguments(GameType.wordsMedium, "easy", false));
+        // Navigator.pushNamed(context, LevelTwo.id);
+      },
+      buttonThree: () {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            LevelVoice.id, (Route<dynamic> route) => false,
+            arguments: LevelVoiceArguments(VoiceGameType.words));
+      },
+      buttonTextOne: 'Stutt orð',
+      buttonTextTwo: 'Lengri orð',
+      buttonTextThree: 'Talgreining',
+      appBarColor: cardColorLvlTwo,
+      appBarText: 'Orð',
+      image: 'assets/images/level_buttons-2.png',
+    );
   }
 }

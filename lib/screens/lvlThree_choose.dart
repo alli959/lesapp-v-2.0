@@ -16,13 +16,18 @@ class LvlThreeChoose extends StatelessWidget {
         buttonOne: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
               Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.sentencesEasy));
+              arguments: LevelArguments(
+                GameType.sentencesEasy,
+                "easy",
+                true,
+              ));
           // Navigator.pushNamed(context, LevelThreeShort.id);
         },
         buttonTwo: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
               Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.sentencesMedium));
+              arguments:
+                  LevelArguments(GameType.sentencesMedium, "easy", false));
           // Navigator.pushNamed(context, LevelThree.id);
         },
         buttonThree: () {

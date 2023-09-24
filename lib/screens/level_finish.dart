@@ -23,7 +23,6 @@ class LevelFinish extends StatelessWidget {
   LevelFinish(LevelFinishArguments args) {
     this.stig = args.score;
     this.gameType = args.gameType;
-    this._config = new FinishGameListener(gameType);
     this._config.init();
   }
 

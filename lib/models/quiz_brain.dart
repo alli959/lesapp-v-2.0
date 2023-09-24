@@ -186,4 +186,14 @@ class QuizBrain {
     _question1 = 0;
     _question2 = 0;
   }
+
+  void playLocalAsset() {
+    if (whichSound == 1) {
+      AssetSource source = AssetSource(sound1!);
+      player.play(source);
+    } else {
+      AssetSource source = AssetSource(sound2!);
+      player.play(source);
+    }
+  }
 }

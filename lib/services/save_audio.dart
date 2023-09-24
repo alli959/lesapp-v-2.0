@@ -28,7 +28,7 @@ class SaveAudio {
   }
 
   void setData(String username, String typeoffile, String question,
-      String answer, Uint8List audio) {
+      String answer, Uint8List? audio) {
     this.username = username;
     this.typeoffile = typeoffile;
     this.question = question;

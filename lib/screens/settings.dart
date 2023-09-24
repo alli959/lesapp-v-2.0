@@ -5,8 +5,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagebutton/imagebutton.dart';
-
 import '../components/bottom_settings.dart';
 import '../components/colored_tab_bar.dart';
 import '../components/sidemenu.dart';
@@ -16,6 +14,8 @@ import '../shared/loading.dart';
 class Settings extends StatelessWidget {
   static const String id = 'settings';
 
+  UrlSource sourceDora = UrlSource('sound/Dora_introduction.mp3');
+  UrlSource sourceKarl = UrlSource('sound/Karl_introduction.mp3');
   AudioCache cache = AudioCache();
   bool isInit = false;
   bool isManualCorrection = false;
@@ -34,7 +34,6 @@ class Settings extends StatelessWidget {
   String age = "Aldur barns";
   bool _specialScreen = true;
   List<String> schoolnamelist = ["Utan skóla"];
-
   Settings({specialScreen = true}) {
     this._specialScreen = specialScreen;
   }
@@ -156,37 +155,36 @@ class Settings extends StatelessWidget {
                                                     children: <Widget>[
                                                       Column(children: [
                                                         Center(
-                                                          child: ImageButton(
-                                                            children: <
-                                                                Widget>[],
-                                                            unpressedImage:
-                                                                Image.asset(
-                                                                    'assets/icons/woman_speaking.png'),
-                                                            pressedImage:
-                                                                Image.asset(
-                                                                    'assets/icons/woman_speaking.png'),
-                                                            width: 75,
-                                                            height: 75,
-                                                            onTap: () async => {
-                                                              playerDora =
-                                                                  await cache.play(
-                                                                      voiceDora),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async {
+                                                              await playerDora
+                                                                  .play(
+                                                                      sourceDora);
                                                               await Future.delayed(
                                                                   Duration(
                                                                       milliseconds:
-                                                                          4000)),
-                                                              playerDora.stop()
+                                                                          4000));
+                                                              playerDora.stop();
                                                             },
+                                                            child: Image.asset(
+                                                              'assets/icons/woman_speaking.png',
+                                                              width: 75,
+                                                              height: 75,
+                                                              // If you want feedback (like a color overlay) when the button is pressed,
+                                                              // consider using the `InkWell` widget or adjusting the color property here.
+                                                            ),
                                                           ),
                                                         ),
                                                         Center(
                                                             child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .fromLTRB(
+                                                                  .fromLTRB(
                                                                   0, 0, 25, 0),
                                                           child:
                                                               RoundIconButton(
+                                                            color: Colors.white,
                                                             icon: prefVoice ==
                                                                     PrefVoice
                                                                         .DORA
@@ -223,33 +221,30 @@ class Settings extends StatelessWidget {
                                                       ]),
                                                       Column(children: [
                                                         Center(
-                                                          child: ImageButton(
-                                                              children: <
-                                                                  Widget>[],
-                                                              unpressedImage:
-                                                                  Image.asset(
-                                                                      'assets/icons/man_speaking.png'),
-                                                              pressedImage:
-                                                                  Image.asset(
-                                                                      'assets/icons/man_speaking.png'),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () async => {
+                                                              await playerKarl
+                                                                  .play(
+                                                                      sourceKarl),
+                                                              await Future.delayed(
+                                                                  Duration(
+                                                                      milliseconds:
+                                                                          4000)),
+                                                              playerKarl.stop()
+                                                            },
+                                                            child: Image.asset(
+                                                              'assets/icons/man_speaking.png',
                                                               width: 75,
                                                               height: 75,
-                                                              onTap:
-                                                                  () async => {
-                                                                        playerKarl =
-                                                                            await cache.play(voiceKarl),
-                                                                        await Future.delayed(Duration(
-                                                                            milliseconds:
-                                                                                4000)),
-                                                                        playerKarl
-                                                                            .stop()
-                                                                      }),
+                                                            ),
+                                                          ),
                                                         ),
                                                         Center(
                                                             child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                      .fromLTRB(
+                                                                  .fromLTRB(
                                                                   0, 0, 20, 0),
                                                           child:
                                                               RoundIconButton(
@@ -262,6 +257,7 @@ class Settings extends StatelessWidget {
                                                                     .radio_button_checked,
                                                             iconSize: 30,
                                                             circleSize: 30,
+                                                            color: Colors.white,
                                                             onPressed: () => {
                                                               prefVoice == PrefVoice.DORA
                                                                   ? _databaseBloc.add(ActionPerformedEvent(
@@ -340,7 +336,8 @@ class Settings extends StatelessWidget {
                                                               saveRecord:
                                                                   voiceRecord,
                                                               manualFix:
-                                                                  newValue,
+                                                                  newValue ??
+                                                                      false,
                                                               schoolname:
                                                                   schoolname,
                                                               classname:
@@ -393,7 +390,8 @@ class Settings extends StatelessWidget {
                                                             prefVoice:
                                                                 prefVoice,
                                                             saveRecord:
-                                                                newValue,
+                                                                newValue ??
+                                                                    false,
                                                             manualFix:
                                                                 isManualCorrection,
                                                             schoolname:
@@ -468,7 +466,7 @@ class Settings extends StatelessWidget {
                                                     color: Colors.black),
                                                 labelText: 'Nafn barns'),
                                             validator: (value) {
-                                              if (value.isEmpty) {
+                                              if (value!.isEmpty) {
                                                 return 'Vinsamlegast fyllið út nafn';
                                               }
                                               return null;
@@ -491,16 +489,17 @@ class Settings extends StatelessWidget {
                                         ),
                                         Container(
                                             padding: EdgeInsets.all(10),
-                                            child: DropdownButtonFormField2(
+                                            child: DropdownButtonFormField2<
+                                                    String>(
                                                 style: TextStyle(
                                                     fontFamily: 'Metropolis',
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
                                                     color: Color.fromARGB(
                                                         255, 36, 9, 238)),
-                                                itemPadding:
-                                                    EdgeInsets.fromLTRB(
-                                                        0, 0, 0, 0),
+                                                // dropdownButtonStyle:
+                                                //     EdgeInsets.fromLTRB(
+                                                //         0, 0, 0, 0),
                                                 value: this.schoolname,
                                                 decoration: InputDecoration(
                                                   labelText: 'Skóli',
@@ -534,7 +533,8 @@ class Settings extends StatelessWidget {
                                                               manualFix:
                                                                   isManualCorrection,
                                                               schoolname:
-                                                                  newValue,
+                                                                  newValue ??
+                                                                      "Utan skóla",
                                                               classname:
                                                                   classname,
                                                               agreement:
@@ -560,7 +560,7 @@ class Settings extends StatelessWidget {
                                                     color: Colors.black),
                                                 labelText: 'Bekkur'),
                                             validator: (value) {
-                                              if (value.isEmpty) {
+                                              if (value!.isEmpty) {
                                                 return 'Vinsamlegast fyllið út bekki';
                                               }
                                               return null;
@@ -599,7 +599,7 @@ class Settings extends StatelessWidget {
                                                     color: Colors.black),
                                                 labelText: 'Aldur barns'),
                                             validator: (value) {
-                                              if (value.isEmpty) {
+                                              if (value!.isEmpty) {
                                                 return 'Vinsamlegast fyllið út aldur barns';
                                               }
                                               return null;

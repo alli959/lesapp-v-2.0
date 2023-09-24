@@ -8,17 +8,17 @@ import 'listeners/level_voice_listener.dart';
 
 class Choose extends StatelessWidget {
   static const String id = 'low_or_caps';
-  Choose(
-      {required this.buttonOne,
-      required this.buttonTwo,
-      required this.buttonThree,
-      required this.buttonTextOne,
-      required this.buttonTextTwo,
-      required this.buttonTextThree,
-      required this.appBarText,
-      required this.image,
-      required this.appBarColor,
-      required this.gametype});
+  Choose({
+    required this.buttonOne,
+    required this.buttonTwo,
+    required this.buttonThree,
+    required this.buttonTextOne,
+    required this.buttonTextTwo,
+    required this.buttonTextThree,
+    required this.appBarText,
+    required this.image,
+    required this.appBarColor,
+  });
 
   void Function()? buttonOne;
   void Function()? buttonTwo;
@@ -29,7 +29,6 @@ class Choose extends StatelessWidget {
   String appBarText;
   String image;
   Color appBarColor;
-  VoiceGameType gametype;
 
   @override
   Widget build(BuildContext context) {

@@ -50,7 +50,7 @@ class LettersConfig extends LevelListener {
   @override
   void init() {
     typeofgame = "letters";
-    title = "${selecteddifficulty == "low" ? "Lág" : "Há"}stafir";
+    title = "${isCap ? "Lág" : "Há"}stafir";
     cardcolor = cardColor;
     stigcolor = lightCyan;
     shadowlevel = 145;

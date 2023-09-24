@@ -23,7 +23,7 @@ class VoiceInitializeEvent extends VoiceEvent {
 }
 
 class VoiceStartedEvent extends VoiceEvent {
-  final void Function() resultListener;
+  final void Function(StreamingRecognizeResponse) resultListener;
   final void Function() doneListener;
 
   VoiceStartedEvent({required this.resultListener, required this.doneListener});
@@ -99,7 +99,7 @@ class ScoreKeeperEvent extends VoiceEvent {
   String typeoffile;
   String question;
   String answer;
-  Uint8List audio;
+  Uint8List? audio;
   int trys;
   int correct;
 
@@ -113,7 +113,7 @@ class ScoreKeeperEvent extends VoiceEvent {
       required this.typeoffile,
       required this.question,
       required this.answer,
-      required this.audio,
+      this.audio,
       required this.trys,
       required this.correct});
 

@@ -49,15 +49,14 @@ import 'level_finish.dart';
 class LevelVoice extends StatelessWidget {
   static const String id = 'level_voice';
 
-  LevelVoiceListener _levelVoiceConfig;
+  late LevelVoiceListener _levelVoiceConfig;
 
-  String _difficulty;
+  late String _difficulty;
   bool haschosendifficulty = false;
-  VoiceGameType _gameType;
+  late VoiceGameType _gameType;
 
   LevelVoice(LevelVoiceArguments arguments) {
     this._gameType = arguments.gameType;
-    this._levelVoiceConfig = new LevelVoiceListener(this._gameType);
     this._levelVoiceConfig.init();
   }
 
@@ -186,7 +185,8 @@ class LevelVoice extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key, this.config, this.audiosession}) : super(key: key);
+  QuizPage({Key? key, required this.config, required this.audiosession})
+      : super(key: key);
 
   LevelVoiceListener config;
   AudioSessionService audiosession;
@@ -196,10 +196,9 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   QuizBrainVoice quizBrain = QuizBrainVoice();
-  TimerWidget timer;
+  late TimerWidget timer;
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
-  DatabaseService databaseService = DatabaseService();
   Color circleColorOne = cardColorLvlThree;
   Color circleColorTwo = cardColorLvlThree;
   int soundPress = 0;
@@ -218,8 +217,8 @@ class _QuizPageState extends State<QuizPage> {
   String lowerLetterImage = 'assets/images/empty.png';
   String emptyImage = 'assets/images/empty.png';
   Color letterColor = Colors.black;
-  Function listeningUpdate;
-  SpeechToTextProvider provider;
+  late Function listeningUpdate;
+  late SpeechToTextProvider provider;
   String lastWords = '';
   List<SpeechRecognitionAlternative> alternates = [];
   bool isListening = false;
@@ -228,41 +227,42 @@ class _QuizPageState extends State<QuizPage> {
   List<bool> answerMap = [];
   List<String> questionArr = [];
   List<String> answerArr = [];
-  double minSoundLevel;
-  double maxSoundLevel;
-  double level;
+  late double minSoundLevel;
+  late double maxSoundLevel;
+  late double level;
   bool isShowResult = false;
-  File audioFile;
+  late File audioFile;
   int questionTime = 8;
   bool areButtonsDisabled = false;
 
   void addScore(Map<String, bool> state) {
     quizBrain.stars++;
-    if (state["fivePoints"]) {
+
+    if (state["fivePoints"] == true) {
       scoreKeeper.add(Icon(
         Icons.star,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["fourPoints"]) {
+    } else if (state["fourPoints"] == true) {
       scoreKeeper.add(Icon(
         MyFlutterApp.fourpoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["threePoints"]) {
+    } else if (state["threePoints"] == true) {
       scoreKeeper.add(Icon(
         MyFlutterApp.threepoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["twoPoints"]) {
+    } else if (state["twoPoints"] == true) {
       scoreKeeper.add(Icon(
         MyFlutterApp.twopoints,
         color: Colors.purpleAccent,
         size: 31,
       ));
-    } else if (state["onePoint"]) {
+    } else if (state["onePoint"] == true) {
       scoreKeeper.add(Icon(
         MyFlutterApp.onepoint,
         color: Colors.purpleAccent,
@@ -324,12 +324,8 @@ class _QuizPageState extends State<QuizPage> {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
     LevelVoiceListener config = widget.config;
-    listeningUpdate(String lWords, List<SpeechRecognitionAlternative> alter,
-        bool isList, String quest) {
-      print("alternatives =============>>>>>> $alternates");
-      // if (!isListening) {
-      //   _voiceBloc.add(NewQuestionEvent(question: question));
-      // }
+    void listeningUpdate(String lWords,
+        List<SpeechRecognitionAlternative> alter, bool isList, String quest) {
       var newLWords = quizBrain.bestLastWord(lWords, quest, alter);
       _voiceBloc.add(UpdateEvent(
           lastWords: newLWords,
@@ -338,17 +334,17 @@ class _QuizPageState extends State<QuizPage> {
           question: quest));
     }
 
-    checkAnswer(bool onePoint, bool twoPoints, bool threePoints,
+    void checkAnswer(bool onePoint, bool twoPoints, bool threePoints,
         bool fourPoints, bool fivePoints,
-        {String username,
+        {required String username,
 
         /// Correct, Incorrect, Manual_Correct, Manual_Incorrect
-        String typeoffile,
-        String question,
-        String answer,
-        Uint8List audio,
-        int trys,
-        int correct}) {
+        required String typeoffile,
+        required String question,
+        required String answer,
+        required Uint8List audio,
+        required int trys,
+        required int correct}) {
       if (fivePoints) {
         quizBrain.playCorrect();
       } else {
@@ -387,7 +383,7 @@ class _QuizPageState extends State<QuizPage> {
       print("I'm at the status listener with string $status");
     }
 
-    void doneListener({Uint8List file = null, bool isCancel = false}) {
+    void doneListener({Uint8List? file = null, bool isCancel = false}) {
       if (isCancel || lastWords == "") {
         cancelRecord();
       } else {
@@ -406,13 +402,13 @@ class _QuizPageState extends State<QuizPage> {
 
         Map<String, Object> score =
             quizBrain.isCorrect(lastWords, question, config.level);
-        double finalPoints = score['points'];
-        points = finalPoints;
+        Object? finalPoints = score['points'];
+        points = finalPoints as double;
 
-        questionMap = score['questionMap'];
-        answerMap = score['answerMap'];
-        questionArr = score['questionArr'];
-        answerArr = score['answerArr'];
+        questionMap = score['questionMap'] as List<bool>;
+        answerMap = score['answerMap'] as List<bool>;
+        questionArr = score['questionArr'] as List<String>;
+        answerArr = score['answerArr'] as List<String>;
 
         print("resultListener finalResult");
         print("questionMap = ${questionMap}");
@@ -444,15 +440,15 @@ class _QuizPageState extends State<QuizPage> {
         checkAnswer(onePoint, twoPoints, threePoints, fourPoints, fivePoints,
             username: 'testUserName',
             answer: lastWords,
-            audio: file,
+            audio: file ?? Uint8List(0),
             question: question,
-            typeoffile: null,
+            typeoffile: null ?? 'Correct',
             trys: questionArr.length,
-            correct: score['correct']);
+            correct: score['correct'] as int);
       }
     }
 
-    resultListener(StreamingRecognizeResponse result) {
+    void resultListener(StreamingRecognizeResponse result) {
       final currentText =
           result.results.map((e) => e.alternatives.first.transcript).join(' ');
       lastWords = currentText.trim();
@@ -610,29 +606,29 @@ class _QuizPageState extends State<QuizPage> {
 /// Displays the most recently recognized words and the sound level.
 class RecognitionResultsWidget extends StatelessWidget {
   const RecognitionResultsWidget({
-    Key key,
-    @required this.questionTime,
-    @required this.isListening,
-    @required this.isShowResult,
-    @required this.questionArr,
-    @required this.answerArr,
-    @required this.questionMap,
-    @required this.answerMap,
-    @required this.ondoneListener,
-    @required this.resultListener,
-    @required this.listeningUpdate,
-    @required this.checkAnswer,
-    @required this.question,
-    @required this.lastWords,
-    @required this.scoreKeeper,
-    @required this.trys,
-    @required this.correct,
-    @required this.stig,
-    @required this.cardColor,
-    @required this.stigColor,
-    @required this.fontSize,
-    @required this.bottomBar,
-    @required this.shadowLevel,
+    Key? key,
+    required this.questionTime,
+    required this.isListening,
+    required this.isShowResult,
+    required this.questionArr,
+    required this.answerArr,
+    required this.questionMap,
+    required this.answerMap,
+    required this.ondoneListener,
+    required this.resultListener,
+    required this.listeningUpdate,
+    required this.checkAnswer,
+    required this.question,
+    required this.lastWords,
+    required this.scoreKeeper,
+    required this.trys,
+    required this.correct,
+    required this.stig,
+    required this.cardColor,
+    required this.stigColor,
+    required this.fontSize,
+    required this.bottomBar,
+    required this.shadowLevel,
   }) : super(key: key);
   final int questionTime;
   final bool isListening;
@@ -641,10 +637,26 @@ class RecognitionResultsWidget extends StatelessWidget {
   final List<String> answerArr;
   final List<bool> questionMap;
   final List<bool> answerMap;
-  final Function ondoneListener;
-  final Function resultListener;
-  final Function listeningUpdate;
-  final Function checkAnswer;
+  final void Function() ondoneListener;
+  final void Function(StreamingRecognizeResponse) resultListener;
+  final void Function(String, List<SpeechRecognitionAlternative>, bool, String)
+      listeningUpdate;
+
+  final void Function(
+    bool,
+    bool,
+    bool,
+    bool,
+    bool, {
+    required String username,
+    required String typeoffile,
+    required String question,
+    required String answer,
+    required Uint8List audio,
+    required int trys,
+    required int correct,
+  }) checkAnswer;
+
   final String question;
   final String lastWords;
   final List<Icon> scoreKeeper;
@@ -682,6 +694,7 @@ class RecognitionResultsWidget extends StatelessWidget {
       correct: correct,
       stig: stig,
       bottomBar: bottomBar,
+      isLetters: false,
     );
   }
 }
@@ -689,8 +702,8 @@ class RecognitionResultsWidget extends StatelessWidget {
 // /// Display the current status of the listener
 class SpeechStatusWidget extends StatelessWidget {
   const SpeechStatusWidget({
-    Key key,
-    @required this.isListening,
+    Key? key,
+    required this.isListening,
   }) : super(key: key);
   final bool isListening;
 

@@ -20,13 +20,12 @@ import 'package:Lesaforrit/models/quiz_brain.dart';
 class Level extends StatelessWidget {
   static const String id = 'level';
 
-  LevelListener _levelListenerConfig;
-  GameType _gameType;
-  String _difficulty;
+  late LevelListener _levelListenerConfig;
+  late GameType _gameType;
+  late String _difficulty;
 
   Level(LevelArguments arguments) {
     this._gameType = arguments.gameType;
-    this._levelListenerConfig = new LevelListener(arguments.gameType);
     this._difficulty = _levelListenerConfig.selecteddifficulty;
     this._levelListenerConfig.init();
   }
@@ -40,7 +39,11 @@ class Level extends StatelessWidget {
           var prefVoice = _database.getPreferedVoice();
           return ServerlessBloc(_data, _levelListenerConfig.typeofgame,
               _levelListenerConfig.selecteddifficulty)
-            ..add(FetchEvent(prefvoice: prefVoice));
+            ..add(FetchEvent(
+              prefvoice: prefVoice,
+              difficulty: (String DifficultySet) =>
+                  {this._difficulty = DifficultySet},
+            ));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -56,7 +59,7 @@ class Level extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key, this.config}) : super(key: key);
+  QuizPage({Key? key, required this.config}) : super(key: key);
 
   LevelListener config;
 
@@ -69,7 +72,6 @@ class _QuizPageState extends State<QuizPage> {
   QuizBrain quizBrain = QuizBrain(typeofgame: "letters", isCap: true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
-  DatabaseService databaseService = DatabaseService();
   int soundPress = 0;
   bool enabled = true;
   bool qEnabled = true;

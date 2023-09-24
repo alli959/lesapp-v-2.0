@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:Lesaforrit/bloc/voice/voice_bloc.dart';
 import 'package:Lesaforrit/components/QuestionCard.dart';
 import 'package:Lesaforrit/components/reusable_card.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
 import '../shared/timer.dart';
 
@@ -13,8 +16,23 @@ class LevelTemplateVoice extends StatelessWidget {
   static const String id = 'level_template';
 
   bool isListening = false;
-  void Function() listeningUpdate;
-  void Function() checkAnswer;
+  final void Function(String, List<SpeechRecognitionAlternative>, bool, String)
+      listeningUpdate;
+  final void Function(
+    bool,
+    bool,
+    bool,
+    bool,
+    bool, {
+    required String username,
+    required String typeoffile,
+    required String question,
+    required String answer,
+    required Uint8List audio,
+    required int trys,
+    required int correct,
+  }) checkAnswer;
+
   String question;
   String lastWords;
   List<Icon> scoreKeeper;
@@ -29,7 +47,7 @@ class LevelTemplateVoice extends StatelessWidget {
   bool isLetters = false;
 
   void Function() ondoneListener;
-  void Function() resultListener;
+  void Function(StreamingRecognizeResponse) resultListener;
   List<bool> questionMap = [];
   List<bool> answerMap = [];
   List<String> questionArr = [];

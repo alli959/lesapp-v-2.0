@@ -11,8 +11,10 @@ class LevelVoiceArguments {
 
 class LevelArguments {
   final GameType gameType;
+  final String selecteddifficulty;
+  bool isCap = false;
 
-  LevelArguments(this.gameType);
+  LevelArguments(this.gameType, this.selecteddifficulty, this.isCap);
 }
 
 class LevelFinishArguments {
