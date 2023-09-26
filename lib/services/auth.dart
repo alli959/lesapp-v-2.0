@@ -29,6 +29,7 @@ class AuthService {
 
   Future<bool> isLoggedIn() async {
     var authSession = await _auth.fetchAuthSession(
+        // ignore: deprecated_member_use
         options: CognitoSessionOptions(getAWSCredentials: true));
     return authSession.isSignedIn;
   }
@@ -170,10 +171,8 @@ class AuthService {
   }
 
   static StreamSubscription _configureHubSubscription() {
-    return Amplify.Hub.listen(
-        [HubChannel.Auth] as HubChannel<dynamic, HubEvent<Object?>>,
+    return Amplify.Hub.listen<AuthUser, AuthHubEvent>(HubChannel.Auth,
         (hubEvent) async {
-      /** The argument type 'List<HubChannel<AuthUser, AuthHubEvent>>' can't be assigned to the parameter type 'HubChannel<dynamic, HubEvent<Object?>>'.dartargument_type_not_assignable*/
       switch (hubEvent.eventName) {
         case 'SIGNED_IN':
           print('USER IS SIGNED IN');

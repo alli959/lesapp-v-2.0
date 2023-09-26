@@ -15,9 +15,11 @@ class DatabaseService {
 
   DatabaseService({required this.uid});
 
-  StreamSubscription hubSubscription = Amplify.Hub.listen(
-      [HubChannel.DataStore] as HubChannel<dynamic, HubEvent<Object?>>,
-      (hubEvent) async {});
+  StreamSubscription<DataStoreHubEvent> hubSubscription =
+      Amplify.Hub.listen<DataStoreHubEventPayload, DataStoreHubEvent>(
+          HubChannel.DataStore, (hubEvent) {
+    // Handle the hub event here
+  });
 
   /// Updates user data in the database.
   Future<void> updateUserData(UserData userData, UserScore? userScore) async {

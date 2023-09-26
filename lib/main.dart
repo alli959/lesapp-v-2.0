@@ -71,7 +71,7 @@ void main() async {
         BlocProvider<AuthenticationBloc>(
           create: (context) {
             final authService = RepositoryProvider.of<AuthService>(context);
-            return AuthenticationBloc(authService)..add(AppStarted());
+            return AuthenticationBloc(authService);
           },
         ),
         BlocProvider<DatabaseBloc>(
@@ -81,27 +81,41 @@ void main() async {
             return DatabaseBloc(databaseService);
           },
         ),
-      ], child: lesApp(appRouter: AppRouter()))));
+      ], child: LesApp(appRouter: AppRouter()))));
 }
 
-class lesApp extends StatelessWidget {
+class LesApp extends StatefulWidget {
   final AppRouter appRouter;
 
-  const lesApp({
+  const LesApp({
     Key? key,
     required this.appRouter,
   }) : super(key: key);
+
+  @override
+  _LesAppState createState() => _LesAppState();
+}
+
+class _LesAppState extends State<LesApp> {
+  late AuthenticationBloc _authenticationBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _authenticationBloc.add(AppStarted());
+  }
+
   @override
   Widget build(BuildContext context) {
     final _databaseBloc = BlocProvider.of<DatabaseBloc>(context);
     final databaseRepo = RepositoryProvider.of<DatabaseService>(context);
-    // _databaseBloc.add(SetUserID(Uid: state.usr.uid));
 
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       if (state is UserUid) {
         print("state is userUID !!!!!!! => ${state.uid}");
-        databaseRepo.setUid(state.uid ?? '');
+        databaseRepo.setUid(state.uid);
       }
       return MaterialApp(
           theme: ThemeData(
@@ -127,7 +141,7 @@ class lesApp extends StatelessWidget {
             SetScore.id: (context) => SetScore(),
             Settings.id: (context) => Settings(),
           },
-          onGenerateRoute: appRouter.onGenerateRoute);
+          onGenerateRoute: widget.appRouter.onGenerateRoute);
     });
   }
 }

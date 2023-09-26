@@ -44,9 +44,6 @@ class AuthenticationBloc
     if (event is GetUid) {
       yield* _mapGetUidToState(event);
     }
-    if (event is GetUid) {
-      yield* _mapGetUidToState(event);
-    }
     if (event is RegisterScreenToggle) {
       yield* _mapRegisterScreenState(event);
     }
