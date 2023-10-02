@@ -90,8 +90,8 @@ class Welcome extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.all(8.0),
-        width: 120,
+        margin: EdgeInsets.all(7.0),
+        width: 115,
         height: 139,
         decoration: BoxDecoration(
           image: DecorationImage(

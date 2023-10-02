@@ -7,7 +7,7 @@ environment:
   sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
-  bloc: ^8.1.2
+  bloc: ^7.2.0
   animated_text_kit: ^4.2.1
   audioplayers: ^5.1.0
   connectivity_plus: ^4.0.2
@@ -15,9 +15,9 @@ dependencies:
   equatable: ^2.0.3
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.3
+  flutter_bloc: ^7.3.0
   flutter_spinkit: ^5.1.0
-  hydrated_bloc: ^9.1.2
+  hydrated_bloc: ^7.1.0
   # icon_shadow: ^1.0.1
   # imagebutton: ^0.0.6
   # modal_progress_hud: ^0.1.3

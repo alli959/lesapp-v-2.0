@@ -31,36 +31,36 @@ abstract class FinishGameListener {
   factory FinishGameListener.of(FinishGameType type) {
     switch (type) {
       case FinishGameType.letters:
-        return LettersConfig();
+        return FinishLettersConfig();
       case FinishGameType.lettersCaps:
-        return LettersCapsConfig();
+        return FinishLettersCapsConfig();
       case FinishGameType.voiceLetters:
-        return VoiceLettersConfig();
+        return FinishVoiceLettersConfig();
       case FinishGameType.wordsEasy:
-        return WordsEasyConfig();
+        return FinishWordsEasyConfig();
       case FinishGameType.wordsMedium:
-        return WordsMediumConfig();
+        return FinishWordsMediumConfig();
       case FinishGameType.voiceWordsEasy:
-        return VoiceWordsEasyConfig();
+        return FinishVoiceWordsEasyConfig();
       case FinishGameType.voiceWordsMedium:
-        return VoiceWordsMediumConfig();
+        return FinishVoiceWordsMediumConfig();
       case FinishGameType.sentencesEasy:
-        return SentencesEasyConfig();
+        return FinishSentencesEasyConfig();
       case FinishGameType.sentencesMedium:
-        return SentencesMediumConfig();
+        return FinishSentencesMediumConfig();
       case FinishGameType.voiceSentencesEasy:
-        return VoiceSentencesEasyConfig();
+        return FinishVoiceSentencesEasyConfig();
       case FinishGameType.voiceSentencesMedium:
-        return VoiceSentencesMediumConfig();
+        return FinishVoiceSentencesMediumConfig();
       default:
-        return LettersConfig();
+        return FinishLettersConfig();
     }
   }
 }
 
 /// Configuration for the "letters" game type.
-class LettersConfig extends FinishGameListener {
-  LettersConfig() : super(FinishGameType.letters);
+class FinishLettersConfig extends FinishGameListener {
+  FinishLettersConfig() : super(FinishGameType.letters);
 
   @override
   void init() {
@@ -73,8 +73,8 @@ class LettersConfig extends FinishGameListener {
 }
 
 /// Configuration for the "lettersCaps" game type.
-class LettersCapsConfig extends FinishGameListener {
-  LettersCapsConfig() : super(FinishGameType.lettersCaps);
+class FinishLettersCapsConfig extends FinishGameListener {
+  FinishLettersCapsConfig() : super(FinishGameType.lettersCaps);
 
   @override
   void init() {
@@ -87,8 +87,8 @@ class LettersCapsConfig extends FinishGameListener {
 }
 
 /// Configuration for the "voiceLetters" game type.
-class VoiceLettersConfig extends FinishGameListener {
-  VoiceLettersConfig() : super(FinishGameType.voiceLetters);
+class FinishVoiceLettersConfig extends FinishGameListener {
+  FinishVoiceLettersConfig() : super(FinishGameType.voiceLetters);
 
   @override
   void init() {
@@ -100,8 +100,8 @@ class VoiceLettersConfig extends FinishGameListener {
   }
 }
 
-class WordsEasyConfig extends FinishGameListener {
-  WordsEasyConfig() : super(FinishGameType.wordsEasy);
+class FinishWordsEasyConfig extends FinishGameListener {
+  FinishWordsEasyConfig() : super(FinishGameType.wordsEasy);
 
   @override
   void init() {
@@ -113,8 +113,8 @@ class WordsEasyConfig extends FinishGameListener {
   }
 }
 
-class WordsMediumConfig extends FinishGameListener {
-  WordsMediumConfig() : super(FinishGameType.wordsMedium);
+class FinishWordsMediumConfig extends FinishGameListener {
+  FinishWordsMediumConfig() : super(FinishGameType.wordsMedium);
 
   @override
   void init() {
@@ -126,8 +126,8 @@ class WordsMediumConfig extends FinishGameListener {
   }
 }
 
-class VoiceWordsEasyConfig extends FinishGameListener {
-  VoiceWordsEasyConfig() : super(FinishGameType.voiceWordsEasy);
+class FinishVoiceWordsEasyConfig extends FinishGameListener {
+  FinishVoiceWordsEasyConfig() : super(FinishGameType.voiceWordsEasy);
 
   @override
   void init() {
@@ -139,8 +139,8 @@ class VoiceWordsEasyConfig extends FinishGameListener {
   }
 }
 
-class VoiceWordsMediumConfig extends FinishGameListener {
-  VoiceWordsMediumConfig() : super(FinishGameType.voiceWordsMedium);
+class FinishVoiceWordsMediumConfig extends FinishGameListener {
+  FinishVoiceWordsMediumConfig() : super(FinishGameType.voiceWordsMedium);
   @override
   void init() {
     this.appBarText = 'Upplesnir löng orð';
@@ -151,8 +151,8 @@ class VoiceWordsMediumConfig extends FinishGameListener {
   }
 }
 
-class SentencesEasyConfig extends FinishGameListener {
-  SentencesEasyConfig() : super(FinishGameType.sentencesEasy);
+class FinishSentencesEasyConfig extends FinishGameListener {
+  FinishSentencesEasyConfig() : super(FinishGameType.sentencesEasy);
 
   @override
   void init() {
@@ -164,8 +164,8 @@ class SentencesEasyConfig extends FinishGameListener {
   }
 }
 
-class SentencesMediumConfig extends FinishGameListener {
-  SentencesMediumConfig() : super(FinishGameType.sentencesMedium);
+class FinishSentencesMediumConfig extends FinishGameListener {
+  FinishSentencesMediumConfig() : super(FinishGameType.sentencesMedium);
   @override
   void init() {
     this.appBarText = 'Langar setningar';
@@ -176,8 +176,8 @@ class SentencesMediumConfig extends FinishGameListener {
   }
 }
 
-class VoiceSentencesEasyConfig extends FinishGameListener {
-  VoiceSentencesEasyConfig() : super(FinishGameType.voiceSentencesEasy);
+class FinishVoiceSentencesEasyConfig extends FinishGameListener {
+  FinishVoiceSentencesEasyConfig() : super(FinishGameType.voiceSentencesEasy);
   @override
   void init() {
     this.appBarText = 'Upplesnar stuttar setningar';
@@ -188,8 +188,9 @@ class VoiceSentencesEasyConfig extends FinishGameListener {
   }
 }
 
-class VoiceSentencesMediumConfig extends FinishGameListener {
-  VoiceSentencesMediumConfig() : super(FinishGameType.voiceSentencesMedium);
+class FinishVoiceSentencesMediumConfig extends FinishGameListener {
+  FinishVoiceSentencesMediumConfig()
+      : super(FinishGameType.voiceSentencesMedium);
   @override
   void init() {
     this.appBarText = 'Upplesnar langar setningar';

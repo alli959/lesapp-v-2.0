@@ -11,6 +11,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/serverless/serverless_bloc.dart';
 import '../components/arguments.dart';
+import '../models/listeners/level_finish_listener.dart';
 import '../models/listeners/level_listener.dart';
 import '../services/audio_session.dart';
 import '../services/get_data.dart';
@@ -26,8 +27,64 @@ class Level extends StatelessWidget {
 
   Level(LevelArguments arguments) {
     this._gameType = arguments.gameType;
+
+    // Initialize _levelListenerConfig based on the game type
+    switch (_gameType) {
+      case GameType.letters:
+        _levelListenerConfig = LettersConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          isCap: false, // Set this according to your requirements
+          finishtype:
+              FinishGameType.letters, // Set this according to your requirements
+        );
+        break;
+      case GameType.lettersCaps:
+        _levelListenerConfig = LettersConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          isCap: true, // Set this according to your requirements
+          finishtype: FinishGameType
+              .lettersCaps, // Set this according to your requirements
+        );
+        break;
+      case GameType.wordsEasy:
+        _levelListenerConfig = LettersConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          isCap: true, // Set this according to your requirements
+          finishtype: FinishGameType
+              .wordsEasy, // Set this according to your requirements
+        );
+        break;
+      case GameType.wordsMedium:
+        _levelListenerConfig = WordsConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .wordsMedium, // Set this according to your requirements
+        );
+        break;
+      case GameType.sentencesEasy:
+        _levelListenerConfig = SentencesConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .sentencesEasy, // Set this according to your requirements
+        );
+        break;
+      case GameType.sentencesMedium:
+        _levelListenerConfig = SentencesConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .sentencesMedium, // Set this according to your requirements
+        );
+        break;
+    }
+
+    _levelListenerConfig.init();
     this._difficulty = _levelListenerConfig.selecteddifficulty;
-    this._levelListenerConfig.init();
   }
 
   @override

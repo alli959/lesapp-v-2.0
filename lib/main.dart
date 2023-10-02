@@ -1,5 +1,8 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
+import 'package:Lesaforrit/components/arguments.dart';
+import 'package:Lesaforrit/models/listeners/level_listener.dart';
+import 'package:Lesaforrit/screens/level.dart';
 import 'package:Lesaforrit/screens/settings.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:Lesaforrit/services/get_data.dart';
@@ -71,7 +74,7 @@ void main() async {
         BlocProvider<AuthenticationBloc>(
           create: (context) {
             final authService = RepositoryProvider.of<AuthService>(context);
-            return AuthenticationBloc(authService);
+            return AuthenticationBloc(authService)..add(AppStarted());
           },
         ),
         BlocProvider<DatabaseBloc>(
@@ -84,27 +87,16 @@ void main() async {
       ], child: LesApp(appRouter: AppRouter()))));
 }
 
-class LesApp extends StatefulWidget {
+class LesApp extends StatelessWidget {
   final AppRouter appRouter;
 
-  const LesApp({
+  LesApp({
     Key? key,
     required this.appRouter,
   }) : super(key: key);
 
-  @override
-  _LesAppState createState() => _LesAppState();
-}
-
-class _LesAppState extends State<LesApp> {
-  late AuthenticationBloc _authenticationBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _authenticationBloc.add(AppStarted());
-  }
+  AuthenticationBloc _authenticationBloc = AuthenticationBloc(AuthService());
+  // _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -141,7 +133,7 @@ class _LesAppState extends State<LesApp> {
             SetScore.id: (context) => SetScore(),
             Settings.id: (context) => Settings(),
           },
-          onGenerateRoute: widget.appRouter.onGenerateRoute);
+          onGenerateRoute: appRouter.onGenerateRoute);
     });
   }
 }

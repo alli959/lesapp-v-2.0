@@ -24,6 +24,7 @@ import 'package:Lesaforrit/components/my_flutter_app_icons.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
+import '../models/listeners/level_finish_listener.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
@@ -57,6 +58,18 @@ class LevelVoice extends StatelessWidget {
 
   LevelVoice(LevelVoiceArguments arguments) {
     this._gameType = arguments.gameType;
+    switch (_gameType) {
+      case VoiceGameType.letters:
+        _levelVoiceConfig =
+            LettersConfig(); // Set this according to your requirements);
+        break;
+      case VoiceGameType.words:
+        _levelVoiceConfig = WordsConfig();
+        break;
+      case VoiceGameType.sentences:
+        _levelVoiceConfig = SentencesConfig();
+        break;
+    }
     this._levelVoiceConfig.init();
   }
 

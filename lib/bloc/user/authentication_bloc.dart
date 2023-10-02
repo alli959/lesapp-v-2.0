@@ -20,7 +20,6 @@ class AuthenticationBloc
         _databaseBloc = databaseBloc,
         super(AuthenticationInitialized());
 
-  @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
     if (event is AppStarted) {
