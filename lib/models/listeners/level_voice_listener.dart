@@ -13,10 +13,10 @@ abstract class LevelVoiceListener {
   late final String level;
   late final String typeofgame;
   late final List<String> typeofdifficulty;
-  late final String selecteddifficulty;
-  late final bool haschosendifficulty;
+  late String selecteddifficulty;
+  late bool haschosendifficulty;
   late final Map<String, String> difftranslate;
-  late final String title;
+  late String title;
   late final int questionTime;
   late final Widget finishWidget;
   late final Color contColor;

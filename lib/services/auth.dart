@@ -163,11 +163,13 @@ class AuthService {
   Future<void> _configureAmplify() async {
     AmplifyDataStore datastorePlugin =
         AmplifyDataStore(modelProvider: ModelProvider.instance);
-    await Amplify.addPlugin(AmplifyAuthCognito());
-    await Amplify.addPlugin(AmplifyStorageS3());
-    await Amplify.addPlugin(datastorePlugin);
-    await Amplify.addPlugin(AmplifyAPI());
-    await Amplify.configure(amplifyconfig);
+    if (Amplify.isConfigured) {
+      await Amplify.addPlugin(AmplifyAuthCognito());
+      await Amplify.addPlugin(AmplifyStorageS3());
+      await Amplify.addPlugin(datastorePlugin);
+      await Amplify.addPlugin(AmplifyAPI());
+      await Amplify.configure(amplifyconfig);
+    }
   }
 
   static StreamSubscription _configureHubSubscription() {

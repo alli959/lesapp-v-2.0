@@ -304,13 +304,12 @@ class _RegisterState extends State<RegisterForm> {
                                     ),
                                     Flexible(
                                       fit: FlexFit.loose,
-                                      flex: 1,
+                                      flex: 2,
                                       child: new Text(
-                                        // ' Ég samþykki að taka þátt í \n meistaraverkefni á vegum \n Háskóla Íslands og geyma \n stig og hljóðupptökur úr leikjum \n í lokuðum gagnagrunni á Íslandi.',
                                         'Ég samþykki að taka þátt í meistaraverkefni á vegum  Háskóla Íslands sem felst í vistun á stigum og hljóðupptökum úr leikjum  í lokaðann gagnagrunn á Íslandi.',
                                         textWidthBasis: TextWidthBasis.parent,
                                         style: TextStyle(
-                                          fontSize: 8,
+                                          fontSize: 10,
                                           color: Colors.black,
                                         ),
                                       ),
@@ -321,8 +320,8 @@ class _RegisterState extends State<RegisterForm> {
                               Container(
                                 padding: EdgeInsets.fromLTRB(20, 7, 20, 0),
                                 // button that NOT RoundedButton, is small and fits 50% of the screens with
-                                width:
-                                    (MediaQuery.of(context).size.width * 0.5),
+                                // width:
+                                //     (MediaQuery.of(context).size.width * 0.5),
                                 child: RoundedButton(
                                     title: 'Nýskráning',
                                     colour: buttonColorBlue,

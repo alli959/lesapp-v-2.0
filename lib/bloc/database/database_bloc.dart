@@ -170,9 +170,9 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     yield DatabaseLoading();
     try {
       var data = await _databaseService.GetSpecialData();
-      PrefVoice prefVoice = data["prefVoice"];
-      bool saveRecord = data["saveRecord"];
-      bool manualFix = data["manualFix"];
+      PrefVoice prefVoice = data["prefVoice"] ?? PrefVoice.DORA;
+      bool saveRecord = data["saveRecord"] ?? true;
+      bool manualFix = data["manualFix"] ?? false;
       bool agreement = data["agreement"];
       String classname = data["classname"];
       String name = data["name"];

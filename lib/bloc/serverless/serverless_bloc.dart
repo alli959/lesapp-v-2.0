@@ -37,9 +37,13 @@ class ServerlessBloc extends Bloc<ServerlessEvent, ServerlessState> {
   Stream<ServerlessState> _mapFetchData(FetchEvent event) async* {
     print("at fetchdata guy");
     yield ServerlessLoading();
-    print("ERR EVENT DIFFICULTY IS NOT NULL");
-    await event.difficulty(
-        (String difficulty) => {this._typeofdifficulty = difficulty});
+    try {
+      await event.difficulty(
+          (String difficulty) => {this._typeofdifficulty = difficulty});
+    } catch (err) {
+      print("ERR EVENT DIFFICULTY IS $err");
+    }
+
     yield DifficultySet();
     yield ServerlessLoading();
     print(
