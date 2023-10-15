@@ -14,6 +14,7 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthService _authService;
+  static bool _amplifyConfigured = false;
   DatabaseBloc? _databaseBloc;
   AuthenticationBloc(AuthService authService, {DatabaseBloc? databaseBloc})
       : _authService = authService,
@@ -52,8 +53,9 @@ class AuthenticationBloc
     yield AuthenticationLoading();
     try {
       await Future.delayed(Duration(milliseconds: 500));
-      if (!Amplify.isConfigured) {
+      if (!_amplifyConfigured) {
         await _authService.init();
+        _amplifyConfigured = true;
       }
       bool isLoggedIn = await _authService.isLoggedIn();
       print("isLoggedIn = $isLoggedIn");

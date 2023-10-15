@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:Lesaforrit/components/sidemenu.dart';
+import 'package:Lesaforrit/models/ModelProvider.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/screens/level_finish.dart';
 
@@ -49,10 +50,9 @@ class Level extends StatelessWidget {
         );
         break;
       case GameType.wordsEasy:
-        _levelListenerConfig = LettersConfig(
+        _levelListenerConfig = WordsConfig(
           type: _gameType,
           selecteddifficulty: arguments.selecteddifficulty,
-          isCap: true, // Set this according to your requirements
           finishtype: FinishGameType
               .wordsEasy, // Set this according to your requirements
         );
@@ -149,9 +149,13 @@ class _QuizPageState extends State<QuizPage> {
   Color letterColorOne = Colors.black;
   Color letterColorTwo = Colors.black;
 
-  String play() {
+  String play(PrefVoice prefVoice) {
     if (quizBrain.stars < 10) {
-      quizBrain.playLocalAsset();
+      if (prefVoice == PrefVoice.DORA) {
+        quizBrain.playDora();
+      } else {
+        quizBrain.playKarl();
+      }
       return 'STIG : ';
     } else {
       return 'STIG : ';
@@ -172,7 +176,7 @@ class _QuizPageState extends State<QuizPage> {
         scoreKeeper.add(Icon(
           Icons.star,
           color: Colors.purpleAccent,
-          size: 31,
+          size: 29,
         ));
         quizBrain.stars++;
       } else {
@@ -220,13 +224,15 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void getNewQuestion() {
+  void getNewQuestion() async {
     print("we are at the new question function");
     letterOne = quizBrain.getQuestionText1();
     letterTwo = quizBrain.getQuestionText2();
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
-    play();
+    final _database = RepositoryProvider.of<DatabaseService>(context);
+    var prefVoice = await _database.getPreferedVoice();
+    play(prefVoice);
   }
 
   @override
@@ -282,7 +288,9 @@ class _QuizPageState extends State<QuizPage> {
         soundPadBottom = 10;
         soundIconSize = 35;
         started = true;
-        quizBrain.playLocalAsset();
+        final _database = RepositoryProvider.of<DatabaseService>(context);
+        var prefVoice = _database.getPreferedVoice();
+        prefVoice.then((value) => play(value));
       }
       print("state is neither serverlessfetch nor loading");
       return (LevelTemplate(

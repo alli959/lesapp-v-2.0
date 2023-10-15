@@ -26,7 +26,7 @@ abstract class LevelListener {
   late final String bottombarimage;
   late final double fontsize;
   late final BuildContext context;
-  late final bool isCap;
+  late bool isCap = false;
   late final FinishGameType finishtype;
 
   LevelListener({required this.type});
@@ -50,7 +50,7 @@ class LettersConfig extends LevelListener {
   @override
   void init() {
     typeofgame = "letters";
-    title = "${isCap ? "Lág" : "Há"}stafir";
+    title = "${isCap == true ? "Há" : "Lág"}stafir";
     cardcolor = cardColor;
     stigcolor = lightCyan;
     shadowlevel = 145;

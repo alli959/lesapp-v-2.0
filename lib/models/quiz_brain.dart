@@ -1,28 +1,27 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:Lesaforrit/models/ModelProvider.dart';
-import 'package:Lesaforrit/models/question_cache.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import './PrefVoice.dart';
 import './question.dart';
-import '../../services/get_data.dart';
+import 'question_cache.dart';
 
 class QuizBrain {
-  final String correctSound = 'assets/sound/correct_sound.mp3';
-  final String incorrectSound = 'assets/sound/incorrect_sound.mp3';
-  final AudioCache cache = AudioCache();
+  static const String CORRECT_SOUND_PATH = 'assets/sound/correct_sound.mp3';
+  static const String INCORRECT_SOUND_PATH = 'assets/sound/incorrect_sound.mp3';
+  static const int CORRECT_SOUND_VOLUME = 70;
+  static const int INCORRECT_SOUND_VOLUME = 250;
+
   final AudioPlayer player = AudioPlayer();
-  final AudioPlayer spilari = AudioPlayer();
-  final AudioPlayer correctPlayer = AudioPlayer();
-  final AudioPlayer incorrectPlayer = AudioPlayer();
-  final List<Object> data = [];
+
   final List<Question> _questionBank = [];
   final List<QuestionCache> _questionCache = [];
+  bool isLoading = false;
 
   int _question1 = 0;
   int _question2 = 0;
@@ -32,15 +31,15 @@ class QuizBrain {
   int? whichSound;
   bool? isCap;
   bool? hasInitialized = false;
-  String? sound1;
-  String? sound2;
-  String? sound1Secondary;
-  String? sound2Secondary;
   String? typeofgame;
   String? typeofgamedifficulty;
 
+  String? soundDoraTop;
+  String? soundDoraBottom;
+  String? soundKarlTop;
+  String? soundKarlBottom;
+
   AudioSessionService? audioSessionService;
-  GetData? getdata;
 
   QuizBrain({
     this.typeofgame,
@@ -90,70 +89,81 @@ class QuizBrain {
     }
   }
 
-  Future<AudioPlayer?> playCorrect() async {
+  Future<void> preloadAudio(String audioUrl) async {
+    isLoading = true;
     try {
-      await audioSessionService?.setPlayerLocalUrl(correctSound, 70);
+      await player.setPlayerMode(PlayerMode.mediaPlayer);
+      await player.setSource(UrlSource(audioUrl)); // Preload the audio
+    } catch (e) {
+      print("Error preloading audio: $e");
+    } finally {
+      isLoading = false; // Reset loading state
+    }
+  }
+
+  Future<void> playAudioWithPreload(String audioUrl) async {
+    await preloadAudio(audioUrl); // Preload the audio
+    try {
+      await player.play(UrlSource(audioUrl)); // Play once preloaded
+    } catch (e) {
+      print("Error playing audio after preload: $e");
+    }
+  }
+
+  Future<void> playCorrect() async {
+    try {
+      await audioSessionService?.setPlayerLocalUrl(INCORRECT_SOUND_PATH);
       await Future.delayed(Duration(milliseconds: 1000));
       audioSessionService?.play();
     } catch (err) {
       print("Error playing correct sound: $err");
-      return null;
     }
-    return null;
   }
 
   Future<AudioPlayer?> playIncorrect() async {
     try {
-      await audioSessionService?.setPlayerLocalUrl(incorrectSound, 250);
+      await audioSessionService?.setPlayerLocalUrl(INCORRECT_SOUND_PATH);
       await Future.delayed(Duration(milliseconds: 1000));
       audioSessionService?.play();
     } catch (err) {
-      print("Error playing incorrect sound");
+      print("Error playing incorrect sound: $err");
       return null;
     }
     return null;
   }
 
-  Future<AudioPlayer?> _playSound(String sound, String secondarySound) async {
-    if (hasInitialized == true) {
-      var soundFileEnding = sound.split('_')[1];
-      String soundToPlay =
-          (soundFileEnding == 'Dora.mp3' || soundFileEnding == 'Karl.mp3')
-              ? sound
-              : secondarySound;
-      try {
-        await audioSessionService?.setPlayerUrl(soundToPlay);
-        audioSessionService?.play();
-      } catch (err) {
-        print("Error playing sound: $err");
-        return null;
-      }
+  Future<void> playDora() async {
+    try {
+      String soundToPlay = whichSound == 1 ? soundDoraTop! : soundDoraBottom!;
+      await playAudioWithPreload(
+          soundToPlay); // Use new method to preload then play
+    } catch (err) {
+      print("Error playing Dora's sound: $err");
     }
-    return null;
   }
 
-  Future<AudioPlayer?> playKarl() => _playSound(sound1!, sound1Secondary!);
-
-  Future<AudioPlayer?> playDora() => _playSound(sound2!, sound2Secondary!);
+  Future<void> playKarl() async {
+    try {
+      String soundToPlay = whichSound == 1 ? soundKarlTop! : soundKarlBottom!;
+      await playAudioWithPreload(
+          soundToPlay); // Use new method to preload then play
+    } catch (err) {
+      print("Error playing Karl's sound: $err");
+    }
+  }
 
   void stop() {
-    if (whichSound == 1) {
-      player.stop();
-    } else {
-      spilari.stop();
-    }
+    player.stop();
   }
 
   String getQuestionText1() {
     _question1 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
     Question questionOne = _questionBank[_question1];
-    sound1 = (questionOne.prefVoice == PrefVoice.DORA)
-        ? questionOne.file
-        : questionOne.file2;
-    sound1Secondary = (questionOne.prefVoice == PrefVoice.DORA)
-        ? questionOne.file2
-        : questionOne.file;
+    soundDoraTop =
+        questionOne.file; // Assuming file always contains Dora's sound
+    soundKarlTop = questionOne.file2 ??
+        questionOne.file; // Assuming file2 always contains Karl's sound
     return questionOne.questionText;
   }
 
@@ -161,16 +171,17 @@ class QuizBrain {
     _question2 = Random().nextInt(_questionBank.length - 1);
     whichSound = Random().nextInt(2) + 1;
 
-    if (_question1 == _question2) {
-      _question2++;
+    // Ensure _question2 is not equal to _question1
+    while (_question1 == _question2) {
+      _question2 = Random().nextInt(_questionBank.length - 1);
     }
+
     Question questionTwo = _questionBank[_question2];
-    sound2 = (questionTwo.prefVoice == PrefVoice.DORA)
-        ? questionTwo.file
-        : questionTwo.file2;
-    sound2Secondary = (questionTwo.prefVoice == PrefVoice.DORA)
-        ? questionTwo.file2
-        : questionTwo.file;
+    print("questionTwo is $questionTwo");
+    soundDoraBottom =
+        questionTwo.file; // Assuming file always contains Dora's sound
+    soundKarlBottom = questionTwo.file2 ??
+        questionTwo.file; // Assuming file2 always contains Karl's sound
 
     return questionTwo.questionText;
   }
@@ -189,10 +200,10 @@ class QuizBrain {
 
   void playLocalAsset() {
     if (whichSound == 1) {
-      AssetSource source = AssetSource(sound1!);
+      AssetSource source = AssetSource(soundDoraTop!);
       player.play(source);
     } else {
-      AssetSource source = AssetSource(sound2!);
+      AssetSource source = AssetSource(soundDoraBottom!);
       player.play(source);
     }
   }

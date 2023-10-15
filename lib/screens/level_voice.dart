@@ -337,6 +337,7 @@ class _QuizPageState extends State<QuizPage> {
     final _voiceBloc = BlocProvider.of<VoiceBloc>(context);
 
     LevelVoiceListener config = widget.config;
+
     void listeningUpdate(String lWords,
         List<SpeechRecognitionAlternative> alter, bool isList, String quest) {
       var newLWords = quizBrain.bestLastWord(lWords, quest, alter);
@@ -424,6 +425,7 @@ class _QuizPageState extends State<QuizPage> {
         answerArr = score['answerArr'] as List<String>;
 
         print("resultListener finalResult");
+        print("finalPoints = ${points}");
         print("questionMap = ${questionMap}");
         print("answerMAp = ${answerMap}");
         print("questionArr = ${questionArr}");
@@ -534,6 +536,8 @@ class _QuizPageState extends State<QuizPage> {
               }
 
               if (state is NewVoiceQuestionState) {
+                print("state is newvoicequestionstate");
+                print("state is $state");
                 Map<String, bool> val = {
                   "onePoint": state.onePoint,
                   "twoPoints": state.twoPoints,

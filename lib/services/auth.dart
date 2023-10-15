@@ -16,6 +16,7 @@ import '../models/ModelProvider.dart';
 class AuthService {
   // All of the authentication goes inside this class
   final _auth = Amplify.Auth;
+  static bool _amplifyConfigured = false;
 
   StreamSubscription hubSubscription = _configureHubSubscription();
 
@@ -163,12 +164,20 @@ class AuthService {
   Future<void> _configureAmplify() async {
     AmplifyDataStore datastorePlugin =
         AmplifyDataStore(modelProvider: ModelProvider.instance);
-    if (Amplify.isConfigured) {
+    print("isConfigured: ${Amplify.isConfigured}");
+    print("isConfigured from static: $_amplifyConfigured");
+    if (Amplify.isConfigured) return;
+
+    try {
       await Amplify.addPlugin(AmplifyAuthCognito());
       await Amplify.addPlugin(AmplifyStorageS3());
       await Amplify.addPlugin(datastorePlugin);
       await Amplify.addPlugin(AmplifyAPI());
       await Amplify.configure(amplifyconfig);
+    } on AmplifyAlreadyConfiguredException catch (e) {
+      print('Amplify was already configured. Detail: $e');
+    } catch (e) {
+      print('An error occurred during Amplify configuration: $e');
     }
   }
 

@@ -119,16 +119,29 @@ class QuizBrainVoice {
     List<String> answerArr = userVoiceAnswer.split(' ');
     Map<String, int> mapQuestion = _createMap(questionArr);
     Map<String, int> mapAnswer = _createMap(answerArr);
-    List<bool> questionMap =
-        _createColorBoard(questionArr, mapAnswer, totalCorrect, totalIncorrect);
-    List<bool> answerMap =
-        _createColorBoard(answerArr, mapQuestion, totalCorrect, totalIncorrect);
-
+    List<bool> questionMap = _createColorBoard(questionArr, mapAnswer);
+    List<bool> answerMap = _createColorBoard(answerArr, mapQuestion);
+    questionMap.forEach((element) {
+      if (element) {
+        totalCorrect++;
+      } else {
+        totalIncorrect++;
+      }
+    });
+    answerMap.forEach((element) {
+      if (element) {
+        totalCorrect++;
+      } else {
+        totalIncorrect++;
+      }
+    });
+    print("totalCorrect is $totalCorrect");
+    print("totalIncorrect is $totalIncorrect");
     double points = totalCorrect / (totalCorrect + totalIncorrect);
 
     return {
       "points": points,
-      "correct": totalCorrect,
+      "correct": (totalCorrect / 2).round(),
       "questionMap": questionMap,
       "answerMap": answerMap,
       "questionArr": questionArr,
@@ -146,15 +159,12 @@ class QuizBrainVoice {
     return map;
   }
 
-  List<bool> _createColorBoard(List<String> list, Map<String, int> map,
-      int totalCorrect, int totalIncorrect) {
+  List<bool> _createColorBoard(List<String> list, Map<String, int> map) {
     List<bool> colorBoard = [];
     for (var item in list) {
       if (map.containsKey(item.toLowerCase())) {
-        totalCorrect += 1;
         colorBoard.add(true);
       } else {
-        totalIncorrect += 1;
         colorBoard.add(false);
       }
     }

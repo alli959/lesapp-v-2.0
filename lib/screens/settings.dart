@@ -1,5 +1,6 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
+import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +15,17 @@ import '../shared/loading.dart';
 class Settings extends StatelessWidget {
   static const String id = 'settings';
 
-  UrlSource sourceDora = UrlSource('sound/Dora_introduction.mp3');
-  UrlSource sourceKarl = UrlSource('sound/Karl_introduction.mp3');
+  static const String KARL_SOUND_PATH = 'assets/sound/Karl_introduction.mp3';
+  static const String DORA_SOUND_PATH = 'assets/sound/Dora_introduction.mp3';
+  static const int DORA_SOUND_VOLUME = 250;
+  static const int KARL_SOUND_VOLUME = 70;
+  final AudioPlayer player = AudioPlayer();
+  AudioSessionService? audioSessionService;
+
   AudioCache cache = AudioCache();
   bool isInit = false;
   bool isManualCorrection = false;
-  AudioPlayer playerDora = AudioPlayer();
-  AudioPlayer playerKarl = AudioPlayer();
   PrefVoice prefVoice = PrefVoice.DORA;
-  String voiceDora = 'sound/Dora_introduction.mp3';
-  String voiceKarl = 'sound/Karl_introduction.mp3';
   bool voiceRecord = true;
   String classname = "bekkur";
   String schoolname = "Utan skóla";
@@ -36,6 +38,34 @@ class Settings extends StatelessWidget {
   List<String> schoolnamelist = ["Utan skóla"];
   Settings({specialScreen = true}) {
     this._specialScreen = specialScreen;
+  }
+
+  String sourceKarl = KARL_SOUND_PATH;
+
+  Future<AudioPlayer?> playDora() async {
+    try {
+      await audioSessionService?.setPlayerLocalUrl(
+          DORA_SOUND_PATH, DORA_SOUND_VOLUME);
+      await Future.delayed(Duration(milliseconds: 4000));
+      audioSessionService?.play();
+    } catch (err) {
+      print("Error playing Dora sound: $err");
+      return null;
+    }
+    return null;
+  }
+
+  Future<AudioPlayer?> playKarl() async {
+    try {
+      await audioSessionService?.setPlayerLocalUrl(
+          KARL_SOUND_PATH, KARL_SOUND_VOLUME);
+      await Future.delayed(Duration(milliseconds: 4000));
+      audioSessionService?.play();
+    } catch (err) {
+      print("Error playing Karl sound: $err");
+      return null;
+    }
+    return null;
   }
 
   @override
@@ -158,14 +188,8 @@ class Settings extends StatelessWidget {
                                                           child:
                                                               GestureDetector(
                                                             onTap: () async {
-                                                              await playerDora
-                                                                  .play(
-                                                                      sourceDora);
-                                                              await Future.delayed(
-                                                                  Duration(
-                                                                      milliseconds:
-                                                                          4000));
-                                                              playerDora.stop();
+                                                              await () =>
+                                                                  playDora();
                                                             },
                                                             child: Image.asset(
                                                               'assets/icons/woman_speaking.png',
@@ -224,14 +248,7 @@ class Settings extends StatelessWidget {
                                                           child:
                                                               GestureDetector(
                                                             onTap: () async => {
-                                                              await playerKarl
-                                                                  .play(
-                                                                      sourceKarl),
-                                                              await Future.delayed(
-                                                                  Duration(
-                                                                      milliseconds:
-                                                                          4000)),
-                                                              playerKarl.stop()
+                                                              await playKarl()
                                                             },
                                                             child: Image.asset(
                                                               'assets/icons/man_speaking.png',
@@ -488,60 +505,55 @@ class Settings extends StatelessWidget {
                                           ),
                                         ),
                                         Container(
-                                            padding: EdgeInsets.all(10),
-                                            child: DropdownButtonFormField2<
-                                                    String>(
-                                                style: TextStyle(
-                                                    fontFamily: 'Metropolis',
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Color.fromARGB(
-                                                        255, 36, 9, 238)),
-                                                // dropdownButtonStyle:
-                                                //     EdgeInsets.fromLTRB(
-                                                //         0, 0, 0, 0),
-                                                value: this.schoolname,
-                                                decoration: InputDecoration(
-                                                  labelText: 'Skóli',
-                                                  labelStyle: TextStyle(
-                                                      fontFamily: 'Metropolis',
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: Colors.black),
+                                          padding: EdgeInsets.all(10),
+                                          child:
+                                              DropdownButtonFormField2<String>(
+                                            isExpanded:
+                                                true, // Ensure the dropdown is as wide as its parent
+                                            style: TextStyle(
+                                              fontFamily: 'Metropolis',
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color.fromARGB(
+                                                  255, 36, 9, 238),
+                                            ),
+                                            value: this.schoolname,
+                                            decoration: InputDecoration(
+                                              labelText: 'Skóli',
+                                              labelStyle: TextStyle(
+                                                fontFamily: 'Metropolis',
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w800,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            items: schoolnamelist.map((label) {
+                                              return DropdownMenuItem(
+                                                child: Text(
+                                                  label,
+                                                  overflow: TextOverflow
+                                                      .ellipsis, // Use ellipsis for longer text
                                                 ),
-                                                // validator: (value) {
-                                                //   if (value.isEmpty) {
-                                                //     return 'Vinsamlegast fyllið út skóla';
-                                                //   }
-                                                //   return null;
-                                                // },
-                                                items: schoolnamelist
-                                                    .map((label) =>
-                                                        DropdownMenuItem(
-                                                          child: Text(label),
-                                                          value: label,
-                                                        ))
-                                                    .toList(),
-                                                onChanged: (newValue) => {
-                                                      _databaseBloc.add(
-                                                          ActionPerformedEvent(
-                                                              prefVoice:
-                                                                  prefVoice,
-                                                              saveRecord:
-                                                                  voiceRecord,
-                                                              manualFix:
-                                                                  isManualCorrection,
-                                                              schoolname:
-                                                                  newValue ??
-                                                                      "Utan skóla",
-                                                              classname:
-                                                                  classname,
-                                                              agreement:
-                                                                  agreement,
-                                                              name: name,
-                                                              age: age))
-                                                    })),
+                                                value: label,
+                                              );
+                                            }).toList(),
+                                            onChanged: (newValue) {
+                                              _databaseBloc.add(
+                                                ActionPerformedEvent(
+                                                  prefVoice: prefVoice,
+                                                  saveRecord: voiceRecord,
+                                                  manualFix: isManualCorrection,
+                                                  schoolname:
+                                                      newValue ?? "Utan skóla",
+                                                  classname: classname,
+                                                  agreement: agreement,
+                                                  name: name,
+                                                  age: age,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
                                         Container(
                                           padding: EdgeInsets.all(10),
                                           child: TextFormField(

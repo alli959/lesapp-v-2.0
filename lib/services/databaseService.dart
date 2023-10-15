@@ -263,9 +263,11 @@ class DatabaseService {
 
     try {
       AuthUser user = await Amplify.Auth.getCurrentUser();
+      print("user is $user");
       print("userID IS ${user.userId}");
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(user.userId)));
+      print("oldUserData is $oldUserData");
       Map<String, dynamic> returner = {
         "prefVoice": oldUserData[0].prefVoice,
         "saveRecord": oldUserData[0].saveRecord,
@@ -427,6 +429,7 @@ class DatabaseService {
 
   Future<void> saveSpecialData(UserData userData) async {
     print("we are at updateUserData");
+    print("userData is $userData");
     try {
       await lesaCollection.save(userData);
     } catch (err) {
@@ -519,9 +522,11 @@ class DatabaseService {
     try {
       List<UserData> oldUserData = (await lesaCollection
           .query(UserData.classType, where: UserData.ID.eq(this.uid)));
+      print("oldUserData is $oldUserData");
       return oldUserData[0];
-    } catch (err) {
+    } catch (err, stacktrace) {
       print("there was an error getting user data ====> $err");
+      print(stacktrace);
       return UserData(
         id: "",
         name: "",

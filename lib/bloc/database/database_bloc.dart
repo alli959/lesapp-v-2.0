@@ -174,7 +174,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       bool saveRecord = data["saveRecord"] ?? true;
       bool manualFix = data["manualFix"] ?? false;
       bool agreement = data["agreement"];
-      String classname = data["classname"];
+      String classname = data["classname"] ?? "";
       String name = data["name"];
       String age = data["age"];
 
@@ -205,6 +205,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     try {
       // Create an instance of UserData
       UserData userData = UserData(
+        id: _databaseService.uid, // Assuming you have access to uid
         name: event.name,
         age: event.age,
         school: schoolID,

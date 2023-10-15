@@ -23,7 +23,56 @@ class LevelFinish extends StatelessWidget {
   LevelFinish(LevelFinishArguments args) {
     this.stig = args.score;
     this.gameType = args.gameType;
-    this._config.init();
+    switch (gameType) {
+      case FinishGameType.letters:
+        _config = FinishLettersConfig();
+        _config.init();
+        break;
+      case FinishGameType.lettersCaps:
+        _config = FinishLettersCapsConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceLetters:
+        _config = FinishVoiceLettersConfig();
+        _config.init();
+        break;
+      case FinishGameType.wordsEasy:
+        _config = FinishWordsEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.wordsMedium:
+        _config = FinishWordsMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceWordsEasy:
+        _config = FinishVoiceWordsEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceWordsMedium:
+        _config = FinishVoiceWordsMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.sentencesEasy:
+        _config = FinishSentencesEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.sentencesMedium:
+        _config = FinishSentencesMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceSentencesEasy:
+        _config = FinishVoiceSentencesEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceSentencesMedium:
+        _config = FinishVoiceSentencesMediumConfig();
+        _config.init();
+        break;
+      default:
+        _config = FinishLettersConfig();
+        _config.init();
+        break;
+    }
   }
 
   // static const String id = 'LevelFinish';

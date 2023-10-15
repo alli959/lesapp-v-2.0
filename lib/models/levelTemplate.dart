@@ -277,7 +277,7 @@ class LevelTemplate extends StatelessWidget {
                                 child: ReusableCard(
                                   colour: Colors.white,
                                   height: 35,
-                                  width: 100,
+                                  width: 300,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: scoreKeeper,

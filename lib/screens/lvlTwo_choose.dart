@@ -14,19 +14,15 @@ class LvlTwoChoose extends StatelessWidget {
   Widget build(BuildContext context) {
     return Choose(
       buttonOne: () {
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil(Level.id, (Route<dynamic> route) => false,
-                arguments: LevelArguments(
-                  GameType.wordsEasy,
-                  "easy",
-                  true,
-                ));
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            Level.id, (Route<dynamic> route) => false,
+            arguments: LevelArguments(GameType.wordsEasy, "easy", false));
         // Navigator.pushNamed(context, LevelTwoShort.id);  // þessi hreinsar ekki routes en efri gerir það
       },
       buttonTwo: () {
         Navigator.of(context).pushNamedAndRemoveUntil(
             Level.id, (Route<dynamic> route) => false,
-            arguments: LevelArguments(GameType.wordsMedium, "easy", false));
+            arguments: LevelArguments(GameType.wordsMedium, "medium", false));
         // Navigator.pushNamed(context, LevelTwo.id);
       },
       buttonThree: () {
