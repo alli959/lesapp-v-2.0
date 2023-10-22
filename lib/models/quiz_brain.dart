@@ -92,11 +92,12 @@ class QuizBrain {
   Future<void> preloadAudio(String audioUrl) async {
     isLoading = true;
     try {
-      await player.setPlayerMode(PlayerMode.mediaPlayer);
+      await player.setPlayerMode(PlayerMode.lowLatency);
       await player.setSource(UrlSource(audioUrl)); // Preload the audio
     } catch (e) {
       print("Error preloading audio: $e");
     } finally {
+      print("Done preloading audio");
       isLoading = false; // Reset loading state
     }
   }
@@ -111,29 +112,36 @@ class QuizBrain {
   }
 
   Future<void> playCorrect() async {
+    isLoading = true;
     try {
-      await audioSessionService?.setPlayerLocalUrl(INCORRECT_SOUND_PATH);
-      await Future.delayed(Duration(milliseconds: 1000));
+      await player.release(); // <-- Release the player here
+      await audioSessionService?.setPlayerLocalUrl(CORRECT_SOUND_PATH);
       audioSessionService?.play();
     } catch (err) {
       print("Error playing correct sound: $err");
+    } finally {
+      isLoading = false;
     }
   }
 
   Future<AudioPlayer?> playIncorrect() async {
+    isLoading = true;
     try {
+      await player.release(); // <-- Release the player here
       await audioSessionService?.setPlayerLocalUrl(INCORRECT_SOUND_PATH);
-      await Future.delayed(Duration(milliseconds: 1000));
       audioSessionService?.play();
     } catch (err) {
       print("Error playing incorrect sound: $err");
       return null;
+    } finally {
+      isLoading = false;
     }
     return null;
   }
 
   Future<void> playDora() async {
     try {
+      await player.release(); // <-- Release the player here
       String soundToPlay = whichSound == 1 ? soundDoraTop! : soundDoraBottom!;
       await playAudioWithPreload(
           soundToPlay); // Use new method to preload then play
@@ -144,6 +152,7 @@ class QuizBrain {
 
   Future<void> playKarl() async {
     try {
+      await player.release(); // <-- Release the player here
       String soundToPlay = whichSound == 1 ? soundKarlTop! : soundKarlBottom!;
       await playAudioWithPreload(
           soundToPlay); // Use new method to preload then play
@@ -199,6 +208,7 @@ class QuizBrain {
   }
 
   void playLocalAsset() {
+    player.release(); // <-- Release the player here
     if (whichSound == 1) {
       AssetSource source = AssetSource(soundDoraTop!);
       player.play(source);

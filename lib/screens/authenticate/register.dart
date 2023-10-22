@@ -143,7 +143,7 @@ class _RegisterState extends State<RegisterForm> {
                           child: TextFormField(
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp("[a-zA-Z]")),
+                                  RegExp("[a-zA-ZáéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ\s]")),
                             ],
                             keyboardType: TextInputType.name,
                             textAlign: TextAlign.center,
@@ -225,13 +225,12 @@ class _RegisterState extends State<RegisterForm> {
                                     '                             Skóli barns'), //þetta er ba
                           ),
                         ),
-                        // I need a container for classname
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp("[a-zA-Z0-9]")),
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  "[-a-zA-Z0-9áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ._\s]"))
                             ],
                             keyboardType: TextInputType.name,
                             textAlign: TextAlign.center,
@@ -251,7 +250,7 @@ class _RegisterState extends State<RegisterForm> {
                           child: TextFormField(
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp("[a-zA-Z0-9.@]")),
+                                  RegExp("[a-zA-Z0-9.@áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
                             ],
                             keyboardType: TextInputType.emailAddress,
                             textAlign: TextAlign.center,
@@ -269,6 +268,10 @@ class _RegisterState extends State<RegisterForm> {
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(
+                                  r"[a-zA-Z0-9!@#\$%^&*()_+{}|:<>?\-=\[\]\\;',.áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
+                            ],
                             obscureText: true, //stjörnur í stað texta
                             textAlign: TextAlign.center,
                             validator: (value) => value!.length < 8

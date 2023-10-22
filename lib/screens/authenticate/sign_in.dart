@@ -5,6 +5,7 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/shared/constants.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
@@ -99,6 +100,10 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.all(15),
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp("[a-zA-Z0-9.@áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
+                    ],
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     validator: (value) =>
@@ -115,6 +120,10 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.all(15),
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r"[a-zA-Z0-9!@#\$%^&*()_+{}|:<>?\-=\[\]\\;',.áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
+                    ],
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
                     validator: (value) => value!.length < 8
@@ -159,19 +168,3 @@ class _SignInState extends State<SignInForm> {
     );
   }
 }
-
-/*
-            child: RoundedButton(
-              title: 'Skrá inn',
-              colour: Color(0xFF009df4),
-              onPressed: () async {
-                dynamic result = await _auth.signInAnon();
-                if (result == null) {
-                  print('error signing in');
-                } else {
-                  print('signed in');
-                  print(result.uid);
-                }
-              },
-            ),
- */
