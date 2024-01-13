@@ -1,8 +1,5 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
-import 'package:Lesaforrit/components/arguments.dart';
-import 'package:Lesaforrit/models/listeners/level_listener.dart';
-import 'package:Lesaforrit/screens/level.dart';
 import 'package:Lesaforrit/screens/settings.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:Lesaforrit/services/get_data.dart';
@@ -95,12 +92,10 @@ class LesApp extends StatelessWidget {
     required this.appRouter,
   }) : super(key: key);
 
-  AuthenticationBloc _authenticationBloc = AuthenticationBloc(AuthService());
   // _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
 
   @override
   Widget build(BuildContext context) {
-    final _databaseBloc = BlocProvider.of<DatabaseBloc>(context);
     final databaseRepo = RepositoryProvider.of<DatabaseService>(context);
 
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(

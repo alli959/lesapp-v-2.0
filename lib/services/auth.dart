@@ -16,7 +16,6 @@ import '../models/ModelProvider.dart';
 class AuthService {
   // All of the authentication goes inside this class
   final _auth = Amplify.Auth;
-  static bool _amplifyConfigured = false;
 
   StreamSubscription hubSubscription = _configureHubSubscription();
 
@@ -45,15 +44,36 @@ class AuthService {
   Future<AuthUser?> getCurrentUser() async {
     try {
       return await _auth.getCurrentUser();
-    } catch (err) {
-      print("User is logged out");
+    } on SignedOutException catch (e) {
+      print("No user is currently signed in: ${e.message}");
+      // Handle the exception here - for example, redirect to a login screen
+      return null;
+    } catch (e) {
+      print("Error getting current user: $e");
       return null;
     }
   }
 
-  Future<String> getCurrentUserID() async {
-    final user = await getCurrentUser();
-    return user!.userId;
+  Future<String?> getCurrentUserID() async {
+    if (await isLoggedIn()) {
+      final user = await getCurrentUser();
+      return user?.userId;
+    } else {
+      // Handle the scenario when no user is logged in
+      print("No user is currently signed in");
+      return null;
+    }
+  }
+
+  Future<bool> isAmplifyConfigured() async {
+    try {
+      await Amplify.Auth.fetchAuthSession();
+      return true;
+    } on AmplifyAlreadyConfiguredException {
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // SIGN IN w. email and password
@@ -164,20 +184,23 @@ class AuthService {
   Future<void> _configureAmplify() async {
     AmplifyDataStore datastorePlugin =
         AmplifyDataStore(modelProvider: ModelProvider.instance);
-    print("isConfigured: ${Amplify.isConfigured}");
-    print("isConfigured from static: $_amplifyConfigured");
-    if (Amplify.isConfigured) return;
-
     try {
-      await Amplify.addPlugin(AmplifyAuthCognito());
-      await Amplify.addPlugin(AmplifyStorageS3());
-      await Amplify.addPlugin(datastorePlugin);
-      await Amplify.addPlugin(AmplifyAPI());
-      await Amplify.configure(amplifyconfig);
+      await Amplify.addPlugins([
+        AmplifyAuthCognito(),
+        AmplifyStorageS3(),
+        datastorePlugin,
+        AmplifyAPI()
+      ]);
+      await Amplify.configure(
+          amplifyconfig); // exception thrown here in debug mode
+      print('Amplify configured successfully');
     } on AmplifyAlreadyConfiguredException catch (e) {
-      print('Amplify was already configured. Detail: $e');
+      print('Amplify was already configured: $e');
+    } on SignedOutException catch (e) {
+      print('User is already signed out: $e');
     } catch (e) {
       print('An error occurred during Amplify configuration: $e');
+      throw e;
     }
   }
 

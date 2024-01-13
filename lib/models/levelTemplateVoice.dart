@@ -273,23 +273,6 @@ class LevelTemplateVoice extends StatelessWidget {
               ],
             ),
           ),
-
-          // // animation
-          // Expanded(
-          //   child: Stack(
-          //     children: [
-          //       BlocBuilder<VoiceBloc, VoiceState>(builder: (context, state) {
-          //         if (state is CorrectAnimation) {
-          //           print("CORRECTANIMATION");
-          //           return Stack(children: state.animation);
-          //         }
-          //         return Padding(
-          //             padding: const EdgeInsets.all(8.0),
-          //             child: SizedBox.shrink());
-          //       }),
-          //     ],
-          //   ),
-          // ),
           Column(
             children: [
               Row(
@@ -354,7 +337,7 @@ class LevelTemplateVoice extends StatelessWidget {
                                 child: ReusableCard(
                                   height: 35,
                                   colour: Colors.white,
-                                  width: 100,
+                                  width: 300,
                                   cardChild: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: scoreKeeper,

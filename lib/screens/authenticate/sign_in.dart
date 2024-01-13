@@ -29,7 +29,7 @@ class SignInForm extends StatefulWidget {
 class _SignInState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
 
-  late String email;
+  late String email = "";
   late String password;
   String error = '';
 
@@ -100,6 +100,7 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.all(15),
                   child: TextFormField(
+                    initialValue: email, // Use the state variable
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                           RegExp("[a-zA-Z0-9.@áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),

@@ -24,7 +24,6 @@ import 'package:Lesaforrit/components/my_flutter_app_icons.dart';
 import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/levelTemplateVoice.dart';
 import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
-import '../models/listeners/level_finish_listener.dart';
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
@@ -292,7 +291,8 @@ class _QuizPageState extends State<QuizPage> {
       Timer(Duration(seconds: 1), () {
         Navigator.of(context).pushNamedAndRemoveUntil(
             LevelFinish.id, (Route<dynamic> route) => false,
-            arguments: LevelFinishArguments(widget.config.finishtype,
+            arguments: LevelFinishArguments(
+                widget.config.finishtype, //here is a part of my call stack fail
                 calc.calculatePoints(calc.correct, calc.trys) * 100));
       });
     }

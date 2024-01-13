@@ -24,7 +24,7 @@ abstract class LevelVoiceListener {
   late final Color stigColor;
   late final bool isLetter;
   late final BuildContext context;
-  late final FinishGameType finishtype;
+  late FinishGameType finishtype;
 
   LevelVoiceListener({required this.type});
 
@@ -87,6 +87,7 @@ class WordsConfig extends LevelVoiceListener {
     cardColor = cardColorLvlTwo;
     stigColor = lightGreen;
     isLetter = false;
+    finishtype = FinishGameType.voiceWordsEasy;
   }
 
   @override
@@ -121,6 +122,7 @@ class SentencesConfig extends LevelVoiceListener {
     cardColor = cardColorLvlThree;
     stigColor = lightBlue;
     isLetter = false;
+    finishtype = FinishGameType.voiceSentencesEasy;
   }
 
   @override

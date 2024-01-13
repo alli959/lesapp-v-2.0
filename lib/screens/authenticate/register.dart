@@ -42,13 +42,13 @@ class _RegisterState extends State<RegisterForm> {
     {"school": "school"}
   ];
   bool hideTopImage = false;
-  late String email;
+  late String email = "";
   late String password;
-  late String name;
-  late String age;
-  late String classname;
-  late String school;
-  bool agreement = true;
+  late String name = "";
+  late String age = "";
+  late String classname = "";
+  late String school = "";
+  late bool agreement = true;
   String? selected;
   String error = '';
 
@@ -141,6 +141,7 @@ class _RegisterState extends State<RegisterForm> {
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
+                            initialValue: name,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                   RegExp("[a-zA-ZáéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ\s]")),
@@ -161,6 +162,7 @@ class _RegisterState extends State<RegisterForm> {
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
+                            initialValue: age,
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             validator: (value) =>
@@ -228,6 +230,7 @@ class _RegisterState extends State<RegisterForm> {
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
+                            initialValue: classname,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(
                                   "[-a-zA-Z0-9áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ._\s]"))
@@ -248,6 +251,7 @@ class _RegisterState extends State<RegisterForm> {
                         Container(
                           padding: EdgeInsets.all(6),
                           child: TextFormField(
+                            initialValue: email, // Use the state variable
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                   RegExp("[a-zA-Z0-9.@áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),

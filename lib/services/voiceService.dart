@@ -196,7 +196,11 @@ class VoiceService {
   }
 
   Future reset() async {
-    await stopRecording();
+    try {
+      await stopRecording();
+    } catch (err) {
+      print("there was an error at stopping recording $err");
+    }
     lastWords = ' ';
     lastError = ' ';
     lastStatus = ' ';
