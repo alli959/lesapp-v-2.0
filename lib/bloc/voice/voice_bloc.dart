@@ -182,39 +182,44 @@ class VoiceBloc extends Bloc<VoiceEvent, VoiceState> {
 
     bool manualAnswer = false;
 
-    void callBackFunc(setAnswer) {
+    void callBackFunc(bool setAnswer) {
+      print("WE ARE AT THE CALLBACK FUNC");
+      print("setAnswer is $setAnswer");
+      print("typeOfFile is $typeOfFile");
       manualAnswer = setAnswer;
       if (setAnswer) {
         if (typeOfFile == "Incorrect") {
-          correct = trys;
           typeOfFile = "Manual_Correct";
-          fivePoints = true;
-          fourPoints = false;
-          threePoints = false;
-          twoPoints = false;
-          onePoint = false;
         }
+        correct = trys;
+        fivePoints = true;
+        fourPoints = false;
+        threePoints = false;
+        twoPoints = false;
+        onePoint = false;
       }
       if (!setAnswer) {
         if (typeOfFile == "Correct") {
           typeOfFile = "Manual_Incorrect";
-          correct = 0;
-          fivePoints = false;
-          fourPoints = false;
-          threePoints = false;
-          twoPoints = false;
-          onePoint = true;
         }
+        correct = 0;
+        fivePoints = false;
+        fourPoints = false;
+        threePoints = false;
+        twoPoints = false;
+        onePoint = true;
       }
     }
 
     if (isManualFix) {
-      await dialog(callBackFunc);
+      dynamic a = await dialog(callBackFunc);
+      print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa is $a");
     }
     print("manualAnswer is $manualAnswer");
 
     if (fivePoints) {
       // check if user has disabled save feature
+      print("we are saving data after gitting five points");
       if (isSaveVoice) {
         audioSaver.setData('testName', "$level/$typeOfFile", event.question,
             event.answer, event.audio);

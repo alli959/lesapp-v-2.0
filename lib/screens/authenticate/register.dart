@@ -133,7 +133,7 @@ class _RegisterState extends State<RegisterForm> {
                             ? Container()
                             : Container(
                                 alignment: Alignment.topCenter,
-                                height: 200.0,
+                                height: 100.0,
                                 child: Image.asset(
                                     'assets/images/cat_noshadow.png'),
                               ),

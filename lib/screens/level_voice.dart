@@ -120,40 +120,41 @@ class LevelVoice extends StatelessWidget {
     }
 
     Future<bool> manualFixDialog(callback) async {
-      return await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: blai,
-            title: Text('Handvirk Útkoma'),
-            content: const Text('Las barnið rétt eða rangt?'),
-            actions: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                color: Colors.red,
-                child: TextButton(
-                  child: Text('Rangt'),
-                  onPressed: () {
-                    callback(false);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                color: Colors.green,
-                child: TextButton(
-                  child: Text('Rétt'),
-                  onPressed: () {
-                    callback(true);
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      );
+      return await showDialog<bool>(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: blai,
+                title: Text('Handvirk Útkoma'),
+                content: const Text('Las barnið rétt eða rangt?'),
+                actions: [
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: Colors.red,
+                    child: TextButton(
+                      child: Text('Rangt'),
+                      onPressed: () {
+                        callback(false);
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    color: Colors.green,
+                    child: TextButton(
+                      child: Text('Rétt'),
+                      onPressed: () {
+                        callback(true);
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ) ??
+          false;
     }
 
     final _speech = RepositoryProvider.of<VoiceService>(context);
