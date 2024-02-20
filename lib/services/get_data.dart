@@ -2,16 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 // import 'package:projectPath/model/product.dart';
-import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/data.dart';
-import 'dart:convert' show utf8;
 
 class GetData {
-  String typeofgame;
-  String typeofdifficulty;
+  String typeofgame = "words";
+  String typeofdifficulty = "easy";
 
   GetData(String typeofgame, String typeofdifficulty) {
     this.typeofgame = typeofgame;
@@ -43,21 +41,21 @@ class GetData {
         if (statusCode == 200) {
           DefaultCacheManager().putFile(url.toString(), response.bodyBytes,
               key: '${this.typeofgame}_${this.typeofgame}');
-          Iterable l = json.fuse(utf8).decode(response.bodyBytes);
+          Iterable l = json.fuse(utf8).decode(response.bodyBytes) as Iterable;
           List<Data> temp =
               List<Data>.from(l.map((model) => Data.fromJson(model)));
           print("temp after calling from web is $temp");
 
           return temp;
         }
-        if (statusCode < 200 || statusCode > 400 || json == null) {
+        if (statusCode < 200 || statusCode > 400) {
           throw new Exception("Error while fetching data");
         }
-        return null;
+        return <Data>[];
       });
     } else {
       Uint8List bodyBytes = await fileInfo.file.readAsBytes();
-      Iterable l = json.fuse(utf8).decode(bodyBytes);
+      Iterable l = json.fuse(utf8).decode(bodyBytes) as Iterable;
       List<Data> temp = List<Data>.from(l.map((model) => Data.fromJson(model)));
       print("temp after calling from cache is $temp");
 
@@ -65,23 +63,3 @@ class GetData {
     }
   }
 }
-
-      // return await DefaultCacheManager().getSingleFile(url.toString(), headers: {
-      //   "Content-Type": 'application/json',
-      //   "charset": "utf-8"
-      // }).then((http.Response response) {
-      //   print("response is ${response.body}");
-      //   final int statusCode = response.statusCode;
-      //   if (statusCode == 200) {
-      //     Iterable l = json.fuse(utf8).decode(response.bodyBytes);
-      //     List<Data> temp =
-      //         List<Data>.from(l.map((model) => Data.fromJson(model)));
-      //     print("temp is $temp");
-
-      //     return temp;
-      //   }
-      //   if (statusCode < 200 || statusCode > 400 || json == null) {
-      //     throw new Exception("Error while fetching data");
-      //   }
-      //   return null;
-      // });

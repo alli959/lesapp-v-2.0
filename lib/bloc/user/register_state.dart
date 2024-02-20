@@ -16,7 +16,7 @@ class RegisterSuccess extends RegisterState {}
 class RegisterFailure extends RegisterState {
   final String error;
 
-  RegisterFailure({@required this.error});
+  RegisterFailure({required this.error});
 
   @override
   List<Object> get props => [error];

@@ -8,12 +8,12 @@ Til að keyra:
 - Opna android studio og setja upp
 - - Platform tools
 - - cmd-line
-- Sækja java-jdk version 11
+- Sækja java-jdk version 17
 - Setja inn enviroment variables
 - - '.../android/platform-tools'
 - - '.../android/cmdline-tools/latest/bin'
-- - '.../Java/jdk-11/bin'
-- - '.../Java/jdk-11/lib'
+- - '.../Java/jdk-17/bin'
+- - '.../Java/jdk-17/lib'
 - Skrifa inn terminal 'flutter doctor -v' og fylgja því sem beðið er um
 
 Kveikt þarf að vera á simulator eða sími tengdur við tölvu.
@@ -44,13 +44,13 @@ flutter run
 - Sækja skal
 - - dart: ">=2.18.0 <3.0.0"
 - - flutter: ">=3.3.0"
-- - java-jdk version 11
+- - java-jdk version 17
 - - adb Platform tools
 - - Setja inn enviroment variables
 - - '.../android/platform-tools'
 - - '.../android/cmdline-tools/latest/bin'
-- - '.../Java/jdk-11/bin'
-- - '.../Java/jdk-11/lib'
+- - '.../Java/jdk-17/bin'
+- - '.../Java/jdk-17/lib'
 - Skrifa inn terminal 'flutter doctor -v' og fylgja því sem beðið er um
 
 - Tengjast Websocket á emulator:

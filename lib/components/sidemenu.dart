@@ -1,6 +1,5 @@
 import 'package:Lesaforrit/components/img_button.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
-import 'package:Lesaforrit/screens/home/score_chart.dart';
 import 'package:Lesaforrit/screens/home/welcome.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
 import 'package:Lesaforrit/screens/lvlThree_choose.dart';
@@ -10,7 +9,6 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/settings.dart';
-import 'update_info.dart';
 
 class SideMenu extends StatelessWidget {
   @override
@@ -36,6 +34,7 @@ class SideMenu extends StatelessWidget {
                             title: 'Heim',
                             icons: Icons.home,
                             navigation: Welcome(),
+                            nav: '',
                           ),
                         ),
                         Expanded(
@@ -43,6 +42,7 @@ class SideMenu extends StatelessWidget {
                             title: 'Mínar síður',
                             icons: Icons.face,
                             navigation: ProfileView(),
+                            nav: '',
                           ),
                         ),
                         Expanded(
@@ -50,6 +50,7 @@ class SideMenu extends StatelessWidget {
                             title: 'Stillingar',
                             icons: Icons.settings,
                             navigation: Settings(),
+                            nav: '',
                           ),
                         ),
                         Expanded(
@@ -58,6 +59,7 @@ class SideMenu extends StatelessWidget {
                             title: 'Notanda Stillingar',
                             icons: Icons.account_box,
                             navigation: Settings(specialScreen: false),
+                            nav: '',
                           ),
                           Align(
                             alignment: Alignment.centerRight,
@@ -141,7 +143,7 @@ class Div extends StatelessWidget {
   final double bottom;
   final double top;
 
-  Div({this.bottom, this.top});
+  Div({required this.bottom, required this.top});
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +157,7 @@ class Div extends StatelessWidget {
 class NavigationScreen extends StatelessWidget {
   final Widget nav;
 
-  NavigationScreen({this.nav});
+  NavigationScreen({required this.nav});
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +171,11 @@ class Tile extends StatelessWidget {
   final Widget navigation;
   final String nav;
 
-  Tile({this.title, this.icons, this.navigation, this.nav});
+  Tile(
+      {required this.title,
+      required this.icons,
+      required this.navigation,
+      required this.nav});
 
   @override
   Widget build(BuildContext context) {
@@ -215,11 +221,11 @@ class ImgTile extends StatelessWidget {
   final Function onTap;
 
   ImgTile({
-    this.title,
-    this.navigation,
-    this.imgOne,
-    this.imgTwo,
-    this.onTap,
+    required this.title,
+    required this.navigation,
+    required this.imgOne,
+    required this.imgTwo,
+    required this.onTap,
   });
 
   @override

@@ -2,41 +2,77 @@ import 'package:Lesaforrit/components/arguments.dart';
 import 'package:Lesaforrit/models/finish_buildColumn.dart';
 import 'package:Lesaforrit/models/quiz_brain_voice.dart';
 import 'package:Lesaforrit/screens/lvlOne_choose.dart';
-import 'package:Lesaforrit/screens/wrapper.dart';
-import 'package:Lesaforrit/shared/constants.dart';
-import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/database/database_bloc.dart';
-import '../bloc/user/authentication_bloc.dart';
 
 import '../models/listeners/level_finish_listener.dart';
 import '../models/quiz_brain.dart';
 import '../models/set_score.dart';
-import '../models/voices/quiz_brain_lvlOne_voice.dart';
-import '../models/voices/quiz_brain_lvlThree_voice.dart';
-import '../models/voices/quiz_brain_lvlTwo_voice.dart';
-import '../services/auth.dart';
-import 'home/welcome.dart';
 
-import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:provider/provider.dart';
-import 'package:Lesaforrit/models/usr.dart';
 import 'lvlThree_choose.dart';
 import 'lvlTwo_choose.dart';
 
 class LevelFinish extends StatelessWidget {
   static const String id = 'LevelFinish';
 
-  double stig;
-  FinishGameType gameType;
-  FinishGameListener _config;
+  late double stig;
+  late FinishGameType gameType;
+  late FinishGameListener _config;
 
   LevelFinish(LevelFinishArguments args) {
     this.stig = args.score;
     this.gameType = args.gameType;
-    this._config = new FinishGameListener(gameType);
-    this._config.init();
+    switch (gameType) {
+      case FinishGameType.letters:
+        _config = FinishLettersConfig();
+        _config.init();
+        break;
+      case FinishGameType.lettersCaps:
+        _config = FinishLettersCapsConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceLetters:
+        _config = FinishVoiceLettersConfig();
+        _config.init();
+        break;
+      case FinishGameType.wordsEasy:
+        _config = FinishWordsEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.wordsMedium:
+        _config = FinishWordsMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceWordsEasy:
+        _config = FinishVoiceWordsEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceWordsMedium:
+        _config = FinishVoiceWordsMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.sentencesEasy:
+        _config = FinishSentencesEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.sentencesMedium:
+        _config = FinishSentencesMediumConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceSentencesEasy:
+        _config = FinishVoiceSentencesEasyConfig();
+        _config.init();
+        break;
+      case FinishGameType.voiceSentencesMedium:
+        _config = FinishVoiceSentencesMediumConfig();
+        _config.init();
+        break;
+      default:
+        _config = FinishLettersConfig();
+        _config.init();
+        break;
+    }
   }
 
   // static const String id = 'LevelFinish';
@@ -60,11 +96,11 @@ class LevelFinish extends StatelessWidget {
 
 class LevelFin extends StatelessWidget {
   LevelFin(
-      {@required this.stig,
-      this.image,
-      this.undertext,
-      this.appBarText,
-      this.cardcolor});
+      {required this.stig,
+      required this.image,
+      required this.undertext,
+      required this.appBarText,
+      required this.cardcolor});
 
   double stig;
   String image;

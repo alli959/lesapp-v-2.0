@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:Lesaforrit/components/sidemenu.dart';
+import 'package:Lesaforrit/models/ModelProvider.dart';
 import 'package:Lesaforrit/models/levelTemplate.dart';
 import 'package:Lesaforrit/screens/level_finish.dart';
 
-import 'package:Lesaforrit/trash-geyma/letters.dart';
 import 'package:Lesaforrit/services/databaseService.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/models/total_points.dart';
@@ -13,6 +12,7 @@ import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/serverless/serverless_bloc.dart';
 import '../components/arguments.dart';
+import '../models/listeners/level_finish_listener.dart';
 import '../models/listeners/level_listener.dart';
 import '../services/audio_session.dart';
 import '../services/get_data.dart';
@@ -22,15 +22,69 @@ import 'package:Lesaforrit/models/quiz_brain.dart';
 class Level extends StatelessWidget {
   static const String id = 'level';
 
-  LevelListener _levelListenerConfig;
-  GameType _gameType;
-  String _difficulty;
+  late LevelListener _levelListenerConfig;
+  late GameType _gameType;
+  late String _difficulty;
 
   Level(LevelArguments arguments) {
     this._gameType = arguments.gameType;
-    this._levelListenerConfig = new LevelListener(arguments.gameType);
+
+    // Initialize _levelListenerConfig based on the game type
+    switch (_gameType) {
+      case GameType.letters:
+        _levelListenerConfig = LettersConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          isCap: false, // Set this according to your requirements
+          finishtype:
+              FinishGameType.letters, // Set this according to your requirements
+        );
+        break;
+      case GameType.lettersCaps:
+        _levelListenerConfig = LettersConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          isCap: true, // Set this according to your requirements
+          finishtype: FinishGameType
+              .lettersCaps, // Set this according to your requirements
+        );
+        break;
+      case GameType.wordsEasy:
+        _levelListenerConfig = WordsConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .wordsEasy, // Set this according to your requirements
+        );
+        break;
+      case GameType.wordsMedium:
+        _levelListenerConfig = WordsConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .wordsMedium, // Set this according to your requirements
+        );
+        break;
+      case GameType.sentencesEasy:
+        _levelListenerConfig = SentencesConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .sentencesEasy, // Set this according to your requirements
+        );
+        break;
+      case GameType.sentencesMedium:
+        _levelListenerConfig = SentencesConfig(
+          type: _gameType,
+          selecteddifficulty: arguments.selecteddifficulty,
+          finishtype: FinishGameType
+              .sentencesMedium, // Set this according to your requirements
+        );
+        break;
+    }
+
+    _levelListenerConfig.init();
     this._difficulty = _levelListenerConfig.selecteddifficulty;
-    this._levelListenerConfig.init();
   }
 
   @override
@@ -42,7 +96,11 @@ class Level extends StatelessWidget {
           var prefVoice = _database.getPreferedVoice();
           return ServerlessBloc(_data, _levelListenerConfig.typeofgame,
               _levelListenerConfig.selecteddifficulty)
-            ..add(FetchEvent(prefvoice: prefVoice));
+            ..add(FetchEvent(
+              prefvoice: prefVoice,
+              difficulty: (String DifficultySet) =>
+                  {this._difficulty = DifficultySet},
+            ));
         },
         child: Scaffold(
           appBar: AppBar(
@@ -58,7 +116,7 @@ class Level extends StatelessWidget {
 }
 
 class QuizPage extends StatefulWidget {
-  QuizPage({Key key, this.config}) : super(key: key);
+  QuizPage({Key? key, required this.config}) : super(key: key);
 
   LevelListener config;
 
@@ -71,7 +129,6 @@ class _QuizPageState extends State<QuizPage> {
   QuizBrain quizBrain = QuizBrain(typeofgame: "letters", isCap: true);
   TotalPoints calc = TotalPoints();
   List<Icon> scoreKeeper = []; // Empty list
-  DatabaseService databaseService = DatabaseService();
   int soundPress = 0;
   bool enabled = true;
   bool qEnabled = true;
@@ -92,9 +149,13 @@ class _QuizPageState extends State<QuizPage> {
   Color letterColorOne = Colors.black;
   Color letterColorTwo = Colors.black;
 
-  String play() {
+  String play(PrefVoice prefVoice) {
     if (quizBrain.stars < 10) {
-      quizBrain.playLocalAsset();
+      if (prefVoice == PrefVoice.DORA) {
+        quizBrain.playDora();
+      } else {
+        quizBrain.playKarl();
+      }
       return 'STIG : ';
     } else {
       return 'STIG : ';
@@ -115,7 +176,7 @@ class _QuizPageState extends State<QuizPage> {
         scoreKeeper.add(Icon(
           Icons.star,
           color: Colors.purpleAccent,
-          size: 31,
+          size: 29,
         ));
         quizBrain.stars++;
       } else {
@@ -163,13 +224,15 @@ class _QuizPageState extends State<QuizPage> {
     }
   }
 
-  void getNewQuestion() {
+  void getNewQuestion() async {
     print("we are at the new question function");
     letterOne = quizBrain.getQuestionText1();
     letterTwo = quizBrain.getQuestionText2();
     upperLetterImage = emptyImage;
     lowerLetterImage = emptyImage;
-    play();
+    final _database = RepositoryProvider.of<DatabaseService>(context);
+    var prefVoice = await _database.getPreferedVoice();
+    play(prefVoice);
   }
 
   @override
@@ -225,7 +288,9 @@ class _QuizPageState extends State<QuizPage> {
         soundPadBottom = 10;
         soundIconSize = 35;
         started = true;
-        quizBrain.playLocalAsset();
+        final _database = RepositoryProvider.of<DatabaseService>(context);
+        var prefVoice = _database.getPreferedVoice();
+        prefVoice.then((value) => play(value));
       }
       print("state is neither serverlessfetch nor loading");
       return (LevelTemplate(

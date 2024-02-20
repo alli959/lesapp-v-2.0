@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'dart:convert' show utf8;
 
 class Data {
   String Text;
@@ -7,9 +5,9 @@ class Data {
   String Dora;
 
   Data({
-    @required this.Text,
-    @required this.Karl,
-    @required this.Dora,
+    required this.Text,
+    required this.Karl,
+    required this.Dora,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) {

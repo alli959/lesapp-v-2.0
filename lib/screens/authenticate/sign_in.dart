@@ -5,7 +5,7 @@ import 'package:Lesaforrit/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/rounded_button.dart';
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:Lesaforrit/components/bottom_bar.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignIn extends StatelessWidget {
@@ -29,8 +29,8 @@ class SignInForm extends StatefulWidget {
 class _SignInState extends State<SignInForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String email;
-  String password;
+  late String email = "";
+  late String password;
   String error = '';
 
   @override
@@ -38,7 +38,7 @@ class _SignInState extends State<SignInForm> {
     final _loginBloc = BlocProvider.of<LoginBloc>(context);
     final _authBloc = BlocProvider.of<AuthenticationBloc>(context);
     _onLoginButtonPressed() {
-      if (_formKey.currentState.validate()) {
+      if (_formKey.currentState!.validate()) {
         _loginBloc
             .add(LoginWithEmailButtonPressed(email: email, password: password));
       }
@@ -100,10 +100,15 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.all(15),
                   child: TextFormField(
+                    initialValue: email, // Use the state variable
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp("[a-zA-Z0-9.@áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
+                    ],
                     keyboardType: TextInputType.emailAddress,
                     textAlign: TextAlign.center,
                     validator: (value) =>
-                        value.isEmpty ? 'Sláðu inn netfang' : null,
+                        value!.isEmpty ? 'Sláðu inn netfang' : null,
                     onChanged: (value) {
                       setState(() {
                         email = value;
@@ -116,9 +121,13 @@ class _SignInState extends State<SignInForm> {
                 Container(
                   padding: EdgeInsets.all(15),
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(
+                          r"[a-zA-Z0-9!@#\$%^&*()_+{}|:<>?\-=\[\]\\;',.áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ]")),
+                    ],
                     obscureText: true, //stjörnur í stað texta
                     textAlign: TextAlign.center,
-                    validator: (value) => value.length < 8
+                    validator: (value) => value!.length < 8
                         ? 'Lykilorð þarf að vera a.m.k 8 stafir'
                         : null,
                     onChanged: (value) {
@@ -160,19 +169,3 @@ class _SignInState extends State<SignInForm> {
     );
   }
 }
-
-/*
-            child: RoundedButton(
-              title: 'Skrá inn',
-              colour: Color(0xFF009df4),
-              onPressed: () async {
-                dynamic result = await _auth.signInAnon();
-                if (result == null) {
-                  print('error signing in');
-                } else {
-                  print('signed in');
-                  print(result.uid);
-                }
-              },
-            ),
- */

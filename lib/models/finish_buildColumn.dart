@@ -1,13 +1,9 @@
-import 'package:Lesaforrit/components/sidemenu.dart';
 import 'package:Lesaforrit/models/quiz_brain.dart';
 import 'package:Lesaforrit/models/quiz_brain_voice.dart';
-import 'package:Lesaforrit/models/voices/quiz_brain_lvlOne_voice.dart';
-import 'package:Lesaforrit/models/voices/quiz_brain_lvlTwo_voice.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/bottom_bar.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'voices/quiz_brain_lvlThree_voice.dart';
 
 class Finish {
   QuizBrain quizBrain = QuizBrain();

@@ -1,17 +1,10 @@
 import 'package:Lesaforrit/bloc/database/database_bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
-import 'package:Lesaforrit/screens/level_voice.dart';
 import 'package:Lesaforrit/screens/settings.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:Lesaforrit/services/get_data.dart';
 import 'package:Lesaforrit/services/save_audio.dart';
 import 'package:Lesaforrit/services/voiceService.dart';
-import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import 'package:amplify_datastore/amplify_datastore.dart';
-import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
-import 'package:amplify_api/amplify_api.dart';
-import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/services.dart';
 import 'package:Lesaforrit/router/app_router.dart';
 import 'package:Lesaforrit/screens/authenticate/register.dart';
@@ -30,9 +23,7 @@ import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_speech/google_speech.dart';
-import 'models/ModelProvider.dart';
 import 'models/levelTemplate.dart';
-import 'amplifyconfiguration.dart';
 import 'shared/constants.dart';
 
 // void main() async {
@@ -61,7 +52,7 @@ void main() async {
           return AuthService();
         }),
         RepositoryProvider(create: (context) {
-          return DatabaseService();
+          return DatabaseService(uid: '');
         }),
         RepositoryProvider<VoiceService>(create: (context) {
           return VoiceService(speech: speech, context: context);
@@ -73,7 +64,7 @@ void main() async {
           return SaveAudio("username", "Correct", "question", "answer", null);
         }),
         RepositoryProvider<AudioSessionService>(create: (context) {
-          return AudioSessionService()..init();
+          return AudioSessionService(uid: '')..init();
         })
       ],
       child: MultiBlocProvider(providers: [
@@ -90,21 +81,22 @@ void main() async {
             return DatabaseBloc(databaseService);
           },
         ),
-      ], child: lesApp(appRouter: AppRouter()))));
+      ], child: LesApp(appRouter: AppRouter()))));
 }
 
-class lesApp extends StatelessWidget {
+class LesApp extends StatelessWidget {
   final AppRouter appRouter;
 
-  const lesApp({
-    Key key,
-    @required this.appRouter,
+  LesApp({
+    Key? key,
+    required this.appRouter,
   }) : super(key: key);
+
+  // _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+
   @override
   Widget build(BuildContext context) {
-    final _databaseBloc = BlocProvider.of<DatabaseBloc>(context);
     final databaseRepo = RepositoryProvider.of<DatabaseService>(context);
-    // _databaseBloc.add(SetUserID(Uid: state.usr.uid));
 
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {

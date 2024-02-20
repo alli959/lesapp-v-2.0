@@ -1,11 +1,8 @@
 import 'package:Lesaforrit/components/sidemenu.dart';
-import 'package:Lesaforrit/models/read.dart';
-import 'package:Lesaforrit/models/usr.dart';
 import 'package:Lesaforrit/screens/my_profile.dart';
 import 'package:Lesaforrit/services/auth.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:Lesaforrit/services/databaseService.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/user/authentication_bloc.dart';
@@ -13,9 +10,6 @@ import '../bloc/user/authentication_bloc.dart';
 class ProfileView extends StatelessWidget {
   static const String id = 'profile view';
   final AuthService _auth = AuthService();
-  final DatabaseService data = DatabaseService();
-  final UserData user = UserData();
-  final Read read = Read();
   @override
   Widget build(BuildContext context) {
     //final users = Provider.of<List<Read>>(context) ?? []; // fæ villu

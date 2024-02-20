@@ -15,12 +15,14 @@ class PlayGameState extends ServerlessState {}
 
 class ServerlessFetch extends ServerlessState {
   final List<Question> questionBank;
-  Function difficulty;
+  Function? difficulty;
 
-  ServerlessFetch({@required this.questionBank, difficulty});
+  ServerlessFetch({required this.questionBank, this.difficulty});
 
   @override
-  List<Object> get props => [questionBank, difficulty];
+  List<Object> get props => [
+        questionBank,
+      ];
 }
 
 class CheckAnswerState extends ServerlessState {
@@ -30,16 +32,16 @@ class CheckAnswerState extends ServerlessState {
   final bool upperImageIncorrect;
 
   CheckAnswerState(
-      {this.upperImageCorrect,
-      this.lowerImageCorrect,
-      this.lowerImageIncorrect,
-      this.upperImageIncorrect});
+      {required this.upperImageCorrect,
+      required this.lowerImageCorrect,
+      required this.lowerImageIncorrect,
+      required this.upperImageIncorrect});
 }
 
 class NewQuestionState extends ServerlessState {
   final bool wasCorrect;
 
-  NewQuestionState({this.wasCorrect});
+  NewQuestionState({required this.wasCorrect});
 }
 
 class DifficultySet extends ServerlessState {}

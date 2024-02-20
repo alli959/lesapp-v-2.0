@@ -1,13 +1,12 @@
-import 'package:Lesaforrit/screens/home/welcome.dart';
 import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
 
 class BottomBar extends StatelessWidget {
-  BottomBar({@required this.onTap, @required this.image});
+  BottomBar({required this.onTap, required this.image});
 
-  final Function onTap;
+  final void Function()? onTap;
   final String image;
 
   @override
@@ -31,10 +30,10 @@ class BottomBar extends StatelessWidget {
                 iconSize: 35,
                 circleSize: 55,
                 onPressed: () {
-                  onTap();
+                  onTap?.call(); // Safely call onTap if it's not null
                   Navigator.pushNamed(context, Wrapper.id);
                 },
-                size: null,
+                // size: null, // Remove or replace this with a valid value
                 color: Colors.white.withBlue(220),
               ),
             ),
@@ -48,10 +47,10 @@ class BottomBar extends StatelessWidget {
                 iconSize: 35,
                 circleSize: 55,
                 onPressed: () {
-                  onTap();
+                  onTap?.call(); // Safely call onTap if it's not null
                   Navigator.pushNamed(context, ProfileView.id);
                 },
-                size: null,
+                // size: null, // Remove or replace this with a valid value
                 color: Colors.white.withBlue(220),
               ),
             ),

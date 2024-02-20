@@ -4,7 +4,6 @@ import 'package:Lesaforrit/models/listeners/level_finish_listener.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 enum GameType {
   letters,
@@ -15,221 +14,93 @@ enum GameType {
   sentencesMedium,
 }
 
+/// Represents the configuration for a game level.
 abstract class LevelListener {
-  GameType type;
-  String typeofgame;
-  String selecteddifficulty;
-  String title;
-  Color cardcolor;
-  Color stigcolor;
-  int shadowlevel;
-  String bottombarimage;
-  double fontsize;
-  BuildContext context;
-  bool isCap = false;
-  FinishGameType finishtype;
+  late final GameType type;
+  late final String typeofgame;
+  late final String selecteddifficulty;
+  late final String title;
+  late final Color cardcolor;
+  late final Color stigcolor;
+  late final int shadowlevel;
+  late final String bottombarimage;
+  late final double fontsize;
+  late final BuildContext context;
+  late bool isCap = false;
+  late final FinishGameType finishtype;
 
-  factory LevelListener(GameType type, [BuildContext context]) {
-    switch (type) {
-      case GameType.letters:
-        type = GameType.letters;
-        return LettersConfig(
-            selecteddifficulty: "low",
-            isCap: false,
-            finishtype: FinishGameType.letters);
-      case GameType.lettersCaps:
-        type = GameType.lettersCaps;
-        return LettersConfig(
-            selecteddifficulty: "caps",
-            isCap: true,
-            finishtype: FinishGameType.lettersCaps);
-      case GameType.wordsEasy:
-        type = GameType.wordsEasy;
-        return WordsConfig(
-            selecteddifficulty: "easy", finishtype: FinishGameType.wordsEasy);
-      case GameType.wordsMedium:
-        type = GameType.wordsMedium;
-        return WordsConfig(
-            selecteddifficulty: "medium",
-            finishtype: FinishGameType.wordsMedium);
-      case GameType.sentencesEasy:
-        type = GameType.sentencesEasy;
-        return SentencesConfig(
-            selecteddifficulty: "easy",
-            finishtype: FinishGameType.sentencesEasy);
-      case GameType.sentencesMedium:
-        type = GameType.sentencesMedium;
-        return SentencesConfig(
-            selecteddifficulty: "medium",
-            finishtype: FinishGameType.sentencesMedium);
-      default:
-        return SentencesConfig(
-            selecteddifficulty: "easy",
-            finishtype: FinishGameType.sentencesEasy);
-    }
-  }
+  LevelListener({required this.type});
 
   void init();
 }
 
-class LettersConfig implements LevelListener {
-  LettersConfig(
-      {String selecteddifficulty, bool isCap, FinishGameType finishtype}) {
+/// Configuration for the "letters" and "lettersCaps" game types.
+class LettersConfig extends LevelListener {
+  LettersConfig({
+    required GameType type,
+    required String selecteddifficulty,
+    required bool isCap,
+    required FinishGameType finishtype,
+  }) : super(type: type) {
     this.selecteddifficulty = selecteddifficulty;
     this.isCap = isCap;
     this.finishtype = finishtype;
   }
-  @override
-  Color cardcolor;
-
-  @override
-  Color stigcolor;
-
-  @override
-  String title;
-
-  @override
-  GameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  int shadowlevel;
-
-  @override
-  String bottombarimage;
-
-  @override
-  double fontsize;
-
-  @override
-  BuildContext context;
-
-  @override
-  bool isCap;
-
-  @override
-  FinishGameType finishtype;
 
   @override
   void init() {
-    this.typeofgame = "letters";
-    this.title = "${selecteddifficulty == "low" ? "Lág" : "Há"}stafir";
-    this.cardcolor = cardColor;
-    this.stigcolor = lightCyan;
-    this.shadowlevel = 145;
-    this.bottombarimage = "assets/images/bottomBar_ye.png";
-    this.fontsize = 100;
+    typeofgame = "letters";
+    title = "${isCap == true ? "Há" : "Lág"}stafir";
+    cardcolor = cardColor;
+    stigcolor = lightCyan;
+    shadowlevel = 145;
+    bottombarimage = "assets/images/bottomBar_ye.png";
+    fontsize = 100;
   }
 }
 
-class WordsConfig implements LevelListener {
-  WordsConfig({String selecteddifficulty, FinishGameType finishtype}) {
+/// Configuration for the "wordsEasy" and "wordsMedium" game types.
+class WordsConfig extends LevelListener {
+  WordsConfig({
+    required GameType type,
+    required String selecteddifficulty,
+    required FinishGameType finishtype,
+  }) : super(type: type) {
     this.selecteddifficulty = selecteddifficulty;
     this.finishtype = finishtype;
   }
-  @override
-  Color cardcolor;
-
-  @override
-  Color stigcolor;
-
-  @override
-  String title;
-
-  @override
-  GameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  int shadowlevel;
-
-  @override
-  String bottombarimage;
-
-  @override
-  double fontsize;
-
-  @override
-  BuildContext context;
-
-  @override
-  bool isCap;
-
-  @override
-  FinishGameType finishtype;
 
   @override
   void init() {
-    this.typeofgame = "words";
-    this.title = "${selecteddifficulty == "easy" ? "Styttri" : "Lengri"} orð";
-    this.cardcolor = cardColorLvlTwo;
-    this.stigcolor = lightGreen;
-    this.shadowlevel = 145;
-    this.bottombarimage = "assets/images/bottomBar_gr.png";
-    this.fontsize = 39;
+    typeofgame = "words";
+    title = "${selecteddifficulty == "easy" ? "Styttri" : "Lengri"} orð";
+    cardcolor = cardColorLvlTwo;
+    stigcolor = lightGreen;
+    shadowlevel = 145;
+    bottombarimage = "assets/images/bottomBar_gr.png";
+    fontsize = 39;
   }
 }
 
-class SentencesConfig implements LevelListener {
-  SentencesConfig({String selecteddifficulty, FinishGameType finishtype}) {
+/// Configuration for the "sentencesEasy" and "sentencesMedium" game types.
+class SentencesConfig extends LevelListener {
+  SentencesConfig({
+    required GameType type,
+    required String selecteddifficulty,
+    required FinishGameType finishtype,
+  }) : super(type: type) {
     this.selecteddifficulty = selecteddifficulty;
     this.finishtype = finishtype;
   }
-  @override
-  Color cardcolor;
-
-  @override
-  Color stigcolor;
-
-  @override
-  String title;
-
-  @override
-  GameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  int shadowlevel;
-
-  @override
-  String bottombarimage;
-
-  @override
-  double fontsize;
-
-  @override
-  BuildContext context;
-
-  @override
-  bool isCap;
-
-  @override
-  FinishGameType finishtype;
 
   @override
   void init() {
-    this.typeofgame = "sentences";
-    this.title =
-        "${selecteddifficulty == "easy" ? "Styttri" : "Lengri"} setning";
-    this.cardcolor = cardColorLvlThree;
-    this.stigcolor = lightBlue;
-    this.shadowlevel = 30;
-    this.bottombarimage = 'assets/images/bottomBar_bl.png';
-    this.fontsize = 39;
+    typeofgame = "sentences";
+    title = "${selecteddifficulty == "easy" ? "Styttri" : "Lengri"} setning";
+    cardcolor = cardColorLvlThree;
+    stigcolor = lightBlue;
+    shadowlevel = 30;
+    bottombarimage = 'assets/images/bottomBar_bl.png';
+    fontsize = 39;
   }
 }

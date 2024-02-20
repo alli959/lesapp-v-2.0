@@ -5,10 +5,8 @@ import 'package:bloc/bloc.dart';
 import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:Lesaforrit/exceptions/authentication_exception.dart';
 import 'package:Lesaforrit/services/auth.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 part 'register_event.dart';
 part 'register_state.dart';
@@ -17,9 +15,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final AuthenticationBloc _authenticationBloc;
   final AuthService _authService;
   RegisterBloc(AuthenticationBloc authenticationBloc, AuthService authService)
-      : assert(AuthenticationBloc != null),
-        assert(authService != null),
-        _authenticationBloc = authenticationBloc,
+      : _authenticationBloc = authenticationBloc,
         _authService = authService,
         super(RegisterInitial());
 
@@ -87,7 +83,11 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       print("UserNotFoundException: " + e.message);
       yield RegisterFailure(error: "Notandi fannst ekki");
     } catch (err) {
-      yield RegisterFailure(error: err);
+      if (err is FormatException) {
+        yield RegisterFailure(error: err.message);
+      } else {
+        yield RegisterFailure(error: 'An unknown error occurred');
+      }
     }
   }
 }

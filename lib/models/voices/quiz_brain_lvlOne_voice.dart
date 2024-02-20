@@ -1,37 +1,24 @@
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 
-import '../PrefVoice.dart';
-import '../question.dart';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
-import 'dart:async';
-import 'package:Lesaforrit/shared/audio.dart';
 
 class QuizBrainLvlOneVoice {
   // Audio audio = Audio();
   int _question = 0;
   int correct = 0;
   int trys = 0;
-  String question;
-  int whichSound;
+  String question = "";
+  int whichSound = 0;
   int stars = 0;
-  double finalscore;
-  AudioCache cache = AudioCache();
-  String correctSound = 'sound/correct_sound.mp3';
-  String incorrectSound = 'sound/incorrect_sound.mp3';
-  AudioPlayer correctPlayer = AudioPlayer();
-  AudioPlayer incorrectPlayer = AudioPlayer();
+  double finalscore = 0.0;
+  final AudioCache cache = AudioCache();
+  final String correctSound = 'sound/correct_sound.mp3';
+  final String incorrectSound = 'sound/incorrect_sound.mp3';
+  final AudioPlayer correctPlayer = AudioPlayer();
+  final AudioPlayer incorrectPlayer = AudioPlayer();
 
-  //add new values
-  var prefVoice = PrefVoice.DORA;
-
-  Future<AudioPlayer> playCorrect() async {
-    print("correct sound");
-  }
-
-  Future<AudioPlayer> playIncorrect() async {
-    print("incorrect sound");
-  }
+  final PrefVoice prefVoice = PrefVoice.DORA;
 
   List<String> _questionBank = [
     'Aa',
@@ -74,55 +61,29 @@ class QuizBrainLvlOneVoice {
     return question;
   }
 
-  dynamic bestLastWord(
+  String bestLastWord(
       String lWords, String quest, List<SpeechRecognitionAlternative> alt) {
-    int closestVal = lWords
-        .toLowerCase()
-        .compareTo(quest.toLowerCase()); //compare correct answer to voice input
+    int closestVal = lWords.toLowerCase().compareTo(quest.toLowerCase());
+    int closestIndex = -1;
 
-    int closestIndex =
-        -1; //index of closest value, if -1 then result.recongizedwords
-    //check if alternates are closer to correct answer
     for (int i = 0; i < alt.length; i++) {
       String tempString = alt[i].transcript.trim();
       int temp = tempString.toLowerCase().compareTo(quest.toLowerCase());
       if (temp.abs() < closestVal.abs()) {
-        print("temp < closestVal");
-        print("tempString: $tempString");
-        print("lastWords: $lWords");
-        print("tempInt: $temp");
-        print("closestValInt: $closestVal");
-
         closestIndex = i;
         closestVal = temp;
       }
     }
 
-    if (closestIndex == -1) {
-      return lWords;
-    } else {
-      print("there was another");
-      print(alt[closestIndex].transcript);
-
-      lWords = alt[closestIndex].transcript;
-
-      return lWords;
-    }
+    return closestIndex == -1 ? lWords : alt[closestIndex].transcript;
   }
 
   Map<String, Object> isCorrect(
       String userVoiceAnswer, String question, String lvl) {
-    // if (quizBrain.isFinished() == true) {
-    //   quizBrain.reset();
-    // } else {
-
-    print("question = $question");
-    print("answer = $userVoiceAnswer");
-    if (lvl == "level_1") {
-      if (question[0].substring(0, 1).toLowerCase() ==
-          userVoiceAnswer[0].substring(0, 1).toLowerCase()) {
-        userVoiceAnswer = question;
-      }
+    if (lvl == "level_1" &&
+        question[0].substring(0, 1).toLowerCase() ==
+            userVoiceAnswer[0].substring(0, 1).toLowerCase()) {
+      userVoiceAnswer = question;
     }
 
     int totalCorrect = 0;
@@ -135,20 +96,14 @@ class QuizBrainLvlOneVoice {
     List<bool> answerMap = [];
     // Creating hashmap of questions
     for (var i = 0; i < questionArr.length; i++) {
-      if (mapQuestion.containsKey(questionArr[i].toLowerCase())) {
-        mapQuestion[questionArr[i].toLowerCase()] += 1;
-      } else {
-        mapQuestion[questionArr[i].toLowerCase()] = 1;
-      }
+      var key = questionArr[i].toLowerCase();
+      mapQuestion[key] = (mapQuestion[key] ?? 0) + 1;
     }
 
     // Creating hashmap of answers
     for (var i = 0; i < answerArr.length; i++) {
-      if (mapAnswer.containsKey(answerArr[i].toLowerCase())) {
-        mapAnswer[answerArr[i].toLowerCase()] += 1;
-      } else {
-        mapAnswer[answerArr[i].toLowerCase()] = 1;
-      }
+      var key = answerArr[i].toLowerCase();
+      mapAnswer[key] = (mapAnswer[key] ?? 0) + 1;
     }
 
     // Creating colorBoard for questions
@@ -185,26 +140,16 @@ class QuizBrainLvlOneVoice {
       "questionArr": questionArr,
       "answerArr": answerArr
     };
-    // if (userVoiceAnswer.toLowerCase() == question.toLowerCase()) {
-    //   return true;
-    //   // }
-    // }
-    // return false;
   }
 
-  bool isFinished() {
-    if (stars == 10) {
-      print('Now returning true');
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool isFinished() => stars == 10;
 
   void reset() {
     stars = 0;
     trys = 0;
     correct = 0;
-    _question = 0; // kannski sleppa?
+    _question = 0;
   }
 }
+
+enum PrefVoice { DORA }

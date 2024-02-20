@@ -2,8 +2,6 @@ import 'package:Lesaforrit/models/choose_long_short.dart';
 import 'package:Lesaforrit/models/listeners/level_voice_listener.dart';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/game/audio_bloc.dart';
 import '../components/arguments.dart';
 import '../models/listeners/level_listener.dart';
 import 'level.dart';
@@ -18,13 +16,18 @@ class LvlThreeChoose extends StatelessWidget {
         buttonOne: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
               Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.sentencesEasy));
+              arguments: LevelArguments(
+                GameType.sentencesEasy,
+                "easy",
+                true,
+              ));
           // Navigator.pushNamed(context, LevelThreeShort.id);
         },
         buttonTwo: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
               Level.id, (Route<dynamic> route) => false,
-              arguments: LevelArguments(GameType.sentencesMedium));
+              arguments:
+                  LevelArguments(GameType.sentencesMedium, "medium", false));
           // Navigator.pushNamed(context, LevelThree.id);
         },
         buttonThree: () {

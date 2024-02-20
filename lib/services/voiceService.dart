@@ -1,21 +1,15 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:Lesaforrit/models/total_points.dart';
 import 'package:Lesaforrit/services/audio_session.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbgrpc.dart'
-    hide RecognitionConfig, StreamingRecognitionConfig;
 import 'dart:async';
 
 import 'package:google_speech/google_speech.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:sound_stream/sound_stream.dart';
-import 'package:audio_session/audio_session.dart';
 
 import '../models/voices/quiz_brain_lvlOne_voice.dart';
 import '../models/voices/quiz_brain_lvlThree_voice.dart';
@@ -56,15 +50,15 @@ class VoiceService {
   bool recognizing = false;
   bool recognizeFinished = false;
   String text = '';
-  StreamSubscription<List<int>> _audioStreamSubscription;
-  BehaviorSubject<List<int>> _audioStream;
-  RecognitionConfig config;
+  late StreamSubscription<List<int>> _audioStreamSubscription;
+  late BehaviorSubject<List<int>> _audioStream;
+  late RecognitionConfig config;
 
   bool isSave = true;
   bool isCancel = false;
 
-  AudioSessionService session;
-  VoiceService({@required this.speech, this.context});
+  late AudioSessionService session;
+  VoiceService({required this.speech, required this.context});
 
   Future speechInit(Function statusListener, Function errorListener,
       AudioSessionService _sessionparams,
@@ -77,9 +71,9 @@ class VoiceService {
   }
 
   Future<String> getFilePath() async {
-    Directory appDocumentsDirectory = await getExternalStorageDirectory(); // 1
+    Directory? appDocumentsDirectory = await getExternalStorageDirectory(); // 1
     print("appDocumentsDirectory is $appDocumentsDirectory");
-    String appDocumentsPath = appDocumentsDirectory.path; // 2
+    String appDocumentsPath = appDocumentsDirectory!.path; // 2
     String filePath = '$appDocumentsPath/demoaudiofile.wav'; // 3
 
     return filePath;
@@ -202,7 +196,11 @@ class VoiceService {
   }
 
   Future reset() async {
-    await stopRecording();
+    try {
+      await stopRecording();
+    } catch (err) {
+      print("there was an error at stopping recording $err");
+    }
     lastWords = ' ';
     lastError = ' ';
     lastStatus = ' ';

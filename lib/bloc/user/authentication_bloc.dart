@@ -6,10 +6,7 @@ import 'package:Lesaforrit/services/auth.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../models/read.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -17,14 +14,10 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthService _authService;
-  final DatabaseBloc _databaseBloc;
-  AuthenticationBloc(AuthService authService, {DatabaseBloc databaseBloc})
-      : assert(authService != null),
-        _authService = authService,
-        _databaseBloc = databaseBloc,
+  AuthenticationBloc(AuthService authService, {DatabaseBloc? databaseBloc})
+      : _authService = authService,
         super(AuthenticationInitialized());
 
-  @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
     if (event is AppStarted) {
@@ -48,9 +41,6 @@ class AuthenticationBloc
     if (event is GetUid) {
       yield* _mapGetUidToState(event);
     }
-    if (event is GetUid) {
-      yield* _mapGetUidToState(event);
-    }
     if (event is RegisterScreenToggle) {
       yield* _mapRegisterScreenState(event);
     }
@@ -60,13 +50,14 @@ class AuthenticationBloc
     yield AuthenticationLoading();
     try {
       await Future.delayed(Duration(milliseconds: 500));
-      if (!Amplify.isConfigured) {
+      bool isConfigured = await _authService.isAmplifyConfigured();
+      if (!isConfigured) {
         await _authService.init();
       }
       bool isLoggedIn = await _authService.isLoggedIn();
       print("isLoggedIn = $isLoggedIn");
-      if (isLoggedIn) {
-        final uid = await _authService.getCurrentUserID();
+      final uid = await _authService.getCurrentUserID();
+      if (isLoggedIn && uid != null) {
         Usr usr = Usr(uid: uid);
         yield UserUid(uid: uid);
         await Future.delayed(Duration(milliseconds: 500));
@@ -85,9 +76,16 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapUserLoggedInToState(
       UserLoggedIn event) async* {
     final uid = await _authService.getCurrentUserID();
-    yield UserUid(uid: uid);
-    await Future.delayed(Duration(milliseconds: 500));
-    yield AuthenticationAuthenticated(usr: event.usr);
+    if (uid == null) {
+      yield AuthenticationLoading();
+      await Future.delayed(Duration(milliseconds: 500));
+      yield AuthenticationUnauthenticated();
+      yield LoginScreen();
+    } else {
+      yield UserUid(uid: uid);
+      await Future.delayed(Duration(milliseconds: 500));
+      yield AuthenticationAuthenticated(usr: event.usr);
+    }
   }
 
   Stream<AuthenticationState> _mapUserLoggedOutToState(
@@ -101,9 +99,16 @@ class AuthenticationBloc
   Stream<AuthenticationState> _mapUserRegisterToState(
       UserRegister event) async* {
     final uid = await _authService.getCurrentUserID();
-    yield UserUid(uid: uid);
-    await Future.delayed(Duration(milliseconds: 500));
-    yield AuthenticationAuthenticated(usr: event.usr);
+    if (uid == null) {
+      yield AuthenticationLoading();
+      await Future.delayed(Duration(milliseconds: 500));
+      yield AuthenticationUnauthenticated();
+      yield LoginScreen();
+    } else {
+      yield UserUid(uid: uid);
+      await Future.delayed(Duration(milliseconds: 500));
+      yield AuthenticationAuthenticated(usr: event.usr);
+    }
   }
 
   Stream<AuthenticationState> _mapLoginScreenState(
@@ -149,8 +154,8 @@ class AuthenticationBloc
     try {
       await Future.delayed(Duration(milliseconds: 500));
       final isLoggedIn = await _authService.isLoggedIn();
-      if (isLoggedIn) {
-        final uid = await _authService.getCurrentUserID();
+      final uid = await _authService.getCurrentUserID();
+      if (isLoggedIn && uid != null) {
         print("UID IS => $uid");
         yield UserUid(uid: uid);
       }

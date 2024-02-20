@@ -1,9 +1,5 @@
-import 'dart:core';
-
 import 'package:Lesaforrit/shared/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 enum FinishGameType {
   letters,
@@ -19,372 +15,186 @@ enum FinishGameType {
   voiceSentencesMedium,
 }
 
+/// An abstract class to represent the configuration for the end of a game.
 abstract class FinishGameListener {
-  FinishGameType gametype;
-  String typeofkey;
-  int stig;
-  String image;
-  Color cardcolor;
-  String appBarText;
-  factory FinishGameListener(FinishGameType type, [BuildContext context]) {
-    switch (type) {
-      case FinishGameType.letters:
-        return LettersConfig();
-      case FinishGameType.lettersCaps:
-        return LettersCapsConfig();
-      case FinishGameType.voiceLetters:
-        return VoiceLettersConfig();
-      case FinishGameType.wordsEasy:
-        return WordsEasyConfig();
-      case FinishGameType.wordsMedium:
-        return WordsMediumConfig();
-      case FinishGameType.voiceWordsEasy:
-        return VoiceWordsEasyConfig();
-      case FinishGameType.voiceWordsMedium:
-        return VoiceWordsMediumConfig();
-      case FinishGameType.sentencesEasy:
-        return SentencesEasyConfig();
-      case FinishGameType.sentencesMedium:
-        return SentencesMediumConfig();
-      case FinishGameType.voiceSentencesEasy:
-        return VoiceSentencesEasyConfig();
-      case FinishGameType.voiceSentencesMedium:
-        return VoiceSentencesMediumConfig();
-      default:
-        return LettersConfig();
-    }
-  }
+  final FinishGameType gametype;
+  late final String appBarText;
+  late final Color cardcolor;
+  late final String image;
+  late final int stig;
+  late final String typeofkey;
+
+  FinishGameListener(this.gametype);
 
   void init();
-}
 
-class LettersConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
-
-  @override
-  void init() {
-    this.appBarText = 'Lágstafir';
-    this.cardcolor = cardColor;
-    this.gametype = FinishGameType.letters;
-    this.image = 'assets/images/cat_skuggi-05.png';
-    this.stig = 0;
-    this.typeofkey = 'lvlOneScore';
+  factory FinishGameListener.of(FinishGameType type) {
+    switch (type) {
+      case FinishGameType.letters:
+        return FinishLettersConfig();
+      case FinishGameType.lettersCaps:
+        return FinishLettersCapsConfig();
+      case FinishGameType.voiceLetters:
+        return FinishVoiceLettersConfig();
+      case FinishGameType.wordsEasy:
+        return FinishWordsEasyConfig();
+      case FinishGameType.wordsMedium:
+        return FinishWordsMediumConfig();
+      case FinishGameType.voiceWordsEasy:
+        return FinishVoiceWordsEasyConfig();
+      case FinishGameType.voiceWordsMedium:
+        return FinishVoiceWordsMediumConfig();
+      case FinishGameType.sentencesEasy:
+        return FinishSentencesEasyConfig();
+      case FinishGameType.sentencesMedium:
+        return FinishSentencesMediumConfig();
+      case FinishGameType.voiceSentencesEasy:
+        return FinishVoiceSentencesEasyConfig();
+      case FinishGameType.voiceSentencesMedium:
+        return FinishVoiceSentencesMediumConfig();
+      default:
+        return FinishLettersConfig();
+    }
   }
 }
 
-class LettersCapsConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+/// Configuration for the "letters" game type.
+class FinishLettersConfig extends FinishGameListener {
+  FinishLettersConfig() : super(FinishGameType.letters);
 
   @override
   void init() {
-    this.appBarText = 'Hástafir';
-    this.cardcolor = cardColorCaps;
-    this.gametype = FinishGameType.lettersCaps;
-    this.image = 'assets/images/cat_skuggi-05.png';
-    this.stig = 0;
-    this.typeofkey = 'lvlOneCapsScore';
+    appBarText = 'Lágstafir';
+    cardcolor = cardColor;
+    image = 'assets/images/cat_skuggi-05.png';
+    stig = 0;
+    typeofkey = 'lvlOneScore';
   }
 }
 
-class VoiceLettersConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+/// Configuration for the "lettersCaps" game type.
+class FinishLettersCapsConfig extends FinishGameListener {
+  FinishLettersCapsConfig() : super(FinishGameType.lettersCaps);
 
   @override
   void init() {
-    this.appBarText = 'Upplesnir stafir';
-    this.cardcolor = cardColor;
-    this.gametype = FinishGameType.voiceLetters;
-    this.image = 'assets/images/cat_skuggi-05.png';
-    this.stig = 0;
-    this.typeofkey = 'lvlOneVoiceScore';
+    appBarText = 'Hástafir';
+    cardcolor = cardColorCaps;
+    image = 'assets/images/cat_skuggi-05.png';
+    stig = 0;
+    typeofkey = 'lvlOneCapsScore';
   }
 }
 
-class WordsEasyConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+/// Configuration for the "voiceLetters" game type.
+class FinishVoiceLettersConfig extends FinishGameListener {
+  FinishVoiceLettersConfig() : super(FinishGameType.voiceLetters);
 
   @override
   void init() {
-    this.appBarText = 'Stutt orð';
-    this.cardcolor = cardColorLvlTwo;
-    this.gametype = FinishGameType.wordsEasy;
-    this.image = 'assets/images/fish_skuggi-04.png';
-    this.stig = 0;
-    this.typeofkey = 'lvlTwoEasyScore';
+    appBarText = 'Upplesnir stafir';
+    cardcolor = cardColor;
+    image = 'assets/images/cat_skuggi-05.png';
+    stig = 0;
+    typeofkey = 'lvlOneVoiceScore';
   }
 }
 
-class WordsMediumConfig implements FinishGameListener {
-  @override
-  String appBarText;
+class FinishWordsEasyConfig extends FinishGameListener {
+  FinishWordsEasyConfig() : super(FinishGameType.wordsEasy);
 
   @override
-  Color cardcolor;
+  void init() {
+    appBarText = 'Stutt orð';
+    cardcolor = cardColorLvlTwo;
+    image = 'assets/images/fish_skuggi-04.png';
+    stig = 0;
+    typeofkey = 'lvlTwoEasyScore';
+  }
+}
 
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+class FinishWordsMediumConfig extends FinishGameListener {
+  FinishWordsMediumConfig() : super(FinishGameType.wordsMedium);
 
   @override
   void init() {
     this.appBarText = 'Löng orð';
     this.cardcolor = cardColorLvlTwo;
-    this.gametype = FinishGameType.wordsMedium;
     this.image = 'assets/images/fish_skuggi-04.png';
     this.stig = 0;
     this.typeofkey = 'lvlTwoMediumScore';
   }
 }
 
-//* IMPORTANT: NEED TO ADD DIFFICULTY FOR READ OUT LOUD WORDS AND SENTENCES
-class VoiceWordsEasyConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+class FinishVoiceWordsEasyConfig extends FinishGameListener {
+  FinishVoiceWordsEasyConfig() : super(FinishGameType.voiceWordsEasy);
 
   @override
   void init() {
     this.appBarText = 'Upplesnir stutt orð';
     this.cardcolor = cardColorLvlTwo;
-    this.gametype = FinishGameType.voiceWordsEasy;
     this.image = 'assets/images/fish_skuggi-04.png';
     this.stig = 0;
-    this.typeofkey = 'lvlTwoVoiceScore'; // TODO: CHANGE TO CORRECT KEY
+    this.typeofkey = 'lvlTwoVoiceScore';
   }
 }
 
-//* IMPORTANT: NEED TO ADD DIFFICULTY FOR READ OUT LOUD WORDS AND SENTENCES
-class VoiceWordsMediumConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
-
+class FinishVoiceWordsMediumConfig extends FinishGameListener {
+  FinishVoiceWordsMediumConfig() : super(FinishGameType.voiceWordsMedium);
   @override
   void init() {
     this.appBarText = 'Upplesnir löng orð';
     this.cardcolor = cardColorLvlTwo;
-    this.gametype = FinishGameType.voiceWordsMedium;
     this.image = 'assets/images/fish_skuggi-04.png';
     this.stig = 0;
-    this.typeofkey = 'lvlTwoVoiceMediumScore'; // TODO: CHANGE TO CORRECT KEY
+    this.typeofkey = 'lvlTwoVoiceMediumScore';
   }
 }
 
-class SentencesEasyConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
+class FinishSentencesEasyConfig extends FinishGameListener {
+  FinishSentencesEasyConfig() : super(FinishGameType.sentencesEasy);
 
   @override
   void init() {
     this.appBarText = 'Stuttar setningar';
     this.cardcolor = cardColorLvlThree;
-    this.gametype = FinishGameType.sentencesEasy;
     this.image = 'assets/images/bear_shadow.png';
     this.stig = 0;
     this.typeofkey = 'lvlThreeEasyScore';
   }
 }
 
-class SentencesMediumConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
-
+class FinishSentencesMediumConfig extends FinishGameListener {
+  FinishSentencesMediumConfig() : super(FinishGameType.sentencesMedium);
   @override
   void init() {
     this.appBarText = 'Langar setningar';
     this.cardcolor = cardColorLvlThree;
-    this.gametype = FinishGameType.sentencesMedium;
     this.image = 'assets/images/bear_shadow.png';
     this.stig = 0;
     this.typeofkey = 'lvlThreeMediumScore';
   }
 }
 
-//* IMPORTANT: NEED TO ADD DIFFICULTY FOR READ OUT LOUD WORDS AND SENTENCES
-class VoiceSentencesEasyConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
-
+class FinishVoiceSentencesEasyConfig extends FinishGameListener {
+  FinishVoiceSentencesEasyConfig() : super(FinishGameType.voiceSentencesEasy);
   @override
   void init() {
     this.appBarText = 'Upplesnar stuttar setningar';
     this.cardcolor = cardColorLvlThree;
-    this.gametype = FinishGameType.voiceSentencesEasy;
     this.image = 'assets/images/bear_shadow.png';
     this.stig = 0;
-    this.typeofkey = 'lvlThreeVoiceScore'; // TODO: CHANGE TO CORRECT KEY
+    this.typeofkey = 'lvlThreeVoiceScore';
   }
 }
 
-class VoiceSentencesMediumConfig implements FinishGameListener {
-  @override
-  String appBarText;
-
-  @override
-  Color cardcolor;
-
-  @override
-  FinishGameType gametype;
-
-  @override
-  String image;
-
-  @override
-  int stig;
-
-  @override
-  String typeofkey;
-
+class FinishVoiceSentencesMediumConfig extends FinishGameListener {
+  FinishVoiceSentencesMediumConfig()
+      : super(FinishGameType.voiceSentencesMedium);
   @override
   void init() {
     this.appBarText = 'Upplesnar langar setningar';
     this.cardcolor = cardColorLvlThree;
-    this.gametype = FinishGameType.voiceSentencesMedium;
     this.image = 'assets/images/bear_shadow.png';
     this.stig = 0;
     this.typeofkey = 'lvlThreeVoiceMediumScore'; // TODO: CHANGE TO CORRECT KEY

@@ -1,16 +1,14 @@
-import 'package:Lesaforrit/screens/home/welcome.dart';
-import 'package:Lesaforrit/screens/profile_view.dart';
 import 'package:Lesaforrit/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:Lesaforrit/components/round_icon_button.dart';
 
 class BottomSettings extends StatelessWidget {
   BottomSettings(
-      {@required this.onTapApprove,
-      @required this.onTapDecline,
-      @required this.image});
+      {required this.onTapApprove,
+      required this.onTapDecline,
+      required this.image});
 
-  final Function onTapApprove;
+  final void Function()? onTapApprove;
   final Function onTapDecline;
   final String image;
 
@@ -36,10 +34,9 @@ class BottomSettings extends StatelessWidget {
                 iconSize: 35,
                 circleSize: 55,
                 onPressed: () {
-                  onTapApprove();
+                  onTapApprove?.call();
                   Navigator.pushNamed(context, Wrapper.id);
                 },
-                size: null,
               ),
             ),
           ),
@@ -56,7 +53,6 @@ class BottomSettings extends StatelessWidget {
                   onTapDecline();
                   Navigator.pushNamed(context, Wrapper.id);
                 },
-                size: null,
               ),
             ),
           ),

@@ -10,7 +10,7 @@ abstract class AudioEvent extends Equatable {
 class InitEvent extends AudioEvent {
   final VoiceGameType gameType;
 
-  InitEvent({@required this.gameType});
+  InitEvent({required this.gameType});
 
   @override
   List<Object> get props => [gameType];

@@ -1,5 +1,5 @@
 class Usr {
-  final String uid;
+  final String? uid;
 
   Usr({this.uid});
 }
@@ -23,20 +23,20 @@ class UserData {
   final String lvlTwoVoiceMediumScore;
 
   UserData(
-      {this.uid,
-      this.name,
-      this.age,
-      this.school,
-      this.classname,
-      this.lvlOneCapsScore,
-      this.lvlOneScore,
-      this.lvlOneVoiceScore,
-      this.lvlThreeEasyScore,
-      this.lvlThreeMediumScore,
-      this.lvlThreeVoiceScore,
-      this.lvlThreeVoiceMediumScore,
-      this.lvlTwoEasyScore,
-      this.lvlTwoMediumScore,
-      this.lvlTwoVoiceScore,
-      this.lvlTwoVoiceMediumScore});
+      {required this.uid,
+      required this.name,
+      required this.age,
+      required this.school,
+      required this.classname,
+      required this.lvlOneCapsScore,
+      required this.lvlOneScore,
+      required this.lvlOneVoiceScore,
+      required this.lvlThreeEasyScore,
+      required this.lvlThreeMediumScore,
+      required this.lvlThreeVoiceScore,
+      required this.lvlThreeVoiceMediumScore,
+      required this.lvlTwoEasyScore,
+      required this.lvlTwoMediumScore,
+      required this.lvlTwoVoiceScore,
+      required this.lvlTwoVoiceMediumScore});
 }

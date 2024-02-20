@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter (Pixel 5 API 33)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "flutterMode": "debug",
+            "deviceName": "Pixel 5 API 33"
+        }
+    ]
+}

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../components/custom_painter.dart';
 
@@ -11,10 +10,10 @@ class TimerWidget extends StatelessWidget {
   final Function onTimeCancel;
 
   TimerWidget(
-      {@required this.time,
-      @required this.backgroundcolor,
-      this.onTimeStop,
-      this.onTimeCancel});
+      {required this.time,
+      required this.backgroundcolor,
+      required this.onTimeStop,
+      required this.onTimeCancel});
   Widget build(BuildContext context) {
     return CountDownTimer(
         time: time,
@@ -32,10 +31,10 @@ class CountDownTimer extends StatefulWidget {
   final Function onTimeCancel;
 
   CountDownTimer(
-      {@required this.time,
-      @required this.backgroundcolor,
-      this.onTimeStop,
-      this.onTimeCancel});
+      {required this.time,
+      required this.backgroundcolor,
+      required this.onTimeStop,
+      required this.onTimeCancel});
 
   @override
   _CountDownTimerState createState() => _CountDownTimerState(
@@ -47,18 +46,18 @@ class CountDownTimer extends StatefulWidget {
 
 class _CountDownTimerState extends State<CountDownTimer>
     with TickerProviderStateMixin {
-  AnimationController controller;
+  late AnimationController controller;
   final int time;
   final Color backgroundcolor;
   final Function onTimeStop;
   final Function onTimeCancel;
   _CountDownTimerState(
-      {@required this.time,
-      @required this.backgroundcolor,
-      this.onTimeStop,
-      this.onTimeCancel});
+      {required this.time,
+      required this.backgroundcolor,
+      required this.onTimeStop,
+      required this.onTimeCancel});
   String get timerString {
-    Duration duration = controller.duration * controller.value;
+    Duration duration = controller.duration! * controller.value;
     return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
@@ -89,7 +88,7 @@ class _CountDownTimerState extends State<CountDownTimer>
     return Stack(fit: StackFit.passthrough, children: [
       AnimatedBuilder(
         animation: controller,
-        builder: (BuildContext context, Widget child) {
+        builder: (BuildContext context, Widget? child) {
           return CustomPaint(
               painter: CustomTimerPainter(
             animation: controller,
@@ -102,7 +101,7 @@ class _CountDownTimerState extends State<CountDownTimer>
           padding: const EdgeInsets.fromLTRB(14, 25, 0, 0),
           child: AnimatedBuilder(
               animation: controller,
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 return Text(
                   timerString,
                   style: TextStyle(fontSize: 20, color: Colors.white),

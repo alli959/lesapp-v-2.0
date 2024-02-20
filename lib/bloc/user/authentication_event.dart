@@ -12,7 +12,7 @@ class AppStarted extends AuthenticationEvent {}
 class UserLoggedIn extends AuthenticationEvent {
   final Usr usr;
 
-  UserLoggedIn({@required this.usr});
+  UserLoggedIn({required this.usr});
 
   @override
   List<Object> get props => [usr];
@@ -23,7 +23,7 @@ class UserLoggedOut extends AuthenticationEvent {}
 class UserRegister extends AuthenticationEvent {
   final Usr usr;
 
-  UserRegister({@required this.usr});
+  UserRegister({required this.usr});
 
   @override
   List<Object> get props => [usr];

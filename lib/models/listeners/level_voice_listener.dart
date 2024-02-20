@@ -3,275 +3,135 @@ import 'dart:core';
 import 'package:Lesaforrit/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'level_finish_listener.dart';
 
 enum VoiceGameType { letters, words, sentences }
 
+/// Represents the configuration for a voice game level.
 abstract class LevelVoiceListener {
-  VoiceGameType type;
-  String level;
-  String typeofgame;
-  List<String> typeofdifficulty;
-  String selecteddifficulty;
-  bool haschosendifficulty;
-  Map<String, String> difftranslate;
-  String title;
-  int questionTime;
-  Widget finishWidget;
-  Color contColor;
-  Color cardColor;
-  Color stigColor;
-  bool isLetter;
-  BuildContext context;
-  FinishGameType finishtype;
+  late final VoiceGameType type;
+  late final String level;
+  late final String typeofgame;
+  late final List<String> typeofdifficulty;
+  late String selecteddifficulty;
+  late bool haschosendifficulty;
+  late final Map<String, String> difftranslate;
+  late String title;
+  late final int questionTime;
+  late final Widget finishWidget;
+  late final Color contColor;
+  late final Color cardColor;
+  late final Color stigColor;
+  late final bool isLetter;
+  late final BuildContext context;
+  late FinishGameType finishtype;
 
-  factory LevelVoiceListener(VoiceGameType type, [BuildContext context]) {
-    switch (type) {
-      case VoiceGameType.letters:
-        type = VoiceGameType.letters;
-        return LettersConfig();
-      case VoiceGameType.words:
-        type = VoiceGameType.words;
-        return WordsConfig();
-      case VoiceGameType.sentences:
-        type = VoiceGameType.sentences;
-        return SentencesConfig();
-      default:
-        type = VoiceGameType.sentences;
-        return SentencesConfig();
-    }
-  }
+  LevelVoiceListener({required this.type});
 
-  void init();
+  void init() {}
 
-  void setDifficulty(String diff) {
-    this.selecteddifficulty = diff;
-    this.title = this.difftranslate[diff];
-  }
+  void setDifficulty(String diff);
 }
 
-class LettersConfig implements LevelVoiceListener {
-  @override
-  Color cardColor;
+/// Configuration for the "letters" voice game type.
+class LettersConfig extends LevelVoiceListener {
+  LettersConfig() : super(type: VoiceGameType.letters);
 
   @override
-  Color contColor;
-
-  @override
-  Map<String, String> difftranslate;
-
-  @override
-  Widget finishWidget;
-
-  @override
-  bool isLetter;
-
-  @override
-  String level;
-
-  @override
-  int questionTime;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  Color stigColor;
-
-  @override
-  String title;
-
-  @override
-  VoiceGameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  List<String> typeofdifficulty;
-
-  @override
-  bool haschosendifficulty;
-
-  @override
-  BuildContext context;
-
-  @override
-  FinishGameType finishtype;
+  final Color cardColor = Color(0xFF81FFE9);
 
   @override
   void init() {
-    this.level = "level_1";
-    this.typeofgame = "letters";
-    this.typeofdifficulty = [];
-    this.selecteddifficulty = "low";
-    this.haschosendifficulty = true;
-    this.difftranslate = {};
-    this.title = "Raddgreining Stafa";
-    this.questionTime = 3;
-    this.contColor = lightCyan;
-    this.cardColor = Color(0xFF81FFE9);
-    this.stigColor = lightCyan;
-    this.isLetter = true;
-    this.finishtype = FinishGameType.voiceLetters;
+    level = "level_1";
+    typeofgame = "letters";
+    typeofdifficulty = [];
+    selecteddifficulty = "low";
+    haschosendifficulty = true;
+    difftranslate = {};
+    title = "Raddgreining Stafa";
+    questionTime = 3;
+    contColor = lightCyan;
+    cardColor = Color(0xFF81FFE9);
+    stigColor = lightCyan;
+    isLetter = true;
+    finishtype = FinishGameType.voiceLetters;
   }
 
   @override
   void setDifficulty(String diff) {
-    // TODO: implement setDifficulty
+    selecteddifficulty = diff;
+    finishtype = FinishGameType.voiceLetters;
+    haschosendifficulty = true;
+    title = "Raddgreining Stafa";
   }
 }
 
-class WordsConfig implements LevelVoiceListener {
-  @override
-  Color cardColor;
+/// Configuration for the "words" voice game type.
+class WordsConfig extends LevelVoiceListener {
+  WordsConfig() : super(type: VoiceGameType.words);
 
   @override
-  Color contColor;
-
-  @override
-  Map<String, String> difftranslate;
-
-  @override
-  Widget finishWidget;
-
-  @override
-  bool isLetter;
-
-  @override
-  String level;
-
-  @override
-  int questionTime;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  Color stigColor;
-
-  @override
-  String title;
-
-  @override
-  VoiceGameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  List<String> typeofdifficulty;
-
-  @override
-  bool haschosendifficulty;
-
-  @override
-  BuildContext context;
-
-  @override
-  FinishGameType finishtype;
+  final Color cardColor = cardColorLvlTwo;
 
   @override
   void init() {
-    this.level = "level_2";
-    this.typeofgame = "words";
-    this.typeofdifficulty = ["easy,medium"];
-    this.selecteddifficulty = "easy";
-    this.haschosendifficulty = false;
-    this.difftranslate = {"easy": "Auðvellt", "medium": "Miðlungs"};
-    this.title = "Raddgreining Orða ${difftranslate[selecteddifficulty]}";
-    this.questionTime = 5;
-    this.contColor = Color.fromARGB(255, 109, 223, 112);
-    this.cardColor = cardColorLvlTwo;
-    this.stigColor = lightGreen;
-    this.isLetter = false;
+    level = "level_2";
+    typeofgame = "words";
+    typeofdifficulty = ["easy", "medium"];
+    selecteddifficulty = "easy";
+    haschosendifficulty = false;
+    difftranslate = {"easy": "Auðvellt", "medium": "Miðlungs"};
+    title = "Raddgreining Orða ${difftranslate[selecteddifficulty]}";
+    questionTime = 5;
+    contColor = Color.fromARGB(255, 109, 223, 112);
+    cardColor = cardColorLvlTwo;
+    stigColor = lightGreen;
+    isLetter = false;
+    finishtype = FinishGameType.voiceWordsEasy;
   }
 
   @override
   void setDifficulty(String diff) {
-    this.selecteddifficulty = diff;
-    this.finishtype = diff == "easy"
+    selecteddifficulty = diff;
+    finishtype = diff == "easy"
         ? FinishGameType.voiceWordsEasy
         : FinishGameType.voiceWordsMedium;
-    this.haschosendifficulty = true;
-    this.title = "Raddgreining Orða ${difftranslate[selecteddifficulty]}";
+    haschosendifficulty = true;
+    title = "Raddgreining Orða ${difftranslate[selecteddifficulty]}";
   }
 }
 
-class SentencesConfig implements LevelVoiceListener {
-  @override
-  Color cardColor;
+/// Configuration for the "sentences" voice game type.
+class SentencesConfig extends LevelVoiceListener {
+  SentencesConfig() : super(type: VoiceGameType.sentences);
 
   @override
-  Color contColor;
-
-  @override
-  Map<String, String> difftranslate;
-
-  @override
-  Widget finishWidget;
-
-  @override
-  bool isLetter;
-
-  @override
-  String level;
-
-  @override
-  int questionTime;
-
-  @override
-  String selecteddifficulty;
-
-  @override
-  Color stigColor;
-
-  @override
-  String title;
-
-  @override
-  VoiceGameType type;
-
-  @override
-  String typeofgame;
-
-  @override
-  List<String> typeofdifficulty;
-
-  @override
-  bool haschosendifficulty;
-
-  @override
-  BuildContext context;
-
-  @override
-  FinishGameType finishtype;
+  final Color cardColor = cardColorLvlThree;
 
   @override
   void init() {
-    print("INIT CALLED !!!!");
-    this.level = "level_3";
-    this.typeofgame = "sentences";
-    this.typeofdifficulty = ["easy,medium"];
-    this.selecteddifficulty = "easy";
-    this.haschosendifficulty = false;
-    this.difftranslate = {"easy": "Auðvellt", "medium": "Miðlungs"};
-    this.title = "Raddgreining Setninga ${difftranslate[selecteddifficulty]}";
-    this.questionTime = 8;
-    this.contColor = lightBlue;
-    this.cardColor = cardColorLvlThree;
-    this.stigColor = lightBlue;
-    this.isLetter = false;
+    level = "level_3";
+    typeofgame = "sentences";
+    typeofdifficulty = ["easy", "medium"];
+    selecteddifficulty = "easy";
+    haschosendifficulty = false;
+    difftranslate = {"easy": "Auðvellt", "medium": "Miðlungs"};
+    title = "Raddgreining Setninga ${difftranslate[selecteddifficulty]}";
+    questionTime = 8;
+    contColor = lightBlue;
+    cardColor = cardColorLvlThree;
+    stigColor = lightBlue;
+    isLetter = false;
+    finishtype = FinishGameType.voiceSentencesEasy;
   }
 
   @override
   void setDifficulty(String diff) {
-    this.selecteddifficulty = diff;
-    this.finishtype = diff == "easy"
+    selecteddifficulty = diff;
+    finishtype = diff == "easy"
         ? FinishGameType.voiceSentencesEasy
         : FinishGameType.voiceSentencesMedium;
-    this.haschosendifficulty = true;
-    this.title = "Raddgreining Setninga ${difftranslate[selecteddifficulty]}";
+    haschosendifficulty = true;
+    title = "Raddgreining Setninga ${difftranslate[selecteddifficulty]}";
   }
 }

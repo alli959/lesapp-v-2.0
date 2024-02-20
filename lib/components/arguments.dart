@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:Lesaforrit/models/listeners/level_finish_listener.dart';
 
 import '../models/listeners/level_listener.dart';
@@ -13,8 +11,10 @@ class LevelVoiceArguments {
 
 class LevelArguments {
   final GameType gameType;
+  final String selecteddifficulty;
+  bool isCap = false;
 
-  LevelArguments(this.gameType);
+  LevelArguments(this.gameType, this.selecteddifficulty, this.isCap);
 }
 
 class LevelFinishArguments {

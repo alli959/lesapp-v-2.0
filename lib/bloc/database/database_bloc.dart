@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import 'package:Lesaforrit/models/usr.dart' as usr;
 import 'package:Lesaforrit/services/databaseService.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:Lesaforrit/bloc/user/authentication_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 import '../../models/PrefVoice.dart';
 import '../../models/Schools.dart';
@@ -20,8 +18,7 @@ part 'database_state.dart';
 class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
   final DatabaseService _databaseService;
   DatabaseBloc(DatabaseService databaseService)
-      : assert(databaseService != null),
-        _databaseService = databaseService,
+      : _databaseService = databaseService,
         super(DatabaseInitial());
 
   @override
@@ -57,27 +54,24 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     yield DatabaseLoading();
 
     try {
-      dynamic userData = await _databaseService.updateUserData(
-          event.name,
-          event.age,
-          event.school,
-          event.classname,
-          event.agreement,
-          event.lvlOneCapsScore,
-          event.lvlOneScore,
-          event.lvlOneVoiceScore,
-          event.lvlThreeEasyScore,
-          event.lvlThreeMediumScore,
-          event.lvlThreeVoiceScore,
-          event.lvlThreeVoiceMediumScore,
-          event.lvlTwoEasyScore,
-          event.lvlTwoMediumScore,
-          event.lvlTwoVoiceScore,
-          event.lvlTwoVoiceMediumScore);
+      UserData userData = UserData(
+          id: _databaseService.uid, // Assuming you have access to uid
+          name: event.name,
+          age: event.age,
+          school: enumFromString(
+              event.school,
+              Schools
+                  .values), // Assuming you have a function to convert string to enum
+          classname: event.classname,
+          prefVoice: PrefVoice.DORA, // Default value, modify as needed
+          agreement: event.agreement,
+          saveRecord:
+              event.agreement, // Assuming saveRecord is same as agreement
+          manualFix: false // Default value, modify as needed
+          );
+      await _databaseService.updateUserData(userData, null);
 
-      if (userData != null) {
-        yield UserDataUpdate(userData: userData);
-      }
+      yield UserDataUpdate(userData: userData);
     } catch (e) {
       yield DatabaseFailure();
     }
@@ -103,7 +97,35 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       } else {
         isNewRecord = true;
       }
-      await _databaseService.updateUserScore(event.score, event.typeof);
+
+      // Create an instance of UserScore
+      UserScore userScore = UserScore(
+        userdataID: _databaseService.uid, // Assuming you have access to uid
+        // Set all scores to null by default
+        lvlOneCapsScore: event.typeof == "lvlOneCapsScore" ? event.score : null,
+        lvlOneScore: event.typeof == "lvlOneScore" ? event.score : null,
+        lvlOneVoiceScore:
+            event.typeof == "lvlOneVoiceScore" ? event.score : null,
+        lvlThreeEasyScore:
+            event.typeof == "lvlThreeEasyScore" ? event.score : null,
+        lvlThreeMediumScore:
+            event.typeof == "lvlThreeMediumScore" ? event.score : null,
+        lvlThreeVoiceScore:
+            event.typeof == "lvlThreeVoiceScore" ? event.score : null,
+        lvlThreeVoiceMediumScore:
+            event.typeof == "lvlThreeVoiceMediumScore" ? event.score : null,
+        lvlTwoEasyScore: event.typeof == "lvlTwoEasyScore" ? event.score : null,
+        lvlTwoMediumScore:
+            event.typeof == "lvlTwoMediumScore" ? event.score : null,
+        lvlTwoVoiceScore:
+            event.typeof == "lvlTwoVoiceScore" ? event.score : null,
+        lvlTwoVoiceMediumScore:
+            event.typeof == "lvlTwoVoiceMediumScore" ? event.score : null,
+      );
+
+      // Update score
+      await _databaseService.updateUserScore(userScore);
+
       yield IsNewRecord(newRecord: isNewRecord, record: maxScore);
       // Stream<UserData> userData = await _databaseService.userData;
 
@@ -122,7 +144,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
       var schools = await rootBundle.loadString('assets/Schools.json');
       Map<String, dynamic> schoolsList = json.decode(schools);
 
-      String schoolID = userData.school.name;
+      String schoolID = userData.school!.name;
 
       String school = schoolsList[schoolID];
       print("school is => $school");
@@ -137,7 +159,7 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
   Stream<DatabaseState> _mapUsersToState(GetUsers event) async* {
     yield DatabaseLoading();
     try {
-      Stream<List<Read>> users = await DatabaseService().users;
+      Stream<List<Read>> users = await DatabaseService(uid: '').users;
       yield UsersState(users: users);
     } catch (e) {
       yield DatabaseFailure();
@@ -148,11 +170,11 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
     yield DatabaseLoading();
     try {
       var data = await _databaseService.GetSpecialData();
-      PrefVoice prefVoice = data["prefVoice"];
-      bool saveRecord = data["saveRecord"];
-      bool manualFix = data["manualFix"];
+      PrefVoice prefVoice = data["prefVoice"] ?? PrefVoice.DORA;
+      bool saveRecord = data["saveRecord"] ?? true;
+      bool manualFix = data["manualFix"] ?? false;
       bool agreement = data["agreement"];
-      String classname = data["classname"];
+      String classname = data["classname"] ?? "";
       String name = data["name"];
       String age = data["age"];
 
@@ -181,17 +203,30 @@ class DatabaseBloc extends Bloc<DatabaseEvent, DatabaseState> {
 
     print("Schoolid is ${schoolID.toString()}");
     try {
-      await _databaseService.saveSpecialData(
-          event.prefVoice,
-          event.saveRecord,
-          event.manualFix,
-          event.classname,
-          schoolID,
-          event.agreement,
-          event.name,
-          event.age);
+      // Create an instance of UserData
+      UserData userData = UserData(
+        id: _databaseService.uid, // Assuming you have access to uid
+        name: event.name,
+        age: event.age,
+        school: schoolID,
+        classname: event.classname,
+        agreement: event.agreement,
+        prefVoice: event.prefVoice,
+        saveRecord: event.saveRecord,
+        manualFix: event.manualFix,
+        UserScores: [], // Assuming you want to initialize with an empty list
+        // Add other fields if necessary
+      );
+
+      // Save the special data
+      await _databaseService.saveSpecialData(userData);
+
+      // You can yield a success state here if you have one
+      // yield SpecialDataSaved();
     } catch (err) {
       print("there was an error saving special data $err");
+      // You can yield an error state here if you have one
+      // yield DatabaseFailure();
     }
   }
 

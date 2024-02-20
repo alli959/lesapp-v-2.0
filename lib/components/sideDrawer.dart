@@ -28,17 +28,18 @@ class SideDrawer extends StatelessWidget {
               title: 'Heim',
               icons: Icons.home,
               navigation: Welcome(),
+              nav: '',
             ),
             Tile(
-              title: 'Mínar síður',
-              icons: Icons.face,
-              navigation: ProfileView(),
-            ),
+                title: 'Mínar síður',
+                icons: Icons.face,
+                navigation: ProfileView(),
+                nav: ''),
             Tile(
-              title: 'Stigatafla',
-              icons: Icons.people,
-              navigation: ScoreChart(),
-            ),
+                title: 'Stigatafla',
+                icons: Icons.people,
+                navigation: ScoreChart(),
+                nav: ''),
             Div(bottom: 0, top: 20),
             Row(
               children: [
@@ -108,7 +109,7 @@ class Div extends StatelessWidget {
   final double bottom;
   final double top;
 
-  Div({this.bottom, this.top});
+  Div({required this.bottom, required this.top});
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,7 @@ class Div extends StatelessWidget {
 class NavigationScreen extends StatelessWidget {
   final Widget nav;
 
-  NavigationScreen({this.nav});
+  NavigationScreen({required this.nav});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +137,11 @@ class Tile extends StatelessWidget {
   final Widget navigation;
   final String nav;
 
-  Tile({this.title, this.icons, this.navigation, this.nav});
+  Tile(
+      {required this.title,
+      required this.icons,
+      required this.navigation,
+      required this.nav});
 
   @override
   Widget build(BuildContext context) {
@@ -148,16 +153,6 @@ class Tile extends StatelessWidget {
         Navigator.of(context)
             .pushNamedAndRemoveUntil(nav, (Route<dynamic> route) => false);
       },
-      /*
-      Fyrri aðferð áður en ég reyndi að hreinsa Stack en það virkar ekki
-      onTap: () {
-        Navigator.of(context).pop();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    NavigationScreen(nav: navigation)));
-      },*/
       leading: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
@@ -189,11 +184,11 @@ class ImgTile extends StatelessWidget {
   final Function onTap;
 
   ImgTile({
-    this.title,
-    this.navigation,
-    this.imgOne,
-    this.imgTwo,
-    this.onTap,
+    required this.title,
+    required this.navigation,
+    required this.imgOne,
+    required this.imgTwo,
+    required this.onTap,
   });
 
   @override
