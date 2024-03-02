@@ -1,45 +1,53 @@
-# .github/workflows/ios_deploy.yml
-
 name: iOS Deployment
 
 on:
   push:
     branches:
-      - main  # Set this to the branch you want to deploy from
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.2.3"  # Set this to the Ruby version used by Fastlane
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.3"
 
-    - name: Install dependencies
-      run: |
-        brew install node
-        npm install -g yarn
-        yarn install
-        cd ios
-        bundle install
-        cd ..
+      - name: Install Flutter
+        run: |
+          brew install flutter
 
-    - name: Install Fastlane
-      run: |
-        cd ios
-        gem install fastlane -NV
-        cd ..
+      - name: Install dependencies
+        run: |
+          brew install node
+          npm install -g yarn
+          yarn install
 
-    - name: Build and deploy to TestFlight
-      env:
-        APPLE_ID: ${{ secrets.APPLE_ID }}
-        ISSUER_ID: ${{ secrets.ISSUER_ID }}
-        API_KEY_ID: ${{ secrets.API_KEY_ID }}
-        API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
-      run: |
-        cd ios
-        fastlane beta
+      - name: Prepare for Flutter build
+        run: |
+          cd ios
+          flutter pub get
+          flutter precache --ios
+          flutter clean
+          flutter build ios --release --no-codesign
+          cd ..
 
+      - name: Install Fastlane
+        run: |
+          cd ios
+          gem install fastlane -NV
+          bundle install
+          cd ..
+
+      - name: Build and deploy to TestFlight
+        env:
+          FASTLANE_USER: ${{ secrets.APPLE_ID }}
+          API_KEY_ID: ${{ secrets.API_KEY_ID }}
+          ISSUER_ID: ${{ secrets.ISSUER_ID }}
+          API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
+        run: |
+          cd ios
+          fastlane beta
