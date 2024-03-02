@@ -20,6 +20,8 @@
 default_platform(:ios)
 
 platform :ios do
+
+
   before_all do
     # Set up the app_store_connect_api_key action, which will use the API key for App Store Connect operations
     app_store_connect_api_key(
@@ -31,13 +33,8 @@ platform :ios do
 
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # You would use match here if you're using it for code signing.
-    # If you're not using match, ensure that your code signing is set up properly in Xcode or with another method.
-
-    # Build your app
+    sync_code_signing(type: "appstore") # This uses match to install the correct provisioning profiles
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
-
-    # Upload to TestFlight
     upload_to_testflight(skip_waiting_for_build_processing: true)
   end
 
