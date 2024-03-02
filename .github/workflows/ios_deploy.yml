@@ -11,6 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Create amplifyconfiguration.dart
+        env:
+          AMPLIFY_CONFIGURATION: ${{ secrets.AMPLIFY_CONFIGURATION }}
+        run: |
+          echo "$AMPLIFY_CONFIGURATION" > lib/amplifyconfiguration.dart
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
