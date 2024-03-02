@@ -1,0 +1,56 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# fastlane/Fastfile
+
+# fastlane/Fastfile
+
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    # Set up the app_store_connect_api_key action, which will use the API key for App Store Connect operations
+    app_store_connect_api_key(
+      key_id: ENV["API_KEY_ID"],
+      issuer_id: ENV["ISSUER_ID"],
+      key_content: ENV["API_KEY_SECRET"]
+    )
+  end
+
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # You would use match here if you're using it for code signing.
+    # If you're not using match, ensure that your code signing is set up properly in Xcode or with another method.
+
+    # Build your app
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+
+    # Upload to TestFlight
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  desc "Release a new version to the App Store"
+  lane :release do
+    # Again, use match if it's part of your code signing strategy
+
+    # Build your app
+    build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
+
+    # Deploy to the App Store
+    deliver(skip_metadata: true, skip_screenshots: true, force: true)
+  end
+end
+
+

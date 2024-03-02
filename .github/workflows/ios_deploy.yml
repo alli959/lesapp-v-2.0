@@ -1,0 +1,45 @@
+# .github/workflows/ios_deploy.yml
+
+name: iOS Deployment
+
+on:
+  push:
+    branches:
+      - main  # Set this to the branch you want to deploy from
+
+jobs:
+  build-and-deploy:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.2.3"  # Set this to the Ruby version used by Fastlane
+
+    - name: Install dependencies
+      run: |
+        brew install node
+        npm install -g yarn
+        yarn install
+        cd ios
+        bundle install
+        cd ..
+
+    - name: Install Fastlane
+      run: |
+        cd ios
+        gem install fastlane -NV
+        cd ..
+
+    - name: Build and deploy to TestFlight
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        ISSUER_ID: ${{ secrets.ISSUER_ID }}
+        API_KEY_ID: ${{ secrets.API_KEY_ID }}
+        API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
+      run: |
+        cd ios
+        fastlane beta
+
