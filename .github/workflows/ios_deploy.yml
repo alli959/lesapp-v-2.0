@@ -22,6 +22,9 @@ jobs:
         with:
           ruby-version: "3.2.3"
 
+      - name: Clear Derived Data
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData/
+
       - name: Install Flutter
         run: |
           brew install flutter
