@@ -24,6 +24,9 @@ jobs:
         echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
         echo "storeFile=../upload-keystore.jks" >> android/key.properties
 
+    - name: Create Service Account JSON
+      run: |
+        echo "${{ secrets.SUPPLY_JSON_KEY_DATA }}" > assets/graphite-flare-324114-285b1cf5c32b.json
 
     - name: List contents of the android directory
       run: ls -la android/
