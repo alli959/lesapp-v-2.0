@@ -35,38 +35,27 @@ jobs:
           npm install -g yarn
           yarn install
 
+      - name: Flutter pub get
+        run: flutter pub get
+
       - name: Prepare for Flutter build
         run: |
-          flutter pub get
           flutter precache --ios
           flutter clean
           flutter build ios --release --no-codesign --verbose
 
-      - name: Install CocoaPods
+      - name: Install and setup CocoaPods
         run: |
           sudo gem install cocoapods
           pod setup
-
-      - name: Update CocoaPods
-        run: |
-          cd ios
-          pod repo update
-          cd ..
-
-      - name: Clean CocoaPods Cache
-        run: |
-          pod cache clean --all
-
-      - name: Run pod install
-        run: |
           cd ios
           pod install
           cd ..
 
       - name: Install Fastlane
         run: |
-          cd ios
           gem install fastlane -NV
+          cd ios
           bundle install
           cd ..
 

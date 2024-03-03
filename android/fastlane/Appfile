@@ -1,2 +1,2 @@
-json_key_file("../assets/graphite-flare-324114-285b1cf5c32b.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+json_key_file("app/graphite-flare-324114-285b1cf5c32b.json")
 package_name("thuri.Lesaforrit") # e.g. com.krausefx.app
