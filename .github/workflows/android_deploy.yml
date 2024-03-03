@@ -5,37 +5,35 @@ name: Android Deployment
 on:
   push:
     branches:
-      - main  # Set this to the branch you want to deploy from
+      - main  # Trigger deployment on pushes to the main branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2  # Check out the repository content
 
-    - name: Set up JDK 11
+    - name: Set up JDK 11  # Java Development Kit setup for Android builds
       uses: actions/setup-java@v2
       with:
         java-version: '11'
         distribution: 'adopt'
-    
-    - name: Setup Flutter
+
+    - name: Setup Flutter  # Set up a specific version of Flutter
       uses: subosito/flutter-action@v1
       with:
-        flutter-version: '3.13.7' # Specify your Flutter version here
+        flutter-version: '3.13.7'
 
-    - name: Get Flutter dependencies
+    - name: Get Flutter dependencies  # Fetch all necessary Flutter packages
       run: flutter pub get
 
-    - name: Prepare Android build environment
-      run: |
-        flutter build apk # or flutter build appbundle for App Bundles
-        cd android
-        chmod +x ./gradlew
+    - name: Build APK  # Build the APK from your Flutter project
+      run: flutter build apk
 
-    - name: Build and upload to Google Play
+    - name: Build and upload to Google Play  # Use Fastlane to deploy the APK to Google Play Store
       run: |
-        fastlane beta # Use fastlane deploy for production deployment
+        fastlane beta  # You can change this to `fastlane deploy` for production deployment
       env:
-        SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}
+        SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # Ensure this secret is set in your repository settings
+
 
