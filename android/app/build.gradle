@@ -80,6 +80,8 @@ flutter {
     source '../..'
 }
 
+
+
 dependencies {
     // implementation 'com.android.support:multidex:1.0.3'  // bætti v. utaf error
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
