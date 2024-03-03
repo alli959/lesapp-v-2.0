@@ -21,8 +21,13 @@ jobs:
     # Decode and save the keystore file
     - name: Decode Keystore
       run: |
-        echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
+      echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
 
+
+
+    - name: List contents of the android directory
+      run: ls -la android/
+    
     - name: Create amplifyconfiguration.dart
       env:
         AMPLIFY_CONFIGURATION: ${{ secrets.AMPLIFY_CONFIGURATION }}
