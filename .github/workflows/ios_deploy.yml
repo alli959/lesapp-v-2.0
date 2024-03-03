@@ -35,6 +35,28 @@ jobs:
           npm install -g yarn
           yarn install
 
+      # Insert the new CocoaPods steps here
+      - name: Install CocoaPods
+        run: |
+          sudo gem install cocoapods
+          pod setup
+
+      - name: Update CocoaPods
+        run: |
+          cd ios
+          pod repo update
+          cd ..
+
+      - name: Clean CocoaPods Cache
+        run: |
+          pod cache clean --all
+
+      - name: Run pod install
+        run: |
+          cd ios
+          pod install
+          cd ..
+
       - name: Prepare for Flutter build
         run: |
           cd ios

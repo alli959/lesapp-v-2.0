@@ -52,7 +52,8 @@ jobs:
       run: flutter build appbundle --release
 
     - name: Build and upload to Google Play  # Use Fastlane to deploy the APK to Google Play Store
+      working-directory: ./android
       run: |
-        fastlane beta  # You can change this to `fastlane deploy` for production deployment
+        fastlane deploy
       env:
         SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # Ensure this secret is set in your repository settings
