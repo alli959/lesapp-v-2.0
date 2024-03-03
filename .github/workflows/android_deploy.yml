@@ -1,5 +1,3 @@
-# .github/workflows/android_deploy.yml
-
 name: Android Deployment
 
 on:
@@ -13,17 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2  # Check out the repository content
 
-     # Create key.properties file
-    - name: Create key.properties
-      run: |
-        echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
-
     # Decode and save the keystore file
     - name: Decode Keystore
       run: |
-      echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
+        echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
 
-
+    # Create key.properties file
+    - name: Create key.properties
+      run: |
+        echo "keyAlias=prod" > android/key.properties
+        echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+        echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
+        echo "storeFile=android/upload-keystore.jks" >> android/key.properties
 
     - name: List contents of the android directory
       run: ls -la android/
@@ -56,5 +55,3 @@ jobs:
         fastlane beta  # You can change this to `fastlane deploy` for production deployment
       env:
         SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # Ensure this secret is set in your repository settings
-
-
