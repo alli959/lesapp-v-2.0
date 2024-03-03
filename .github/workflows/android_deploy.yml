@@ -13,6 +13,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2  # Check out the repository content
 
+    - name: Create amplifyconfiguration.dart
+      env:
+        AMPLIFY_CONFIGURATION: ${{ secrets.AMPLIFY_CONFIGURATION }}
+      run: |
+        echo "$AMPLIFY_CONFIGURATION" > lib/amplifyconfiguration.dart
+
     - name: Set up JDK 11  # Java Development Kit setup for Android builds
       uses: actions/setup-java@v2
       with:
@@ -28,7 +34,7 @@ jobs:
       run: flutter pub get
 
     - name: Build APK  # Build the APK from your Flutter project
-      run: flutter build apk
+      run: flutter build appbundle --release
 
     - name: Build and upload to Google Play  # Use Fastlane to deploy the APK to Google Play Store
       run: |
