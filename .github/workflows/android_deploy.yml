@@ -13,6 +13,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2  # Check out the repository content
 
+     # Create key.properties file
+    - name: Create key.properties
+      run: |
+        echo "${{ secrets.KEY_PROPERTIES }}" > android/key.properties
+
+    # Decode and save the keystore file
+    - name: Decode Keystore
+      run: |
+        echo "${{ secrets.ENCODED_KEYSTORE }}" | base64 --decode > android/upload-keystore.jks
+
     - name: Create amplifyconfiguration.dart
       env:
         AMPLIFY_CONFIGURATION: ${{ secrets.AMPLIFY_CONFIGURATION }}
