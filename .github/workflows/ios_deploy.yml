@@ -36,7 +36,7 @@ jobs:
         run: |
           flutter precache --ios
           flutter clean
-          flutter build ios --release --no-codesign --verbose
+          flutter build ios --release --no-codesign
 
       - name: Check Generated.xcconfig exists
         run: |
@@ -72,4 +72,4 @@ jobs:
           API_KEY_SECRET: ${{ secrets.API_KEY_SECRET }}
         run: |
           cd ios
-          fastlane beta
+          fastlane deploy
