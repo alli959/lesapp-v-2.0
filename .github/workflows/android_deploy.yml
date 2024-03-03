@@ -22,7 +22,8 @@ jobs:
         echo "keyAlias=prod" > android/key.properties
         echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
         echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
-        echo "storeFile=android/upload-keystore.jks" >> android/key.properties
+        echo "storeFile=../upload-keystore.jks" >> android/key.properties
+
 
     - name: List contents of the android directory
       run: ls -la android/
