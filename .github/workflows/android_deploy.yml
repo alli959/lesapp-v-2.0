@@ -27,7 +27,11 @@ jobs:
     - name: Create Service Account JSON in Assets
       run: |
         echo '${{ secrets.SUPPLY_JSON_KEY_DATA }}' > ./assets/graphite-flare-324114-285b1cf5c32b.json
-
+        
+    - name: Create Service Account JSON for Deployment
+      run: |
+        echo '${{ secrets.ANDROID_DEPLOY_KEY }}' > ./assets/deploy-key.json
+        
     - name : List contents of the assets directory
       run: ls -la assets/
 
@@ -62,5 +66,5 @@ jobs:
       run: |
         fastlane deploy
       env:
-        SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # This is already correctly set
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/graphite-flare-324114-285b1cf5c32b.json
+        SUPPLY_JSON_KEY_DATA: ${{ secrets.ANDROID_DEPLOY_KEY }}  # This is already correctly set
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/deploy-key.json
