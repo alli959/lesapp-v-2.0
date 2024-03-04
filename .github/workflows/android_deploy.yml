@@ -57,9 +57,10 @@ jobs:
     - name: Build APK  # Build the APK from your Flutter project
       run: flutter build appbundle --release
 
-    - name: Build and upload to Google Play  # Use Fastlane to deploy the APK to Google Play Store
+    - name: Build and upload to Google Play
       working-directory: ./android
       run: |
         fastlane deploy
       env:
-        SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # Ensure this secret is set in your repository settings
+        SUPPLY_JSON_KEY_DATA: ${{ secrets.SUPPLY_JSON_KEY_DATA }}  # This is already correctly set
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/graphite-flare-324114-285b1cf5c32b.json

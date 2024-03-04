@@ -32,6 +32,10 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Verify and Create Symlinks
+        run: |
+          ./verify_and_create_symlinks.sh
+
       - name: Prepare for Flutter build
         run: |
           flutter precache --ios
