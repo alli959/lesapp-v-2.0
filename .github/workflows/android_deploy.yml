@@ -64,8 +64,7 @@ jobs:
     - name: Build and upload to Google Play
       working-directory: ./android
       run: |
-        fastlane deploy
+        fastlane deploy aab:../build/app/outputs/bundle/release/app-release.aab
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/deploy-key.json
         SUPPLY_JSON_KEY_DATA: ${{ secrets.ANDROID_DEPLOY_KEY }}
-        GRADLE_AAB_OUTPUT_PATH: ${{ github.workspace }}/app/build/outputs/bundle/release/app-release.aab
