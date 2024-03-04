@@ -35,7 +35,7 @@ jobs:
       - name: Download amplify_auth_cognito_ios Plugin
         run: |
           mkdir -p $HOME/plugins
-          curl -o $HOME/plugins/amplify_auth_cognito_ios.zip https://github.com/alli959/amplify_auth_cognito_ios-0.6.14
+          curl -L -o $HOME/plugins/amplify_auth_cognito_ios.zip "https://github.com/alli959/amplify_auth_cognito_ios-0.6.14/archive/refs/heads/main.zip"
           unzip -d $HOME/plugins/amplify_auth_cognito_ios $HOME/plugins/amplify_auth_cognito_ios.zip
 
       - name: Verify and Create Symlinks
