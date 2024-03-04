@@ -37,6 +37,7 @@ target 'Runner' do
   pod 'AWSMobileClient'
   pod 'AWSS3'
   pod 'FMDB'
+  pod 'ObjectMapper'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
