@@ -68,3 +68,4 @@ jobs:
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/deploy-key.json
         SUPPLY_JSON_KEY_DATA: ${{ secrets.ANDROID_DEPLOY_KEY }}
+        GRADLE_AAB_OUTPUT_PATH: ${{ github.workspace }}/app/build/outputs/bundle/release/app-release.aab
