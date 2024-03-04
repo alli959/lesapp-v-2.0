@@ -75,6 +75,7 @@ build/
 
 #SECRETS
 assets/graphite-flare-324114-285b1cf5c32b.json
+assets/deploy-key.json
 S3_keys.dart
 
 #amplify-do-not-edit-begin

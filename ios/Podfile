@@ -35,6 +35,7 @@ target 'Runner' do
   pod 'AWSAuthCore'
   pod 'AWSCognitoIdentityProvider'
   pod 'AWSMobileClient'
+  pod 'AWSS3'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
