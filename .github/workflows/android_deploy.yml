@@ -66,5 +66,4 @@ jobs:
       run: |
         fastlane deploy
       env:
-        SUPPLY_JSON_KEY_DATA: ${{ secrets.ANDROID_DEPLOY_KEY }}  # This is already correctly set
-        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/assets/deploy-key.json
+        SUPPLY_JSON_KEY_DATA: ${{ secrets.ANDROID_DEPLOY_KEY }}
