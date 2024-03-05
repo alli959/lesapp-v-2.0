@@ -23,6 +23,11 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
+# Directly specify the Flutter SDK path for WSL
+def flutter_root
+  '/home/alexanderg/Applications/flutter'
+end
+
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
@@ -38,10 +43,8 @@ target 'Runner' do
   pod 'AWSS3'
   pod 'FMDB'
   pod 'ObjectMapper'
-  pod 'Amplify'
   pod 'amplify_api_ios'
-  pod 'AWSDataStorePlugin'
-  pod 'AmplifyAuthCognito'
+  pod 'amplify_auth_cognito'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
