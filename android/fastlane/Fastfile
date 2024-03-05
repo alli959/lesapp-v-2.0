@@ -33,7 +33,6 @@ platform :android do
   lane :deploy do
   upload_to_play_store(
     track: 'production',
-    version_code: '12'
   )
   end
 end
