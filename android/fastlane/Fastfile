@@ -31,13 +31,17 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-    gradle(task: "clean assembleRelease")
+  aab_path = File.expand_path('../../build/app/outputs/bundle/release/app-release.aab', __FILE__)
+  UI.message("AAB Path: #{aab_path}")
+  if File.exist?(aab_path)
     upload_to_play_store(
       track: 'production',
-      aab: '../build/app/outputs/bundle/release/app-release.aab', # Ensure this path is correct
-      version_code: '12' # Replace '123' with your actual version code
+      aab: aab_path,
+      version_code: '12'
     )
+  else
+    UI.error("AAB file not found at #{aab_path}")
   end
+end
 
   
-end
