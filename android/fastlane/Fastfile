@@ -41,7 +41,6 @@ platform :android do
     )
   else
     UI.error("AAB file not found at #{aab_path}")
-  end
-end
 
   
+end
