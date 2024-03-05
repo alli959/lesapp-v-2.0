@@ -31,15 +31,9 @@ platform :android do
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
-  aab_path = File.expand_path('../../build/app/outputs/bundle/release/app-release.aab', __FILE__)
-  UI.message("AAB Path: #{aab_path}")
-  if File.exist?(aab_path)
-    upload_to_play_store(
-      track: 'production',
-      aab: aab_path,
-      version_code: '12'
-    )
-  else
-    UI.error("AAB file not found at #{aab_path}")
+  upload_to_play_store(
+    track: 'production',
+    version_code: '12'
+  )
   end
 end
