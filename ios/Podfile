@@ -38,6 +38,9 @@ target 'Runner' do
   pod 'AWSS3'
   pod 'FMDB'
   pod 'ObjectMapper'
+  pod 'Amplify'
+  pod 'amplify_api_ios'
+  pod 'AWSDataStorePlugin'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end

@@ -1,7 +1,7 @@
 name: Lesaforrit
 description: Lestrarapp fyrir krakka.
 
-version: 1.3.1+12
+version: 1.3.0+12
 
 environment:
   sdk: ">=2.12.0 <4.0.0"
