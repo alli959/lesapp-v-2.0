@@ -34,7 +34,7 @@ platform :android do
     gradle(task: "clean assembleRelease")
     upload_to_play_store(
       track: 'production',
-      aab: '../../build/app/outputs/bundle/release/app-release.aab', # Ensure this path is correct
+      aab: '../build/app/outputs/bundle/release/app-release.aab', # Ensure this path is correct
       version_code: '12' # Replace '123' with your actual version code
     )
   end

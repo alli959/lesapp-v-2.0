@@ -41,6 +41,7 @@ target 'Runner' do
   pod 'Amplify'
   pod 'amplify_api_ios'
   pod 'AWSDataStorePlugin'
+  pod 'AmplifyAuthCognito'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
